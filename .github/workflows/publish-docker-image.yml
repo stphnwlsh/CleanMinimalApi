@@ -11,15 +11,14 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    env:
-      CONTAINER_NAME: ${{ github.event.repository.name }}
 
     steps:
     - uses: actions/checkout@v2
-    - name: Get current date
-      id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
     - name: Prepare
-      run: echo "CONTAINER_VERSION::$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+      id: prepare
+      run: echo "::set-output name=version::$(date +'%Y-%m-%d')"
     - name: Build
-      run: docker build . --target build --file ./build/Dockerfile --tag $CONTAINER_NAME:$CONTAINER_VERSION --tag $CONTAINER_NAME:latest
+      run: docker build . --file ./build/Dockerfile --tag $CONTAINER_NAME:CONTAINER_VERSION --tag $CONTAINER_NAME:latest
+      env:
+        CONTAINER_NAME: ${{ github.event.repository.name }}
+        CONTAINER_VERSION: ${{ steps.prepare.outputs.version }}
