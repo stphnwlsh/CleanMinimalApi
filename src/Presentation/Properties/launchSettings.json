@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "MinimalApi": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "local"
+      },
+      "applicationUrl": "https://localhost:7032;http://localhost:5032",
+      "dotnetRunMessages": true
+    },
+    "WSL": {
+      "commandName": "WSL2",
+      "launchBrowser": true,
+      "launchUrl": "https://localhost:7032/swagger",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "local",
+        "ASPNETCORE_URLS": "https://localhost:7032;http://localhost:5032"
+      },
+      "distributionName": ""
+    }
+  }
+}
