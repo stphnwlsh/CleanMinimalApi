@@ -18,7 +18,7 @@ jobs:
       id: prepare
       run: echo "::set-output name=version::$(date +'%Y-%m-%d')"
     - name: Build
-      run: docker build . --file ./build/Dockerfile --tag $CONTAINER_NAME:CONTAINER_VERSION --tag $CONTAINER_NAME:latest
+      run: docker build . --file ./build/Dockerfile --tag $CONTAINER_NAME:$CONTAINER_VERSION --tag $CONTAINER_NAME:latest
       env:
         CONTAINER_NAME: ${{ github.event.repository.name }}
         CONTAINER_VERSION: ${{ steps.prepare.outputs.version }}
