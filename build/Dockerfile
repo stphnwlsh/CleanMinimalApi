@@ -9,7 +9,6 @@ ARG BASE_IMAGE_RUNTIME_TAG=6.0-alpine
 FROM ${BASE_IMAGE_REPO}/${BASE_IMAGE_BUILD}:${BASE_IMAGE_BUILD_TAG} AS build
 
 # Build, Test and Publish ARGS
-ARG PROJECT_NAME=MinimalApi
 ARG VERSION_PREFIX=1.0.0.0
 ARG VERSION_SUFFIX
 ARG ENVIRONMENT=docker
@@ -32,7 +31,7 @@ RUN dotnet restore -v minimal
 COPY . .
 
 # Dotnet Build
-RUN dotnet build --no-restore -c Release -v minimal
+RUN dotnet build --no-restore -c Release -v minimal -p:VersionPrefix=${VERSION_PREFIX} -p:VersionSuffix=${VERSION_SUFFIX}
 
 # Dotnet Test
 FROM build AS test

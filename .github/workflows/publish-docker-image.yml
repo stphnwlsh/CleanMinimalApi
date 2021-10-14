@@ -20,5 +20,8 @@ jobs:
         echo IMAGE_NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
         echo IMAGE_VERSION=$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER  >> $GITHUB_ENV
     - name: Build
-      run: docker build . --file ./build/Dockerfile --tag $IMAGE_NAME:$IMAGE_VERSION --tag $IMAGE_NAME:latest
+      run: docker build . --file ./build/Dockerfile \
+        --tag $IMAGE_NAME:$IMAGE_VERSION \
+        --tag $IMAGE_NAME:latest \
+        --build-arg VERSION_PREFIX:$IMAGE_VERSION
 
