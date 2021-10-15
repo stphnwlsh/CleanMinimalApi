@@ -9,7 +9,6 @@
     <IsPackable>false</IsPackable>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <LangVersion>latest</LangVersion>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NoWarn>CA1707</NoWarn>
   </PropertyGroup>
 
@@ -31,5 +30,5 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
-  
+
 </Project>
