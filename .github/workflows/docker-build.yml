@@ -22,7 +22,7 @@ jobs:
         echo "::set-output name=prefix::$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER"
 
     - name: Build
-      run: docker build . --file ./build/Dockerfile
+      run: docker build .
         --tag $IMAGE_NAME:$IMAGE_VERSION
         --tag $IMAGE_NAME:latest
         --build-arg VERSION_PREFIX=$IMAGE_VERSION
@@ -46,7 +46,7 @@ jobs:
     - name: Docker Push
       uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
       with:
-        context: ./build/Dockerfile
+        context: .
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
