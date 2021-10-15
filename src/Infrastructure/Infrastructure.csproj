@@ -9,7 +9,6 @@
     <IsPackable>false</IsPackable>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <LangVersion>latest</LangVersion>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NoWarn>S3903</NoWarn>
   </PropertyGroup>
 

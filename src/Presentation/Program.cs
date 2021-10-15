@@ -4,7 +4,9 @@ using CleanMinimalApi.Application.Notes.Delete;
 using CleanMinimalApi.Application.Notes.List;
 using CleanMinimalApi.Application.Notes.Lookup;
 using CleanMinimalApi.Application.Notes.Update;
+using CleanMinimalApi.Application.Versions.ApiVersion;
 using CleanMinimalApi.Domain.Entities.Notes;
+using CleanMinimalApi.Domain.Entities.Versions;
 using CleanMinimalApi.Presentation.Errors;
 using CleanMinimalApi.Presentation.Extensions;
 using MediatR;
@@ -12,6 +14,17 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Serilog;
 
 var app = WebApplication.CreateBuilder(args).ConfigureBuilder().Build().ConfigureApp();
+
+#region Versions
+
+_ = app.MapGet("/version", async (IMediator mediator) => Results.Ok(await mediator.Send(new ApiVersionQuery())))
+    .WithGroupName("Version")
+    .Produces<ApiVersion>(StatusCodes.Status200OK, contentType: MediaTypeNames.Application.Json)
+    .Produces<ApiError>(StatusCodes.Status500InternalServerError, contentType: MediaTypeNames.Application.Json);
+
+#endregion Versions
+
+#region Notes
 
 _ = app.MapGet("/notes", async (IMediator mediator) => Results.Ok(await mediator.Send(new ListNotesQuery())))
     .WithGroupName("Notes")
@@ -54,6 +67,8 @@ _ = app.MapDelete("/notes/{id}", async (IMediator mediator, int id) =>
     .Produces<ApiError>(StatusCodes.Status400BadRequest, contentType: MediaTypeNames.Application.Json)
     .Produces<ApiError>(StatusCodes.Status404NotFound, contentType: MediaTypeNames.Application.Json)
     .Produces<ApiError>(StatusCodes.Status500InternalServerError, contentType: MediaTypeNames.Application.Json);
+
+#endregion Notes
 
 try
 {
