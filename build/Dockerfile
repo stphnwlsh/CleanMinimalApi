@@ -31,7 +31,7 @@ RUN dotnet restore -v minimal
 COPY . .
 
 # Dotnet Build
-RUN dotnet build --no-restore -c Release -v minimal -p:VersionPrefix=$VERSION_PREFIX -p:VersionSuffix=$VERSION_SUFFIX
+RUN dotnet build --no-restore -c Release -v minimal -p:VersionPrefix=${VERSION_PREFIX} -p:VersionSuffix=${VERSION_SUFFIX}
 
 # Dotnet Test
 FROM build AS test
@@ -39,7 +39,7 @@ RUN dotnet test --no-restore --no-build -c Release -v minimal -p:CollectCoverage
 
 # Dotnet Publish
 FROM build AS publish
-RUN dotnet publish ./src/**/Presentation.csproj --no-restore -c Release -v quiet -o app -p:VersionPrefix=$VERSION_PREFIX -p:VersionSuffix=$VERSION_SUFFIX
+RUN dotnet publish ./src/**/Presentation.csproj --no-restore -c Release -v quiet -o app -p:VersionPrefix=${VERSION_PREFIX} -p:VersionSuffix=${VERSION_SUFFIX}
 
 # Runtime Image
 FROM ${BASE_IMAGE_REPO}/${BASE_IMAGE_RUNTIME}:${BASE_IMAGE_RUNTIME_TAG} AS run
