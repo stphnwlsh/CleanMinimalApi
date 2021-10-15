@@ -24,6 +24,7 @@ jobs:
         --tag $IMAGE_NAME:$IMAGE_VERSION
         --tag $IMAGE_NAME:latest
         --build-arg VERSION_PREFIX=$IMAGE_VERSION
+        --build-arg VERSION_SUFFIX=test
       env:
         IMAGE_NAME: ${{ steps.prepare.outputs.name }}
         IMAGE_VERSION: ${{ steps.prepare.outputs.prefix }}
