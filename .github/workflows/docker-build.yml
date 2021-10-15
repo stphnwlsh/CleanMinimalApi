@@ -14,11 +14,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Prepare
       id: prepare
       run: |
         echo "::set-output name=name::$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')"
         echo "::set-output name=prefix::$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER"
+
     - name: Build
       run: docker build . --file ./build/Dockerfile
         --tag $IMAGE_NAME:$IMAGE_VERSION
@@ -28,3 +30,23 @@ jobs:
       env:
         IMAGE_NAME: ${{ steps.prepare.outputs.name }}
         IMAGE_VERSION: ${{ steps.prepare.outputs.prefix }}
+
+    - name: Docker Login
+      uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+      with:
+        username: ${{ secrets.DOCKER_LOGIN }}
+        password: ${{ secrets.DOCKER_TOKEN }}
+
+    - name: Docker Metadata
+      id: meta
+      uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+      with:
+        images: ${{ steps.prepare.outputs.name }}
+
+    - name: Docker Push
+      uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+      with:
+        context: .
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
