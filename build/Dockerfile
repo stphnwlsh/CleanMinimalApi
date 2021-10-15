@@ -39,6 +39,8 @@ RUN dotnet test --no-restore --no-build -c Release -v minimal -p:CollectCoverage
 
 # Dotnet Publish
 FROM build AS publish
+ARG VERSION_PREFIX
+ARG VERSION_SUFFIX
 RUN dotnet publish ./src/**/Presentation.csproj --no-restore -c Release -v quiet -o app -p:VersionPrefix=${VERSION_PREFIX} -p:VersionSuffix=${VERSION_SUFFIX}
 
 # Runtime Image
