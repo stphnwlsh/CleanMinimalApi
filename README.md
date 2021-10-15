@@ -15,6 +15,12 @@ There's a dockerfile included in the build folder and serves the purpose of rest
 docker build -f ./build/Dockerfile -t minapi:latest .
 ```
 
+You can pull the public version of this image using
+
+```
+docker pull stphnwlsh/cleanminimalapi
+```
+
 ## Prerequisites
 This solution depends on the [pre-release SDK for .net 6](https://dotnet.microsoft.com/download/dotnet/6.0), you need to install that before it will work for you.
 
