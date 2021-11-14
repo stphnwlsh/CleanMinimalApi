@@ -1,6 +1,11 @@
 # Clean Minimal API 
 This is a sample application to be an example of using [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) alongside .net 6's [Minimal APIs](https://devblogs.microsoft.com/aspnet/asp-net-core-updates-in-net-6-preview-4/#introducing-minimal-apis).
 
+## Support
+I'm sharing some of my work here and if it helps you, I'd love it if you'd consider supporting me.
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/guidelines/download-assets-sm-1.svg)](https://www.buymeacoffee.com/stphnwlsh)
+
 ## Features
 - Logging using [Serilog](https://github.com/serilog/serilog)
 - Mediator Pattern using [Mediatr](https://github.com/jbogard/MediatR)
