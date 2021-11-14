@@ -1,4 +1,4 @@
-name: Build
+name: Build, Test and Publish
 
 on:
   push:
@@ -8,36 +8,76 @@ on:
 
 jobs:
 
-  build:
-
+  pipeline:
+    name: Build, Test and Publish Pipeline
     runs-on: ubuntu-latest
-
     steps:
+
     - uses: actions/checkout@v2
 
     - name: Prepare
       id: prepare
       run: |
-        echo "::set-output name=name::$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')"
-        echo "::set-output name=prefix::$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER"
+        NAME=$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')
+        VERSION_PREFIX=$(date +'%Y.%m.%d').${GITHUB_RUN_NUMBER}
+        BRANCH_CURRENT=${GITHUB_REF#refs/*/}
+        BRANCH_CURRENT=${BRANCH_CURRENT//[^a-zA-Z0-9]/-}
 
-    - name: Build
+        if [[ ${GITHUB_EVENT_NAME} == 'pull_request' ]]; then
+          BRANCH_BASE=${GITHUB_BASE_REF#refs/*/}
+          BRANCH_BASE=${BRANCH_BASE/[^a-zA-Z0-9]//-}
+          BRANCH_COMPARE=${GITHUB_HEAD_REF#refs/*/}
+          BRANCH_COMPARE=${BRANCH_COMPARE//[^a-zA-Z0-9]/-}
+          VERSION_SUFFIX="merge-${BRANCH_BASE}-${BRANCH_COMPARE}"
+        elif [[ ${GITHUB_EVENT_NAME} == ${{ github.event.repository.default_branch }} ]]; then
+          VERSION_SUFFIX="${BRANCH_CURRENT}"
+        fi
+
+        if [[ $VERSION_SUFFIX == '' ]]; then
+          DOCKER_TAG=$VERSION_PREFIX
+        else
+          DOCKER_TAG=$VERSION_PREFIX-$VERSION_SUFFIX
+        fi
+
+        echo "::set-output name=name::$(eval printf "%s" "$NAME")"
+        echo "::set-output name=version_prefix::$(eval printf "%s" "$VERSION_PREFIX")"
+        echo "::set-output name=version_suffix::$(eval printf "%s" "$VERSION_SUFFIX")"
+        echo "::set-output name=docker_tag::$(eval printf "%s" "$DOCKER_TAG")"
+        echo "::set-output name=branch::$(eval printf "%s" "$BRANCH_CURRENT")"
+      shell: bash
+
+    - name: Outputs
+      run: |
+        echo Name: ${{ steps.prepare.outputs.name }}
+        echo Prefix: ${{ steps.prepare.outputs.version_prefix }}
+        echo Suffix: ${{ steps.prepare.outputs.version_suffix }}
+        echo Tag: ${{ steps.prepare.outputs.docker_tag }}
+        echo Branch:${{ steps.prepare.outputs.branch }}
+
+    - name: Docker Build
+      id: build
       run: docker build .
-        --tag $IMAGE_NAME:$IMAGE_VERSION
-        --tag $IMAGE_NAME:latest
-        --build-arg VERSION_PREFIX=$IMAGE_VERSION
-        --build-arg VERSION_SUFFIX=test
+        --tag $NAME:$DOCKER_TAG
+        --tag $NAME:latest
+        --build-arg VERSION_PREFIX=$VERSION_PREFIX
+        --build-arg VERSION_SUFFIX=$VERSION_SUFFIX
       env:
-        IMAGE_NAME: ${{ steps.prepare.outputs.name }}
-        IMAGE_VERSION: ${{ steps.prepare.outputs.prefix }}
+        NAME: ${{ steps.prepare.outputs.name }}
+        VERSION_PREFIX: ${{ steps.prepare.outputs.version_prefix }}
+        VERSION_SUFFIX: ${{ steps.prepare.outputs.version_suffix }}
+        DOCKER_TAG: ${{ steps.prepare.outputs.docker_tag }}
 
-    - name: Login
+    - name: Docker Login
+      id: login
+      if: ${{ github.ref == 'refs/heads/main' }}
       uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
       with:
         username: ${{ secrets.DOCKER_LOGIN }}
         password: ${{ secrets.DOCKER_TOKEN }}
 
-    - name: Push
-      run: docker push $IMAGE_NAME --all-tags
+    - name: Publish Docker Image
+      id: publish
+      if: ${{ github.ref == 'refs/heads/main' }}
+      run: docker push $NAME --all-tags
       env:
-        IMAGE_NAME: ${{ steps.prepare.outputs.name }}
+        NAME: ${{ steps.prepare.outputs.name }}
