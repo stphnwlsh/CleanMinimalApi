@@ -1,11 +1,6 @@
 # Clean Minimal API 
 This is a sample application to be an example of using [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) alongside .net 6's [Minimal APIs](https://devblogs.microsoft.com/aspnet/asp-net-core-updates-in-net-6-preview-4/#introducing-minimal-apis).
 
-## Support
-I'm sharing some of my work here and if it helps you, I'd love it if you'd consider supporting me.
-
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/guidelines/download-assets-sm-1.svg)](https://www.buymeacoffee.com/stphnwlsh)
-
 ## Features
 - Logging using [Serilog](https://github.com/serilog/serilog)
 - Mediator Pattern using [Mediatr](https://github.com/jbogard/MediatR)
@@ -38,3 +33,9 @@ This sample would not have been possible without gaining inspiration from the fo
 - [Damian Edwards - Minimal API Playground](https://github.com/DamianEdwards/MinimalApiPlayground)
 - [Scott Hanselman - Minimal APIs in .NET 6 but where are the Unit Tests?](https://www.hanselman.com/blog/minimal-apis-in-net-6-but-where-are-the-unit-tests)
 - [Andrew Lock - Reducing log verbosity with Serilog RequestLogging](https://andrewlock.net/using-serilog-aspnetcore-in-asp-net-core-3-reducing-log-verbosity/)
+
+## Support
+I'm sharing some of my work here and if it helps you, I'd love it if you'd consider supporting me.
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/guidelines/download-assets-sm-1.svg)](https://www.buymeacoffee.com/stphnwlsh)
+
