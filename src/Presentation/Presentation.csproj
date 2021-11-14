@@ -3,11 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>CleanMinimalApi.$(AssemblyName)</RootNamespace>
-    <UserSecretsId>8deafe86-d456-4eab-aa0c-8bec7c1ba0d7</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Authors>Stephen Walsh</Authors>
-    <Company>StphnWlsh</Company>
     <Copyright>Stephen Walsh @ 2021</Copyright>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -18,23 +15,24 @@
     <VersionSuffix></VersionSuffix>
     <GenerateAssemblyVersionAttribute>true</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyInformationalVersionAttribute>true</GenerateAssemblyInformationalVersionAttribute>
-    <NoWarn>S3903</NoWarn>
+    <NoWarn>S3903,CS8602,CS8618</NoWarn>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'CleanMinimalApi' " />
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
     <PackageReference Include="NSubstitute" Version="4.2.2" />
-    <PackageReference Include="Serilog.AspNetCore" Version="4.1.1-dev-00229" />
-    <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.1-dev-00787" />
-    <PackageReference Include="Serilog.Enrichers.Thread" Version="3.2.0-dev-00752" />
-    <PackageReference Include="Serilog.Extensions.Hosting" Version="4.1.2" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1-dev-00876" />
-    <PackageReference Include="Serilog.Sinks.Seq" Version="5.0.1" />
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.30.0.37606">
+    <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
+    <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
+    <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="4.2.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
+    <PackageReference Include="Serilog.Sinks.Seq" Version="5.1.0" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.31.0.39249">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -48,4 +46,7 @@
     </AssemblyAttribute>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Serilog.AspNetCore" />
+  </ItemGroup>
 </Project>

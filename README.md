@@ -12,7 +12,7 @@ This is a sample application to be an example of using [Clean Architecture](http
 There's a dockerfile included in the build folder and serves the purpose of restoring, building, testing, publishing and then creating a runtime image of the API.  Works on my machine.....
 
 ```
-docker build -f ./build/Dockerfile -t minapi:latest .
+docker build -t cleanminimalapi:latest .
 ```
 
 You can pull the public version of this image using
