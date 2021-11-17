@@ -4,7 +4,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using CleanMinimalApi.Application.Common.Interfaces;
 using CleanMinimalApi.Application.Movies.ReadAll;
+using CleanMinimalApi.Domain.Movies.Entities;
 using NSubstitute;
+using Shouldly;
 using Xunit;
 
 public class ReadAllHandlerTests
@@ -19,10 +21,22 @@ public class ReadAllHandlerTests
         var handler = new ReadAllHandler(context);
         var token = new CancellationTokenSource().Token;
 
+        _ = context.ReadAllMovies(token).Returns(new List<Movie> {
+            new Movie{
+                Id = Guid.Empty,
+                Title = "Title"
+            }
+        });
+
         // Act
-        _ = await handler.Handle(query, token);
+        var result = await handler.Handle(query, token);
 
         // Assert
         _ = await context.Received(1).ReadAllMovies(token);
+
+        result.ShouldNotBeEmpty();
+        result.Count.ShouldBe(1);
+        result[0].Id.ShouldBe(Guid.Empty);
+        result[0].Title.ShouldBe("Title");
     }
 }
