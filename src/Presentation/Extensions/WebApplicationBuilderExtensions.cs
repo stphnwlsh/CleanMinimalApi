@@ -3,9 +3,11 @@ namespace CleanMinimalApi.Presentation.Extensions;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
+using System.Text.Json.Serialization;
 using CleanMinimalApi.Application;
 using CleanMinimalApi.Infrastructure;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -27,6 +29,16 @@ public static class WebApplicationBuilderExtensions
         });
 
         #endregion Logging
+
+        #region Serialisation
+
+        _ = builder.Services.Configure<JsonOptions>(opt =>
+        {
+            opt.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            opt.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+        });
+
+        #endregion Serialisation
 
         #region Swagger
 
