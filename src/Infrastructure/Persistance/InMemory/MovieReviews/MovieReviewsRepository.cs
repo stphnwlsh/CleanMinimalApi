@@ -1,5 +1,6 @@
 namespace CleanMinimalApi.Infrastructure.Persistance.InMemory.MovieReviews;
 
+using CleanMinimalApi.Application.Common.Enums;
 using CleanMinimalApi.Application.Common.Exceptions;
 using CleanMinimalApi.Application.Common.Interfaces;
 using CleanMinimalApi.Domain.Authors.Entities;
@@ -108,7 +109,9 @@ internal class MovieReviewsRepository : IAuthorsRepository, IMoviesRepository, I
     {
         try
         {
-            var review = this.context.Reviews.FirstOrDefault(r => r.Id == id) ?? throw new NotFoundException(Application.Common.Enums.EntityType.Review);
+            var review = this.context.Reviews.FirstOrDefault(r => r.Id == id);
+
+            NotFoundException.ThrowIfNull(review, EntityType.Review);
 
             review.Stars = stars;
             review.ReviewAuthorId = authorId;
