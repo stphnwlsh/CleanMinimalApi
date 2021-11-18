@@ -1,6 +1,7 @@
 using System.Net.Mime;
 using CleanMinimalApi.Application.Reviews.Create;
 using CleanMinimalApi.Application.Reviews.Delete;
+using CleanMinimalApi.Application.Reviews.Update;
 using CleanMinimalApi.Application.Versions.ReadVersion;
 using CleanMinimalApi.Domain.Authors.Entities;
 using CleanMinimalApi.Domain.Movies.Entities;
@@ -91,23 +92,21 @@ _ = app.MapGet("/reviews/{id}", async (IMediator mediator, Guid id) => Results.O
     .Produces<ApiError>(StatusCodes.Status404NotFound, contentType: MediaTypeNames.Application.Json)
     .Produces<ApiError>(StatusCodes.Status500InternalServerError, contentType: MediaTypeNames.Application.Json);
 
+_ = app.MapPut("/reviews/{id}", async (IMediator mediator, Guid id, UpdateCommand command) =>
+    {
+        command.Id = id;
+
+        _ = await mediator.Send(command);
+
+        return Results.NoContent();
+    })
+    .WithGroupName("Reviews")
+    .Produces(StatusCodes.Status204NoContent)
+    .Produces<ApiError>(StatusCodes.Status400BadRequest, contentType: MediaTypeNames.Application.Json)
+    .Produces<ApiError>(StatusCodes.Status404NotFound, contentType: MediaTypeNames.Application.Json)
+    .Produces<ApiError>(StatusCodes.Status500InternalServerError, contentType: MediaTypeNames.Application.Json);
+
 #endregion Reviews
-
-// #region Notes
-
-// _ = app.MapPut("/notes/{id}", async (IMediator mediator, int id, UpdateNoteRequest request) =>
-//     {
-//         _ = await mediator.Send(new UpdateNoteCommand(id, request.Text));
-
-//         return Results.NoContent();
-//     })
-//     .WithGroupName("Notes")
-//     .Produces<Note>(StatusCodes.Status204NoContent)
-//     .Produces<ApiError>(StatusCodes.Status400BadRequest, contentType: MediaTypeNames.Application.Json)
-//     .Produces<ApiError>(StatusCodes.Status404NotFound, contentType: MediaTypeNames.Application.Json)
-//     .Produces<ApiError>(StatusCodes.Status500InternalServerError, contentType: MediaTypeNames.Application.Json);
-
-// #endregion Notes
 
 try
 {

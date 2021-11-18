@@ -1,10 +1,8 @@
 namespace CleanMinimalApi.Application.Tests.Unit.Version.ReadVersion;
 
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using CleanMinimalApi.Application.Versions.ReadVersion;
-using NSubstitute;
 using Shouldly;
 using Xunit;
 
@@ -24,7 +22,10 @@ public class ReadVersionHandlerTests
 
         // Assert
         _ = result.ShouldNotBeNull();
-        result.FileVersion.ShouldBe("15.0.0");
-        result.InformationalVersion.ShouldBe("17.0.0");
+
+        _ = result.FileVersion.ShouldBeOfType<string>();
+        result.FileVersion.ShouldNotBeNullOrWhiteSpace();
+        _ = result.InformationalVersion.ShouldBeOfType<string>();
+        result.InformationalVersion.ShouldNotBeNullOrWhiteSpace();
     }
 }

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using CleanMinimalApi.Application.Common.Exceptions;
 using CleanMinimalApi.Application.Common.Interfaces;
 using CleanMinimalApi.Application.Reviews.Create;
-using CleanMinimalApi.Domain.Reviews.Entities;
 using NSubstitute;
 using Shouldly;
 using Xunit;

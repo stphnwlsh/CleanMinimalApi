@@ -326,14 +326,14 @@ public class MovieReviewsRepositoryTests
     }
 
     [Fact]
-    public async void UpdateReview_ShouldReturn_UpdateReviews()
+    public async void UpdateReview_ShouldReturn_True()
     {
         // Arrange
         var review = new UpdateCommand
         {
             Id = this.fixture.Context.Reviews.FirstOrDefault(a => a.Stars == 2).Id,
-            AuthorId = this.fixture.Context.Authors.FirstOrDefault(a => a.FirstName == "One").Id,
-            MovieId = this.fixture.Context.Movies.FirstOrDefault(m => m.Title == "One").Id,
+            AuthorId = this.fixture.Context.Authors.FirstOrDefault(a => a.FirstName == "Two").Id,
+            MovieId = this.fixture.Context.Movies.FirstOrDefault(m => m.Title == "Two").Id,
             Stars = 4
         };
         var token = new CancellationTokenSource().Token;
@@ -344,12 +344,12 @@ public class MovieReviewsRepositoryTests
         // Assert
         result.ShouldBeTrue();
 
-        // var updatedReview = this.fixture.Context.Reviews.FirstOrDefault(a => a.Id == review.Id);
+        var updatedReview = this.fixture.Context.Reviews.FirstOrDefault(a => a.Id == review.Id);
 
-        // updatedReview.Id.ShouldNotBe(review.Id);
-        // updatedReview.ReviewAuthorId.ShouldBe(review.AuthorId);
-        // updatedReview.ReviewedMovieId.ShouldBe(review.MovieId);
-        // updatedReview.Stars.ShouldBe(review.Stars);
+        updatedReview.Id.ShouldBe(review.Id);
+        updatedReview.ReviewAuthorId.ShouldBe(review.AuthorId);
+        updatedReview.ReviewedMovieId.ShouldBe(review.MovieId);
+        updatedReview.Stars.ShouldBe(review.Stars);
     }
 
     [Fact]

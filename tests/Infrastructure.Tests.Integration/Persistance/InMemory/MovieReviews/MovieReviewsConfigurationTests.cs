@@ -38,12 +38,12 @@ public class MovieReviewsConfigurationTests
         _ = author.Id.ShouldBeOfType<Guid>();
         _ = author.FirstName.ShouldBeOfType<string>();
         _ = author.LastName.ShouldBeOfType<string>();
-        _ = author.Reviews.ShouldBeOfType<List<Review>>();
+        _ = author.Reviews.ShouldBeOfType<HashSet<Review>>();
 
         _ = movie.ShouldNotBeNull();
         _ = movie.Id.ShouldBeOfType<Guid>();
         _ = movie.Title.ShouldBeOfType<string>();
-        _ = movie.Reviews.ShouldBeOfType<List<Review>>();
+        _ = movie.Reviews.ShouldBeOfType<HashSet<Review>>();
 
         _ = review.ShouldNotBeNull();
         _ = review.Id.ShouldBeOfType<Guid>();

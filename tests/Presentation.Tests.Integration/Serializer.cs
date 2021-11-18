@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-[ExcludeFromCodeCoverage]
 public static class Serializer
 {
     private static readonly JsonSerializerOptions Options = new()

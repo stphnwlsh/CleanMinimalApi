@@ -1,7 +1,6 @@
 namespace CleanMinimalApi.Application.Tests.Unit.Reviews.Update;
 
 using CleanMinimalApi.Application.Reviews.Update;
-using CleanMinimalApi.Domain.Reviews.Entities;
 using FluentValidation.TestHelper;
 using Xunit;
 

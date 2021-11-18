@@ -32,7 +32,7 @@ internal class MovieReviewsRepository : IAuthorsRepository, IMoviesRepository, I
 
     public virtual async Task<Author?> ReadAuthorById(Guid id, CancellationToken cancellationToken)
     {
-        return await this.context.Authors.Where(r => r.Id == id).Include(m => m.Reviews).ThenInclude(r => r.ReviewedMovie).AsNoTracking().FirstOrDefaultAsync(cancellationToken);
+        return await this.context.Authors.Where(r => r.Id == id).Include(a => a.Reviews).ThenInclude(r => r.ReviewedMovie).AsNoTracking().FirstOrDefaultAsync(cancellationToken);
     }
 
     public virtual async Task<bool> AuthorExists(Guid id, CancellationToken cancellationToken)

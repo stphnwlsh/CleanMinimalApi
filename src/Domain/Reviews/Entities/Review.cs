@@ -11,9 +11,11 @@ public class Review : Entity
 
     [ForeignKey("ReviewedMovie")]
     public Guid ReviewedMovieId { get; set; }
+
     public Movie? ReviewedMovie { get; init; }
 
     [ForeignKey("ReviewAuthor")]
     public Guid ReviewAuthorId { get; set; }
+
     public Author? ReviewAuthor { get; init; }
 }

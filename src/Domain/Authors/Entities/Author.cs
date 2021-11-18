@@ -6,9 +6,10 @@ using CleanMinimalApi.Domain.Reviews.Entities;
 
 public class Author : Entity
 {
-    public string FirstName { get; set; } = string.Empty;
-    public string LastName { get; set; } = string.Empty;
+    public string FirstName { get; set; }
+
+    public string LastName { get; set; }
 
     [InverseProperty("ReviewAuthor")]
-    public ICollection<Review> Reviews { get; } = new List<Review>();
+    public ICollection<Review> Reviews { get; init; }
 }
