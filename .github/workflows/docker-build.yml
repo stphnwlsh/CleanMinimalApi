@@ -56,12 +56,15 @@ jobs:
 
     - name: Docker Build - Test
       id: build-test
-      run: DOCKER_BUILDKIT=1 docker build .
+      run: docker build .
         --target coverage
         --output type=local,dest=out
+        --tag $NAME:$DOCKER_TAG
+        --tag $NAME:latest
         --build-arg VERSION_PREFIX=$VERSION_PREFIX
         --build-arg VERSION_SUFFIX=$VERSION_SUFFIX
       env:
+        DOCKER_BUILDKIT: 1
         NAME: ${{ steps.prepare.outputs.name }}
         VERSION_PREFIX: ${{ steps.prepare.outputs.version_prefix }}
         VERSION_SUFFIX: ${{ steps.prepare.outputs.version_suffix }}
@@ -73,8 +76,6 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         path-to-lcov: "./out/coverage.info"
 
-
-
     - name: Docker Build - Runtime
       id: build-run
       run: docker build .
@@ -84,6 +85,7 @@ jobs:
         --build-arg VERSION_PREFIX=$VERSION_PREFIX
         --build-arg VERSION_SUFFIX=$VERSION_SUFFIX
       env:
+        DOCKER_BUILDKIT: 1
         NAME: ${{ steps.prepare.outputs.name }}
         VERSION_PREFIX: ${{ steps.prepare.outputs.version_prefix }}
         VERSION_SUFFIX: ${{ steps.prepare.outputs.version_suffix }}
