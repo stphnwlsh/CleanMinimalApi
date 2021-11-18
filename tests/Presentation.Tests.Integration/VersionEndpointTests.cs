@@ -1,6 +1,4 @@
 namespace CleanMinimalApi.Presentation.Tests.Integration;
-
-using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Threading.Tasks;
 using CleanMinimalApi.Domain.Version;

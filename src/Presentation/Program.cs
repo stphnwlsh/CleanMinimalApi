@@ -74,7 +74,7 @@ _ = app.MapDelete("/reviews/{id}", async (IMediator mediator, Guid id) =>
 
         return Results.NoContent();
     })
-    .WithGroupName("Notes")
+    .WithGroupName("Reviews")
     .Produces(StatusCodes.Status204NoContent)
     .Produces<ApiError>(StatusCodes.Status400BadRequest, contentType: MediaTypeNames.Application.Json)
     .Produces<ApiError>(StatusCodes.Status404NotFound, contentType: MediaTypeNames.Application.Json)

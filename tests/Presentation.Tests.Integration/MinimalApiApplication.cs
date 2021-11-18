@@ -1,6 +1,4 @@
 namespace CleanMinimalApi.Presentation.Tests.Integration;
-
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Hosting;
 
