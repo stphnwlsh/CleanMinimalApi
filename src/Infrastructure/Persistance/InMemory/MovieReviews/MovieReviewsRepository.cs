@@ -1,5 +1,6 @@
 namespace CleanMinimalApi.Infrastructure.Persistance.InMemory.MovieReviews;
 
+using CleanMinimalApi.Application.Common.Exceptions;
 using CleanMinimalApi.Application.Common.Interfaces;
 using CleanMinimalApi.Domain.Authors.Entities;
 using CleanMinimalApi.Domain.Movies.Entities;
@@ -101,6 +102,27 @@ internal class MovieReviewsRepository : IAuthorsRepository, IMoviesRepository, I
     public async Task<bool> ReviewExists(Guid id, CancellationToken cancellationToken)
     {
         return await this.context.Reviews.AnyAsync(r => r.Id == id, cancellationToken);
+    }
+
+    public async Task<bool> UpdateReview(Guid id, Guid authorId, Guid movieId, int stars, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var review = this.context.Reviews.FirstOrDefault(r => r.Id == id) ?? throw new NotFoundException(Application.Common.Enums.EntityType.Review);
+
+            review.Stars = stars;
+            review.ReviewAuthorId = authorId;
+            review.ReviewedMovieId = movieId;
+
+            _ = this.context.Update(review);
+            _ = await this.context.SaveChangesAsync(cancellationToken);
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     #endregion Reviews

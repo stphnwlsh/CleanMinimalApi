@@ -1,6 +1,7 @@
 namespace CleanMinimalApi.Infrastructure.Tests.Integration.Persistance.InMemory.MovieReviews;
 
 using CleanMinimalApi.Application.Reviews.Create;
+using CleanMinimalApi.Application.Reviews.Update;
 using Shouldly;
 using Xunit;
 
@@ -208,7 +209,7 @@ public class MovieReviewsRepositoryTests
     }
 
     [Fact]
-    public async void DeleteReview_ShouldReturn_Boolean()
+    public async void DeleteReview_ShouldReturn_True()
     {
         // Arrange
         var id = this.fixture.Context.Reviews.FirstOrDefault(r => r.Stars == 1).Id;
@@ -319,6 +320,53 @@ public class MovieReviewsRepositoryTests
 
         // Act
         var result = await repository.ReviewExists(Guid.Empty, token);
+
+        // Assert
+        result.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async void UpdateReview_ShouldReturn_UpdateReviews()
+    {
+        // Arrange
+        var review = new UpdateCommand
+        {
+            Id = this.fixture.Context.Reviews.FirstOrDefault(a => a.Stars == 2).Id,
+            AuthorId = this.fixture.Context.Authors.FirstOrDefault(a => a.FirstName == "One").Id,
+            MovieId = this.fixture.Context.Movies.FirstOrDefault(m => m.Title == "One").Id,
+            Stars = 4
+        };
+        var token = new CancellationTokenSource().Token;
+
+        // Act
+        var result = await this.fixture.Repository.UpdateReview(review.Id, review.AuthorId, review.MovieId, review.Stars, token);
+
+        // Assert
+        result.ShouldBeTrue();
+
+        // var updatedReview = this.fixture.Context.Reviews.FirstOrDefault(a => a.Id == review.Id);
+
+        // updatedReview.Id.ShouldNotBe(review.Id);
+        // updatedReview.ReviewAuthorId.ShouldBe(review.AuthorId);
+        // updatedReview.ReviewedMovieId.ShouldBe(review.MovieId);
+        // updatedReview.Stars.ShouldBe(review.Stars);
+    }
+
+    [Fact]
+    public async void UpdateReview_ShouldReturn_False()
+    {
+        // Arrange
+        var review = new UpdateCommand
+        {
+            Id = Guid.Empty,
+            AuthorId = this.fixture.Context.Authors.FirstOrDefault(a => a.FirstName == "One").Id,
+            MovieId = this.fixture.Context.Movies.FirstOrDefault(m => m.Title == "One").Id,
+            Stars = 5
+        };
+        var token = new CancellationTokenSource().Token;
+
+        // Act
+        var result = await this.fixture.Repository.UpdateReview(review.Id, review.AuthorId, review.MovieId, review.Stars, token);
 
         // Assert
         result.ShouldBeFalse();

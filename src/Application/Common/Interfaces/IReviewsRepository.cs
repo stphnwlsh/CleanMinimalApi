@@ -10,4 +10,5 @@ public interface IReviewsRepository
     Task<List<Review>> ReadAllReviews(CancellationToken cancellationToken);
     Task<Review?> ReadReviewById(Guid id, CancellationToken cancellationToken);
     Task<bool> ReviewExists(Guid id, CancellationToken cancellationToken);
+    Task<bool> UpdateReview(Guid id, Guid authorId, Guid movieId, int stars, CancellationToken cancellationToken);
 }

@@ -6,7 +6,8 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Common.Exceptions;
+using CleanMinimalApi.Domain.Authors.Entities;
+using CleanMinimalApi.Domain.Movies.Entities;
 using CleanMinimalApi.Domain.Reviews.Entities;
 using Shouldly;
 using Xunit;
@@ -22,26 +23,34 @@ public class ReviewEndpointTests
         // Arrange
         using var client = Application.CreateClient();
 
-        using var authorResponse = await client.GetAsync("/reviews");
-        var author = (await authorResponse.Content.ReadAsStringAsync()).Deserialize<GraphData>().Data.Authors[0];
-        using var movieResponse = await client.GetAsync("/graphql?query={movies{id,title}}");
-        var movie = (await movieResponse.Content.ReadAsStringAsync()).Deserialize<GraphData>().Data.Movies[0];
-        var json = (new { Text = "Meaning of Life" }).Serialize();
+        using var authorResponse = await client.GetAsync("/authors");
+        var author = (await authorResponse.Content.ReadAsStringAsync()).Deserialize<List<Author>>()[0];
+        using var movieResponse = await client.GetAsync("/movies");
+        var movie = (await movieResponse.Content.ReadAsStringAsync()).Deserialize<List<Movie>>()[0];
+        var json = (new { Stars = 5, AuthorId = author.Id, MovieId = movie.Id }).Serialize();
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
         // Act
-        using var response = await client.PostAsync("/notes", content);
-        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Note>();
+        using var response = await client.PostAsync("/reviews", content);
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Review>();
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
 
         _ = result.ShouldNotBeNull();
 
-        _ = result.Id.ShouldBeOfType<int>();
-        result.Id.ShouldBeInRange(0, 100);
-        _ = result.Text.ShouldBeOfType<string>();
-        result.Text.ShouldNotBe(default);
+        _ = result.Id.ShouldBeOfType<Guid>();
+        _ = result.Stars.ShouldBeOfType<int>();
+        result.Stars.ShouldBe(5);
+
+        _ = result.ReviewAuthor.ShouldNotBeNull();
+        result.ReviewAuthor.Id.ShouldBe(author.Id);
+        result.ReviewAuthor.FirstName.ShouldBe(author.FirstName);
+        result.ReviewAuthor.LastName.ShouldBe(author.LastName);
+
+        _ = result.ReviewedMovie.ShouldNotBeNull();
+        result.ReviewedMovie.Id.ShouldBe(movie.Id);
+        result.ReviewedMovie.Title.ShouldBe(movie.Title);
     }
 
     [Fact]
