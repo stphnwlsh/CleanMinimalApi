@@ -55,7 +55,7 @@ jobs:
         echo Branch:${{ steps.prepare.outputs.branch }}
 
     - name: Docker Build - Test
-      id: build
+      id: build-test
       run: docker build .
         --target coverage
         --output type=local,dest=out
@@ -74,7 +74,7 @@ jobs:
         path-to-lcov: "./out/coverage.info"
 
     - name: Docker Build - Runtime
-      id: build
+      id: build-run
       run: docker build .
         --target run
         --tag $NAME:$DOCKER_TAG
