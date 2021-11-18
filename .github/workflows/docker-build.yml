@@ -56,7 +56,7 @@ jobs:
 
     - name: Docker Build - Test
       id: build-test
-      run: docker build .
+      run: DOCKER_BUILDKIT=1 docker build .
         --target coverage
         --output type=local,dest=out
         --build-arg VERSION_PREFIX=$VERSION_PREFIX
