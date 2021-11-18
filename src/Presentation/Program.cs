@@ -1,8 +1,4 @@
 using System.Net.Mime;
-using CleanMinimalApi.Application.Reviews.Create;
-using CleanMinimalApi.Application.Reviews.Delete;
-using CleanMinimalApi.Application.Reviews.Update;
-using CleanMinimalApi.Application.Versions.ReadVersion;
 using CleanMinimalApi.Domain.Authors.Entities;
 using CleanMinimalApi.Domain.Movies.Entities;
 using CleanMinimalApi.Domain.Reviews.Entities;
@@ -15,12 +11,13 @@ using Serilog;
 using Authors = CleanMinimalApi.Application.Authors;
 using Movies = CleanMinimalApi.Application.Movies;
 using Reviews = CleanMinimalApi.Application.Reviews;
+using Versions = CleanMinimalApi.Application.Versions;
 
 var app = WebApplication.CreateBuilder(args).ConfigureBuilder().Build().ConfigureApp();
 
 #region Versions
 
-_ = app.MapGet("/version", async (IMediator mediator) => Results.Ok(await mediator.Send(new ReadVersionQuery())))
+_ = app.MapGet("/version", async (IMediator mediator) => Results.Ok(await mediator.Send(new Versions.ReadVersion.ReadVersionQuery())))
     .WithGroupName("Version")
     .Produces<ApplicationVersion>(StatusCodes.Status200OK, contentType: MediaTypeNames.Application.Json)
     .Produces<ApiError>(StatusCodes.Status500InternalServerError, contentType: MediaTypeNames.Application.Json);
@@ -59,10 +56,9 @@ _ = app.MapGet("/movies/{id}", async (IMediator mediator, Guid id) => Results.Ok
 
 #endregion Movies
 
-
 #region Reviews
 
-_ = app.MapPost("/reviews", async (IMediator mediator, HttpRequest httpRequest, CreateCommand command) => Results.Created(UriHelper.GetEncodedUrl(httpRequest), await mediator.Send(command)))
+_ = app.MapPost("/reviews", async (IMediator mediator, HttpRequest httpRequest, Reviews.Create.CreateCommand command) => Results.Created(UriHelper.GetEncodedUrl(httpRequest), await mediator.Send(command)))
     .WithGroupName("Reviews")
     .Produces<Review>(StatusCodes.Status201Created, contentType: MediaTypeNames.Application.Json)
     .Produces<ApiError>(StatusCodes.Status400BadRequest, contentType: MediaTypeNames.Application.Json)
@@ -70,7 +66,7 @@ _ = app.MapPost("/reviews", async (IMediator mediator, HttpRequest httpRequest, 
 
 _ = app.MapDelete("/reviews/{id}", async (IMediator mediator, Guid id) =>
     {
-        _ = await mediator.Send(new DeleteCommand { Id = id });
+        _ = await mediator.Send(new Reviews.Delete.DeleteCommand { Id = id });
 
         return Results.NoContent();
     })
@@ -92,7 +88,7 @@ _ = app.MapGet("/reviews/{id}", async (IMediator mediator, Guid id) => Results.O
     .Produces<ApiError>(StatusCodes.Status404NotFound, contentType: MediaTypeNames.Application.Json)
     .Produces<ApiError>(StatusCodes.Status500InternalServerError, contentType: MediaTypeNames.Application.Json);
 
-_ = app.MapPut("/reviews/{id}", async (IMediator mediator, Guid id, UpdateCommand command) =>
+_ = app.MapPut("/reviews/{id}", async (IMediator mediator, Guid id, Reviews.Update.UpdateCommand command) =>
     {
         command.Id = id;
 
