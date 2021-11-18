@@ -12,6 +12,13 @@
     <NoWarn>S3903,CA1707,CS8602</NoWarn>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <VersionPrefix>1.2.3.4</VersionPrefix>
+    <VersionSuffix>Test</VersionSuffix>
+    <GenerateAssemblyVersionAttribute>true</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>true</GenerateAssemblyInformationalVersionAttribute>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="coverlet.msbuild" Version="3.1.0">
       <PrivateAssets>all</PrivateAssets>

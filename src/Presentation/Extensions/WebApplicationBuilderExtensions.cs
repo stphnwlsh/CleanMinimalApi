@@ -3,6 +3,7 @@ namespace CleanMinimalApi.Presentation.Extensions;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using CleanMinimalApi.Application;
 using CleanMinimalApi.Infrastructure;
@@ -36,6 +37,9 @@ public static class WebApplicationBuilderExtensions
         {
             opt.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             opt.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            opt.SerializerOptions.PropertyNameCaseInsensitive = true;
+            opt.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            opt.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
         });
 
         #endregion Serialisation
