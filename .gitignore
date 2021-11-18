@@ -351,5 +351,6 @@ healthchecksdb
 # AWS Logging Output
 aws-logger-errors.txt
 
-# Projects.sh Output
-projects.tar
+# Projects Output
+tests/results/
+out/
