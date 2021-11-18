@@ -1,14 +1,14 @@
 namespace CleanMinimalApi.Presentation.Tests.Integration;
-
-using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-[ExcludeFromCodeCoverage]
 public static class Serializer
 {
     private static readonly JsonSerializerOptions Options = new()
     {
+        ReferenceHandler = ReferenceHandler.IgnoreCycles,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        PropertyNameCaseInsensitive = true,
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         Converters =
         {

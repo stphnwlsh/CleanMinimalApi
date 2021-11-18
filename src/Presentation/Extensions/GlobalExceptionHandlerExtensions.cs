@@ -26,11 +26,10 @@ public static class GlobalExceptionHandlerExtensions
                 {
                     ValidationException ex => HttpStatusCode.BadRequest,
                     NotFoundException ex => HttpStatusCode.NotFound,
-                    ActionFailedException ex => HttpStatusCode.InternalServerError,
                     _ => HttpStatusCode.InternalServerError
                 };
 
-                // Prepare Generic Error 
+                // Prepare Generic Error
                 var apiError = new ApiError(contextFeature.Error.Message, contextFeature.Error.InnerException?.Message, contextFeature.Error.StackTrace);
 
                 // Set Response Details

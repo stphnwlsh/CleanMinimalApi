@@ -1,35 +1,38 @@
 namespace CleanMinimalApi.Application.Tests.Unit.Common.Behaviours;
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
+using CleanMinimalApi.Application.Authors.ReadById;
 using CleanMinimalApi.Application.Common.Behaviours;
-using CleanMinimalApi.Application.Notes.Update;
-using CleanMinimalApi.Domain.Entities.Notes;
+using CleanMinimalApi.Domain.Authors.Entities;
 using FluentValidation;
 using MediatR;
 using NSubstitute;
 using Shouldly;
 using Xunit;
 
-[ExcludeFromCodeCoverage]
 public class ValidationBehaviourTests
 {
     [Fact]
     public async void Handle_ShouldValidate_NoErrors()
     {
         // Arrange
-        var command = new UpdateNoteCommand(42, "Meaning of Life");
-        var validators = new List<IValidator<UpdateNoteCommand>> { new UpdateNoteValidator() };
-        var handler = new ValidationBehaviour<UpdateNoteCommand, Note>(validators);
+        var query = new ReadByIdQuery { Id = Guid.NewGuid() };
+        var validators = new List<IValidator<ReadByIdQuery>> { new ReadByIdQueryValidator() };
+        var handler = new ValidationBehaviour<ReadByIdQuery, Author>(validators);
         var token = new CancellationTokenSource().Token;
-        var deletgate = Substitute.For<RequestHandlerDelegate<Note>>();
+        var deletgate = Substitute.For<RequestHandlerDelegate<Author>>();
 
-        _ = deletgate().Returns(new Note("test"));
+        _ = deletgate().Returns(new Author
+        {
+            Id = Guid.Empty,
+            FirstName = "Test",
+            LastName = "Test"
+        });
 
         // Act
-        var result = await handler.Handle(command, token, deletgate);
+        var result = await handler.Handle(query, token, deletgate);
 
         // Assert
         _ = result.ShouldNotBeNull();
@@ -39,14 +42,14 @@ public class ValidationBehaviourTests
     public void Handle_ShouldValidate_Errors()
     {
         // Arrange
-        var command = new UpdateNoteCommand(-1, "");
-        var validators = new List<IValidator<UpdateNoteCommand>> { new UpdateNoteValidator() };
-        var handler = new ValidationBehaviour<UpdateNoteCommand, Note>(validators);
+        var query = new ReadByIdQuery { Id = Guid.Empty };
+        var validators = new List<IValidator<ReadByIdQuery>> { new ReadByIdQueryValidator() };
+        var handler = new ValidationBehaviour<ReadByIdQuery, Author>(validators);
         var token = new CancellationTokenSource().Token;
-        var deletgate = Substitute.For<RequestHandlerDelegate<Note>>();
+        var deletgate = Substitute.For<RequestHandlerDelegate<Author>>();
 
         // Act
-        var exception = Should.Throw<ValidationException>(async () => await handler.Handle(command, token, deletgate));
+        var exception = Should.Throw<ValidationException>(async () => await handler.Handle(query, token, deletgate));
 
         // Assert
         _ = exception.ShouldNotBeNull();
@@ -55,8 +58,7 @@ public class ValidationBehaviourTests
 
         var errors = exception.Errors.ToList();
 
-        errors.Count.ShouldBe(2);
+        errors.Count.ShouldBe(1);
         errors[0].PropertyName.ShouldBe("Id");
-        errors[1].PropertyName.ShouldBe("Text");
     }
 }
