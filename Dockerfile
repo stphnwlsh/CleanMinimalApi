@@ -41,7 +41,7 @@ FROM build AS test
 RUN dotnet test --no-restore --no-build -c Release -v minimal -p:CollectCoverage=true  -p:CoverletOutput=../results/ -p:MergeWith="../results/coverage.json" -p:CoverletOutputFormat=opencover%2cjson -m:1
 
 FROM scratch AS coverage
-COPY --from=test /sln/tests/results/*.info .
+COPY --from=test /sln/tests/results/*.xml .
 
 # Dotnet Publish
 FROM build AS publish
