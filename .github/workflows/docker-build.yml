@@ -74,7 +74,7 @@ jobs:
       uses: coverallsapp/github-action@1.1.3
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: "./out/coverage.info"
+        path-to-lcov: "./out/coverage.xml"
 
     - name: Docker Build - Runtime
       id: build-run
