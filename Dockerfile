@@ -38,10 +38,10 @@ RUN dotnet build --no-restore -c Release -v minimal -p:VersionPrefix=${VERSION_P
 
 # Dotnet Test
 FROM build AS test
-RUN dotnet test --no-restore -c Release -v minimal -p:CollectCoverage=true -p:CoverletOutput=../coverage/ -p:MergeWith="../coverage/coverage.json" -p:CoverletOutputFormat=\"opencover,json\" -m:1
+RUN dotnet test --no-restore --no-build -c Release -v minimal -p:CollectCoverage=true  -p:CoverletOutput=../results/ RUN dotnet test --no-restore -c Release -v minimal -p:CollectCoverage=true -p:CoverletOutput=../results/ -p:MergeWith="../results/coverage.json" -p:CoverletOutputFormat=\"opencover,json\" -m:1
 
 FROM scratch AS coverage
-COPY --from=test /sln/tests/results/*.xml .
+COPY --from=test /sln/tests/results/*.info .
 
 # Dotnet Publish
 FROM build AS publish
