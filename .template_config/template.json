@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Stephen Walsh",
+  "classifications": [
+    "Clean Architecture",
+    "Clean",
+    "Minimal API",
+    "Minimal",
+    "API",
+    "Dotnet",
+    "Docker"
+  ],
+  "identity": "CleanMinimalApi.Template",
+  "name": "Clean Minimal API Template",
+  "shortName": "cleanminimalapi",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sourceName": "CleanMinimalApi",
+  "preferNameDirectory": true,
+  "symbols": {
+    "author": {
+      "type": "parameter",
+      "displayName": "The name of the author of the solution.",
+      "defaultValue": "Stephen Walsh",
+      "replaces": "Stephen Walsh"
+    }
+  }
+}

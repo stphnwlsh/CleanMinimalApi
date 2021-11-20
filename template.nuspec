@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>CleanMinimalApi.Template</id>
+    <version>1.0.0</version>
+    <authors>Stephen Walsh</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectUrl>https://github.com/stphnwlsh/CleanMinimalApi</projectUrl>
+    <repository type="git" url="https://github.com/stphnwlsh/CleanMinimalApi" branch="main" />
+    <description>A template for an API using Clean Architecture and .net Minimal APIs.</description>
+    <copyright>$copyright$</copyright>
+    <tags>dotnet api csharp template clean clean-architecture minimal-api minimal</tags>
+    <icon>images\icon.png</icon>
+    <license type="file">docs\LICENSE.md</license>
+    <readme>docs\NUGET.md</readme>
+    <packageTypes>
+      <packageType name="Template" />
+    </packageTypes>
+  </metadata>
+  <files>
+    <file src="icon.png" target="images\" />
+    <file src="LICENSE.md;NUGET.md;" target="docs\" />
+    <file src="**" exclude="**\bin\**\*;**\obj\**\*;**\*.user;**\*.lock.json;**\.DS_Store;**\.git\**\*;**\.github\**\*;**\.vs\**\*;**\*LICENSE;**\*.gitattributes;**\*NUGET.md;**\*README.md;**\*.gitignore;**\*nuget.config;" target="content\" />
+  </files>
+</package>
