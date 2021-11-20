@@ -16,7 +16,7 @@ jobs:
       security-events: write
 
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         language: [ 'csharp' ]
 
@@ -42,6 +42,11 @@ jobs:
   pipeline:
     name: Build, Test and Publish
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: true
+      matrix:
+        language: [ 'csharp' ]
 
     steps:
     - name: Checkout
@@ -131,3 +136,75 @@ jobs:
       run: docker push $NAME --all-tags
       env:
         NAME: ${{ steps.initialize.outputs.name }}
+
+  template:
+    name: Nuget Template
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: true
+      matrix:
+        language: [ 'csharp' ]
+
+    steps:
+    - name: Checkout
+      id: checkout
+      uses: actions/checkout@v2
+
+    - name: Initialize
+      id: initialize
+      run: |
+        NAME=$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')
+        VERSION_PREFIX=$(date +'%Y.%m.%d').${GITHUB_RUN_NUMBER}
+        BRANCH_CURRENT=${GITHUB_REF#refs/*/}
+        BRANCH_CURRENT=${BRANCH_CURRENT//[^a-zA-Z0-9]/-}
+
+        if [[ ${GITHUB_EVENT_NAME} == 'pull_request' ]]; then
+          BRANCH_BASE=${GITHUB_BASE_REF#refs/*/}
+          BRANCH_BASE=${BRANCH_BASE/[^a-zA-Z0-9]//-}
+          BRANCH_COMPARE=${GITHUB_HEAD_REF#refs/*/}
+          BRANCH_COMPARE=${BRANCH_COMPARE//[^a-zA-Z0-9]/-}
+          VERSION_SUFFIX="merge-${BRANCH_BASE}-${BRANCH_COMPARE}"
+        elif [[ ${GITHUB_EVENT_NAME} == ${{ github.event.repository.default_branch }} ]]; then
+          VERSION_SUFFIX="${BRANCH_CURRENT}"
+        fi
+
+        if [[ $VERSION_SUFFIX == '' ]]; then
+          DOCKER_TAG=$VERSION_PREFIX
+        else
+          DOCKER_TAG=$VERSION_PREFIX-$VERSION_SUFFIX
+        fi
+
+        echo "::set-output name=name::$(eval printf "%s" "$NAME")"
+        echo "::set-output name=version_prefix::$(eval printf "%s" "$VERSION_PREFIX")"
+        echo "::set-output name=version_suffix::$(eval printf "%s" "$VERSION_SUFFIX")"
+        echo "::set-output name=docker_tag::$(eval printf "%s" "$DOCKER_TAG")"
+        echo "::set-output name=branch::$(eval printf "%s" "$BRANCH_CURRENT")"
+      shell: bash
+
+    - name: Setup
+      id: setup
+      uses: NuGet/setup-nuget@v1.0.5
+      with:
+        nuget-api-key: ${{ secrets.NUGET_API_KEY }}
+
+    - name: Pack
+      id: pack
+      run: |
+        if ([string]::IsNullOrEmpty(${Env:SUFFIX}))
+        {
+            nuget pack template.nuspec -NoDefaultExcludes -Version ${Env:VERSION}
+        }
+        else
+        {
+            nuget pack template.nuspec -NoDefaultExcludes -Version ${Env:VERSION} -Suffix ${Env:SUFFIX}
+        }
+      env:
+        VERSION: ${{ steps.initialize.outputs.version_prefix }}
+        SUFFIX: ${{ steps.initialize.outputs.version_suffix }}
+      shell: pwsh
+
+    - name: Publish
+      id: publish
+      if: ${{ github.ref == 'refs/heads/main' }}
+      run: nuget push *.nupkg -src https://api.nuget.org/v3/index.json
