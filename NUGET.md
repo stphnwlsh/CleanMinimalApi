@@ -13,6 +13,4 @@ dotnet new cleanminimalapi --name {YOUR_SOLUTION_NAMESPACE} --au "{YOU_AUTHORS_N
 ```
 
 ## Support
-I'm sharing some of my work here and if it helps you, I'd love it if you'd consider supporting me.
-
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/guidelines/download-assets-sm-1.svg)](https://www.buymeacoffee.com/stphnwlsh)
+I'm sharing some of my work here and if it helps you, I'd love it if you'd consider supporting me at [Buy Me A Coffee](https://www.buymeacoffee.com/stphnwlsh)
