@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F76F0E9E-98D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{D79C9477-FC71-4927-BDB1-46982F6EB423}"
 	ProjectSection(SolutionItems) = preProject
-		build\Dockerfile = build\Dockerfile
+		build\Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9DBFD6CA-EFB8-43C7-9BAB-E318EE6F134B}"
