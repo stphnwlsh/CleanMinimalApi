@@ -26,34 +26,18 @@ jobs:
       with:
         dotnet-version: 6.0.x
 
-    - name: Tools
-      id: tools
-      run: dotnet tool install --global dotnet-outdated-tool
-
-    - name: Validate
-      id: validate
-      run: |
-        OUTPUT=$(dotnet outdated)
-        if [[ $OUTPUT =~ "No outdated dependencies were detected" ]]; then
-            echo "::set-output name=needs_updates::false"
-        else
-            echo "::set-output name=needs_updates::true"
-        fi
-      shell: bash
-
     - name: Update
       id: update
-      if: ${{ steps.validate.outputs.needs_updates == 'true' }}
-      run: dotnet outdated -u
+      uses: stphnwlsh/dotnet-outdated-action@v1.0.0
 
     - name: Test
       id: test
-      if: ${{ steps.validate.outputs.needs_updates == 'true' }}
+      if: ${{ steps.update.outputs.updated == 'true' }}
       run: dotnet test -c Release -v minimal
 
     - name: Push
       id: push
-      if: ${{ steps.validate.outputs.needs_updates == 'true' }}
+      if: ${{ steps.update.outputs.updated == 'true' }}
       uses: stefanzweifel/git-auto-commit-action@v4
       with:
         commit_author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
