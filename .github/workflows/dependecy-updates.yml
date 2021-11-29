@@ -30,7 +30,7 @@ jobs:
       id: update
       uses: stphnwlsh/dotnet-outdated-action@v2.1
       with:
-        includes: serilog,bogus
+        excludes: visualstudio
 
     - name: Test
       id: test
