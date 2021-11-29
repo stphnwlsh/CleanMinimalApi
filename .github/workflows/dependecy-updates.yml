@@ -31,7 +31,6 @@ jobs:
       uses: stphnwlsh/dotnet-outdated-action@v2
       with:
         includes: serilog,bogus,visualstudio
-        excludes: visualstudio
 
     - name: Test
       id: test
