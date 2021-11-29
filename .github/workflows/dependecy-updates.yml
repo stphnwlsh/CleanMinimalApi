@@ -1,8 +1,8 @@
 name: Automated Dependency Updates
 
 on:
-  schedule:
-    - cron:  '0 0 * * 0'
+  push:
+    branches: [ canary ]
 
 jobs:
   dependencies:
@@ -28,7 +28,10 @@ jobs:
 
     - name: Update
       id: update
-      uses: stphnwlsh/dotnet-outdated-action@v1.0.0
+      uses: stphnwlsh/dotnet-outdated-action@v2
+      with:
+        includes: serilog,bogus,visualstudio
+        excludes: visualstudio
 
     - name: Test
       id: test
