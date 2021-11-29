@@ -28,7 +28,9 @@ jobs:
 
     - name: Update
       id: update
-      uses: stphnwlsh/dotnet-outdated-action@v1.0.0
+      uses: stphnwlsh/dotnet-outdated-action@v2
+      with:
+        excludes: visualstudio
 
     - name: Test
       id: test
