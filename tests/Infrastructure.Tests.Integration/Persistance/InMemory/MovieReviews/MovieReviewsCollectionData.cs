@@ -1,9 +1,7 @@
 namespace CleanMinimalApi.Infrastructure.Tests.Integration.Persistance.InMemory.MovieReviews;
 
 using System;
-using CleanMinimalApi.Domain.Authors.Entities;
-using CleanMinimalApi.Domain.Movies.Entities;
-using CleanMinimalApi.Domain.Reviews.Entities;
+using CleanMinimalApi.Application.Entities;
 using CleanMinimalApi.Infrastructure.Persistance.InMemory.MovieReviews;
 
 internal static class MovieReviewsCollectionData

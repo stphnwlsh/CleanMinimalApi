@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CleanMinimalApi.Application.Authors.ReadAll;
 using CleanMinimalApi.Application.Common.Interfaces;
-using CleanMinimalApi.Domain.Authors.Entities;
+using CleanMinimalApi.Application.Entities;
 using NSubstitute;
 using Shouldly;
 using Xunit;

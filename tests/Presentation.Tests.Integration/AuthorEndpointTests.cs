@@ -3,7 +3,7 @@ namespace CleanMinimalApi.Presentation.Tests.Integration;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using CleanMinimalApi.Domain.Authors.Entities;
+using CleanMinimalApi.Application.Entities;
 using Shouldly;
 using Xunit;
 

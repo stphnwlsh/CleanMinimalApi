@@ -3,7 +3,7 @@ namespace CleanMinimalApi.Application.Authors.ReadAll;
 using System.Threading;
 using System.Threading.Tasks;
 using CleanMinimalApi.Application.Common.Interfaces;
-using CleanMinimalApi.Domain.Authors.Entities;
+using CleanMinimalApi.Application.Entities;
 using MediatR;
 
 public class ReadAllHandler : IRequestHandler<ReadAllQuery, List<Author>>

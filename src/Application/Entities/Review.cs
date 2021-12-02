@@ -1,9 +1,6 @@
-namespace CleanMinimalApi.Domain.Reviews.Entities;
+namespace CleanMinimalApi.Application.Entities;
 
 using System.ComponentModel.DataAnnotations.Schema;
-using CleanMinimalApi.Domain.Authors.Entities;
-using CleanMinimalApi.Domain.Common.Entity;
-using CleanMinimalApi.Domain.Movies.Entities;
 
 public class Review : Entity
 {

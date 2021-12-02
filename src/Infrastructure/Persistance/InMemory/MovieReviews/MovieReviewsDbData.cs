@@ -2,9 +2,7 @@ namespace CleanMinimalApi.Infrastructure.Persistance.InMemory.MovieReviews;
 
 using System;
 using Bogus;
-using CleanMinimalApi.Domain.Authors.Entities;
-using CleanMinimalApi.Domain.Movies.Entities;
-using CleanMinimalApi.Domain.Reviews.Entities;
+using CleanMinimalApi.Application.Entities;
 
 internal static class MovieReviewsDbData
 {
@@ -14,6 +12,8 @@ internal static class MovieReviewsDbData
                    .RuleFor(a => a.Id, _ => Guid.NewGuid())
                    .RuleFor(a => a.FirstName, f => f.Person.FirstName)
                    .RuleFor(a => a.LastName, f => f.Person.LastName)
+                   .RuleFor(a => a.DateCreated, f => f.Date.Past())
+                   .RuleFor(a => a.DateModified, f => f.Date.Past())
                    .Generate(15);
 
         context.AddRange(authors);
@@ -21,6 +21,8 @@ internal static class MovieReviewsDbData
         var movies = new Faker<Movie>()
             .RuleFor(m => m.Id, _ => Guid.NewGuid())
             .RuleFor(m => m.Title, f => f.Company.CatchPhrase())
+            .RuleFor(m => m.DateCreated, f => f.Date.Past())
+            .RuleFor(m => m.DateModified, f => f.Date.Past())
             .Generate(50);
 
         context.AddRange(movies);
@@ -30,6 +32,8 @@ internal static class MovieReviewsDbData
             .RuleFor(r => r.ReviewedMovieId, f => f.PickRandom(movies).Id)
             .RuleFor(r => r.ReviewAuthorId, f => f.PickRandom(authors).Id)
             .RuleFor(r => r.Stars, f => f.Random.Number(1, 5))
+            .RuleFor(r => r.DateCreated, f => f.Date.Past())
+            .RuleFor(r => r.DateModified, f => f.Date.Past())
             .Generate(150);
 
         context.AddRange(reviews);

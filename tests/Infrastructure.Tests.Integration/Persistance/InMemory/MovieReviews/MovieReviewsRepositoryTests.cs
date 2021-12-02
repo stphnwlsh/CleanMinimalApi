@@ -203,6 +203,8 @@ public class MovieReviewsRepositoryTests
         result.ReviewAuthorId.ShouldBe(review.AuthorId);
         result.ReviewedMovieId.ShouldBe(review.MovieId);
         result.Stars.ShouldBe(review.Stars);
+        result.DateCreated.ShouldBe(this.fixture.DateTimeProvider.UtcNow);
+        result.DateModified.ShouldBe(this.fixture.DateTimeProvider.UtcNow);
 
         // Cleanup
         _ = await this.fixture.Repository.DeleteReview(result.Id, token);
@@ -350,6 +352,7 @@ public class MovieReviewsRepositoryTests
         updatedReview.ReviewAuthorId.ShouldBe(review.AuthorId);
         updatedReview.ReviewedMovieId.ShouldBe(review.MovieId);
         updatedReview.Stars.ShouldBe(review.Stars);
+        updatedReview.DateModified.ShouldBe(this.fixture.DateTimeProvider.UtcNow);
     }
 
     [Fact]

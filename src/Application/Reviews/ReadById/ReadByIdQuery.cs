@@ -1,6 +1,6 @@
 namespace CleanMinimalApi.Application.Reviews.ReadById;
 
-using CleanMinimalApi.Domain.Reviews.Entities;
+using CleanMinimalApi.Application.Entities;
 using MediatR;
 
 public class ReadByIdQuery : IRequest<Review>

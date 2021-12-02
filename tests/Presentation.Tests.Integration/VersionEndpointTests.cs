@@ -1,7 +1,7 @@
 namespace CleanMinimalApi.Presentation.Tests.Integration;
 using System.Net;
 using System.Threading.Tasks;
-using CleanMinimalApi.Domain.Version;
+using CleanMinimalApi.Application.Entities;
 using Shouldly;
 using Xunit;
 
