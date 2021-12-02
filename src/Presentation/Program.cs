@@ -1,8 +1,5 @@
 using System.Net.Mime;
-using CleanMinimalApi.Domain.Authors.Entities;
-using CleanMinimalApi.Domain.Movies.Entities;
-using CleanMinimalApi.Domain.Reviews.Entities;
-using CleanMinimalApi.Domain.Version;
+using CleanMinimalApi.Application.Entities;
 using CleanMinimalApi.Presentation.Errors;
 using CleanMinimalApi.Presentation.Extensions;
 using MediatR;

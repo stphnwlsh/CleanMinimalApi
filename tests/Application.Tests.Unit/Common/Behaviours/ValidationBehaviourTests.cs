@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using CleanMinimalApi.Application.Authors.ReadById;
 using CleanMinimalApi.Application.Common.Behaviours;
-using CleanMinimalApi.Domain.Authors.Entities;
+using CleanMinimalApi.Application.Entities;
 using FluentValidation;
 using MediatR;
 using NSubstitute;

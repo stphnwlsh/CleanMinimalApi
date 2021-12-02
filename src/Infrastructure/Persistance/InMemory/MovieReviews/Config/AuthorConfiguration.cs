@@ -1,10 +1,10 @@
 namespace CleanMinimalApi.Infrastructure.Persistance.InMemory.MovieReviews.Config;
 
-using CleanMinimalApi.Domain.Authors.Entities;
+using CleanMinimalApi.Application.Entities;
 using CleanMinimalApi.Infrastructure.Persistance.InMemory.Common.Config;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-public class AuthorConfiguration : EntityConfiguration<Author>
+internal class AuthorConfiguration : EntityConfiguration<Author>
 {
     public override void Configure(EntityTypeBuilder<Author> builder)
     {

@@ -1,3 +1,5 @@
+using SimpleDateTimeProvider;
+
 namespace CleanMinimalApi.Infrastructure.Tests.Integration.Persistance.InMemory.MovieReviews;
 
 using System;
@@ -15,6 +17,7 @@ public class MovieReviewsDataFixture : IDisposable
     private bool disposedValue;
 
     internal MovieReviewsDbContext? Context { get; set; }
+    internal IDateTimeProvider DateTimeProvider { get; set; }
     internal MovieReviewsRepository? Repository { get; set; }
 
     public MovieReviewsDataFixture()
@@ -22,7 +25,15 @@ public class MovieReviewsDataFixture : IDisposable
         var options = new DbContextOptionsBuilder<MovieReviewsDbContext>().UseInMemoryDatabase($"TestMovies-{Guid.NewGuid()}").Options;
 
         this.Context = new MovieReviewsDbContext(options);
-        this.Repository = new MovieReviewsRepository(this.Context);
+
+        this.DateTimeProvider = new MockDateTimeProvider
+        {
+            Now = new DateTime(2000, 01, 01, 01, 01, 01),
+            Today = new DateTime(2000, 01, 01, 00, 00, 00),
+            UtcNow = new DateTime(1999, 12, 31, 23, 51, 01)
+        };
+
+        this.Repository = new MovieReviewsRepository(this.Context, this.DateTimeProvider);
 
         if (this.Context != null)
         {

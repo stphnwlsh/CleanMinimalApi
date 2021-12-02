@@ -5,9 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using CleanMinimalApi.Domain.Authors.Entities;
-using CleanMinimalApi.Domain.Movies.Entities;
-using CleanMinimalApi.Domain.Reviews.Entities;
+using CleanMinimalApi.Application.Entities;
 using Shouldly;
 using Xunit;
 

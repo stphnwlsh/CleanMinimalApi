@@ -1,6 +1,6 @@
 namespace CleanMinimalApi.Application.Versions.ReadVersion;
 
-using CleanMinimalApi.Domain.Version;
+using CleanMinimalApi.Application.Entities;
 using MediatR;
 
 public class ReadVersionQuery : IRequest<ApplicationVersion>

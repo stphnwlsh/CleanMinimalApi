@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using CleanMinimalApi.Application.Common.Enums;
 using CleanMinimalApi.Application.Common.Exceptions;
 using CleanMinimalApi.Application.Common.Interfaces;
-using CleanMinimalApi.Domain.Reviews.Entities;
+using CleanMinimalApi.Application.Entities;
 using MediatR;
 
 public class ReadByIdHandler : IRequestHandler<ReadByIdQuery, Review?>

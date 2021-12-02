@@ -1,3 +1,5 @@
+using SimpleDateTimeProvider;
+
 namespace CleanMinimalApi.Infrastructure;
 
 using System.Diagnostics.CodeAnalysis;
@@ -18,6 +20,8 @@ public static class DependencyInjection
         _ = services.AddSingleton<IAuthorsRepository>(p => p.GetRequiredService<MovieReviewsRepository>());
         _ = services.AddSingleton<IMoviesRepository>(x => x.GetRequiredService<MovieReviewsRepository>());
         _ = services.AddSingleton<IReviewsRepository>(x => x.GetRequiredService<MovieReviewsRepository>());
+
+        _ = services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
 
         return services;
     }

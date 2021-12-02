@@ -1,20 +1,22 @@
+using SimpleDateTimeProvider;
+
 namespace CleanMinimalApi.Infrastructure.Persistance.InMemory.MovieReviews;
 
 using CleanMinimalApi.Application.Common.Enums;
 using CleanMinimalApi.Application.Common.Exceptions;
 using CleanMinimalApi.Application.Common.Interfaces;
-using CleanMinimalApi.Domain.Authors.Entities;
-using CleanMinimalApi.Domain.Movies.Entities;
-using CleanMinimalApi.Domain.Reviews.Entities;
+using CleanMinimalApi.Application.Entities;
 using Microsoft.EntityFrameworkCore;
 
 internal class MovieReviewsRepository : IAuthorsRepository, IMoviesRepository, IReviewsRepository
 {
     private readonly MovieReviewsDbContext context;
+    private readonly IDateTimeProvider dateTimeProvider;
 
-    public MovieReviewsRepository(MovieReviewsDbContext context)
+    public MovieReviewsRepository(MovieReviewsDbContext context, IDateTimeProvider dateTimeProvider)
     {
         this.context = context;
+        this.dateTimeProvider = dateTimeProvider;
 
         if (this.context != null)
         {
@@ -66,7 +68,14 @@ internal class MovieReviewsRepository : IAuthorsRepository, IMoviesRepository, I
 
     public async Task<Review> CreateReview(Guid authorId, Guid movieId, int stars, CancellationToken cancellationToken)
     {
-        var review = new Review { ReviewAuthorId = authorId, ReviewedMovieId = movieId, Stars = stars };
+        var review = new Review
+        {
+            ReviewAuthorId = authorId,
+            ReviewedMovieId = movieId,
+            Stars = stars,
+            DateCreated = this.dateTimeProvider.UtcNow,
+            DateModified = this.dateTimeProvider.UtcNow
+        };
 
         var id = this.context.Add(review).Entity.Id;
 
@@ -116,6 +125,7 @@ internal class MovieReviewsRepository : IAuthorsRepository, IMoviesRepository, I
             review.Stars = stars;
             review.ReviewAuthorId = authorId;
             review.ReviewedMovieId = movieId;
+            review.DateModified = this.dateTimeProvider.UtcNow;
 
             _ = this.context.Update(review);
             _ = await this.context.SaveChangesAsync(cancellationToken);

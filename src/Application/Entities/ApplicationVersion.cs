@@ -1,4 +1,4 @@
-namespace CleanMinimalApi.Domain.Version;
+namespace CleanMinimalApi.Application.Entities;
 
 public class ApplicationVersion
 {

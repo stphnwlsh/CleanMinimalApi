@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using CleanMinimalApi.Application.Authors.ReadById;
 using CleanMinimalApi.Application.Common.Exceptions;
 using CleanMinimalApi.Application.Common.Interfaces;
-using CleanMinimalApi.Domain.Authors.Entities;
+using CleanMinimalApi.Application.Entities;
 using NSubstitute;
 using Shouldly;
 using Xunit;

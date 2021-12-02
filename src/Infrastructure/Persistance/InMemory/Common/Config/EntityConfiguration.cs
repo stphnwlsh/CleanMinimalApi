@@ -1,15 +1,17 @@
 namespace CleanMinimalApi.Infrastructure.Persistance.InMemory.Common.Config;
 
-using CleanMinimalApi.Domain.Common.Entity;
+using CleanMinimalApi.Application.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-public abstract class EntityConfiguration<T> : IEntityTypeConfiguration<T>
+internal abstract class EntityConfiguration<T> : IEntityTypeConfiguration<T>
         where T : Entity
 {
     public virtual void Configure(EntityTypeBuilder<T> builder)
     {
         _ = builder.HasKey(e => e.Id);
         _ = builder.Property(m => m.Id).ValueGeneratedOnAdd().IsRequired();
+        _ = builder.Property(m => m.DateCreated).ValueGeneratedOnAdd().IsRequired();
+        _ = builder.Property(m => m.DateModified).ValueGeneratedOnAdd().IsRequired();
     }
 }
