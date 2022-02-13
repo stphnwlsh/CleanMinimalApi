@@ -15,8 +15,8 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="Bogus" Version="34.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.1" />
-    <PackageReference Include="SimpleDateTimeProvider" Version="2022.2.6.20" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.2" />
+    <PackageReference Include="SimpleDateTimeProvider" Version="2022.2.13.23" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="8.35.0.42613">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
