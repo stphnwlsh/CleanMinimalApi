@@ -17,7 +17,7 @@ public class ReadAllHandlerTests
         // Arrange
         var query = new ReadAllQuery();
 
-        var context = Substitute.For<IReviewsRepository>();
+        var context = Substitute.For<ReviewsRepository>();
         var handler = new ReadAllHandler(context);
         var token = new CancellationTokenSource().Token;
 

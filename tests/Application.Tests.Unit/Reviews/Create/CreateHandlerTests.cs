@@ -21,9 +21,9 @@ public class CreateHandlerTests
             MovieId = Guid.Empty,
             Stars = 5
         };
-        var authorsRepository = Substitute.For<IAuthorsRepository>();
-        var moviesRepository = Substitute.For<IMoviesRepository>();
-        var reviewsRepository = Substitute.For<IReviewsRepository>();
+        var authorsRepository = Substitute.For<AuthorsRepository>();
+        var moviesRepository = Substitute.For<MoviesRepository>();
+        var reviewsRepository = Substitute.For<ReviewsRepository>();
 
         _ = authorsRepository.AuthorExists(default, default).ReturnsForAnyArgs(true);
         _ = moviesRepository.MovieExists(default, default).ReturnsForAnyArgs(true);
@@ -50,9 +50,9 @@ public class CreateHandlerTests
             MovieId = Guid.Empty,
             Stars = 5
         };
-        var authorsRepository = Substitute.For<IAuthorsRepository>();
-        var moviesRepository = Substitute.For<IMoviesRepository>();
-        var reviewsRepository = Substitute.For<IReviewsRepository>();
+        var authorsRepository = Substitute.For<AuthorsRepository>();
+        var moviesRepository = Substitute.For<MoviesRepository>();
+        var reviewsRepository = Substitute.For<ReviewsRepository>();
 
         _ = authorsRepository.AuthorExists(default, default).ReturnsForAnyArgs(false);
 
@@ -80,9 +80,9 @@ public class CreateHandlerTests
             MovieId = Guid.Empty,
             Stars = 5
         };
-        var authorsRepository = Substitute.For<IAuthorsRepository>();
-        var moviesRepository = Substitute.For<IMoviesRepository>();
-        var reviewsRepository = Substitute.For<IReviewsRepository>();
+        var authorsRepository = Substitute.For<AuthorsRepository>();
+        var moviesRepository = Substitute.For<MoviesRepository>();
+        var reviewsRepository = Substitute.For<ReviewsRepository>();
 
         _ = authorsRepository.AuthorExists(default, default).ReturnsForAnyArgs(true);
         _ = moviesRepository.MovieExists(default, default).ReturnsForAnyArgs(false);

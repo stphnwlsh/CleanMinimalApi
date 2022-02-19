@@ -10,9 +10,9 @@ using MediatR;
 
 public class ReadByIdHandler : IRequestHandler<ReadByIdQuery, Review?>
 {
-    private readonly IReviewsRepository repository;
+    private readonly ReviewsRepository repository;
 
-    public ReadByIdHandler(IReviewsRepository repository)
+    public ReadByIdHandler(ReviewsRepository repository)
     {
         this.repository = repository;
     }

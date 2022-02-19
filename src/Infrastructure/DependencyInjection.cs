@@ -17,9 +17,9 @@ public static class DependencyInjection
         _ = services.AddDbContext<MovieReviewsDbContext>(options => options.UseInMemoryDatabase($"Movies-{Guid.NewGuid()}"), ServiceLifetime.Singleton);
 
         _ = services.AddSingleton<MovieReviewsRepository>();
-        _ = services.AddSingleton<IAuthorsRepository>(p => p.GetRequiredService<MovieReviewsRepository>());
-        _ = services.AddSingleton<IMoviesRepository>(x => x.GetRequiredService<MovieReviewsRepository>());
-        _ = services.AddSingleton<IReviewsRepository>(x => x.GetRequiredService<MovieReviewsRepository>());
+        _ = services.AddSingleton<AuthorsRepository>(p => p.GetRequiredService<MovieReviewsRepository>());
+        _ = services.AddSingleton<MoviesRepository>(x => x.GetRequiredService<MovieReviewsRepository>());
+        _ = services.AddSingleton<ReviewsRepository>(x => x.GetRequiredService<MovieReviewsRepository>());
 
         _ = services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
 

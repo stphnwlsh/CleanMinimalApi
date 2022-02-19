@@ -16,7 +16,7 @@ public class DeleteHandlerTests
     {
         // Arrange
         var command = new DeleteCommand { Id = Guid.Empty };
-        var reviewsRepository = Substitute.For<IReviewsRepository>();
+        var reviewsRepository = Substitute.For<ReviewsRepository>();
 
         _ = reviewsRepository.ReviewExists(default, default).ReturnsForAnyArgs(true);
 
@@ -36,7 +36,7 @@ public class DeleteHandlerTests
     {
         // Arrange
         var command = new DeleteCommand { Id = Guid.Empty };
-        var reviewsRepository = Substitute.For<IReviewsRepository>();
+        var reviewsRepository = Substitute.For<ReviewsRepository>();
 
         _ = reviewsRepository.ReviewExists(default, default).ReturnsForAnyArgs(false);
 

@@ -9,9 +9,9 @@ using MediatR;
 
 public class UpdateHandler : IRequestHandler<UpdateCommand, bool>
 {
-    private readonly IReviewsRepository repository;
+    private readonly ReviewsRepository repository;
 
-    public UpdateHandler(IReviewsRepository repository)
+    public UpdateHandler(ReviewsRepository repository)
     {
         this.repository = repository;
     }

@@ -8,7 +8,7 @@ using CleanMinimalApi.Application.Common.Interfaces;
 using CleanMinimalApi.Application.Entities;
 using Microsoft.EntityFrameworkCore;
 
-internal class MovieReviewsRepository : IAuthorsRepository, IMoviesRepository, IReviewsRepository
+internal class MovieReviewsRepository : AuthorsRepository, MoviesRepository, ReviewsRepository
 {
     private readonly MovieReviewsDbContext context;
     private readonly IDateTimeProvider dateTimeProvider;

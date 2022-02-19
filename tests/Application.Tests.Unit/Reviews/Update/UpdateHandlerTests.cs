@@ -22,7 +22,7 @@ public class UpdateHandlerTests
             MovieId = Guid.Empty,
             Stars = 1
         };
-        var reviewsRepository = Substitute.For<IReviewsRepository>();
+        var reviewsRepository = Substitute.For<ReviewsRepository>();
 
         _ = reviewsRepository.ReviewExists(default, default).ReturnsForAnyArgs(true);
 
@@ -47,7 +47,7 @@ public class UpdateHandlerTests
             MovieId = Guid.Empty,
             Stars = 5
         };
-        var reviewsRepository = Substitute.For<IReviewsRepository>();
+        var reviewsRepository = Substitute.For<ReviewsRepository>();
 
         _ = reviewsRepository.ReviewExists(default, default).ReturnsForAnyArgs(false);
 

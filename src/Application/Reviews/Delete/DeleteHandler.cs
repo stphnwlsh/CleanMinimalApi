@@ -9,9 +9,9 @@ using MediatR;
 
 public class DeleteHandler : IRequestHandler<DeleteCommand, bool>
 {
-    private readonly IReviewsRepository repository;
+    private readonly ReviewsRepository repository;
 
-    public DeleteHandler(IReviewsRepository repository)
+    public DeleteHandler(ReviewsRepository repository)
     {
         this.repository = repository;
     }

@@ -10,11 +10,11 @@ using MediatR;
 
 public class CreateHandler : IRequestHandler<CreateCommand, Review>
 {
-    private readonly IAuthorsRepository authorsRepository;
-    private readonly IMoviesRepository moviesRepository;
-    private readonly IReviewsRepository reviewsRepository;
+    private readonly AuthorsRepository authorsRepository;
+    private readonly MoviesRepository moviesRepository;
+    private readonly ReviewsRepository reviewsRepository;
 
-    public CreateHandler(IAuthorsRepository authorsRepository, IMoviesRepository moviesRepository, IReviewsRepository reviewsRepository)
+    public CreateHandler(AuthorsRepository authorsRepository, MoviesRepository moviesRepository, ReviewsRepository reviewsRepository)
     {
         this.authorsRepository = authorsRepository;
         this.moviesRepository = moviesRepository;

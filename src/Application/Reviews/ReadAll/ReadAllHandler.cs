@@ -8,9 +8,9 @@ using MediatR;
 
 public class ReadAllHandler : IRequestHandler<ReadAllQuery, List<Review>>
 {
-    private readonly IReviewsRepository repository;
+    private readonly ReviewsRepository repository;
 
-    public ReadAllHandler(IReviewsRepository repository)
+    public ReadAllHandler(ReviewsRepository repository)
     {
         this.repository = repository;
     }

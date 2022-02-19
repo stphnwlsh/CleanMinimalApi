@@ -3,7 +3,7 @@ namespace CleanMinimalApi.Application.Common.Interfaces;
 using System.Threading.Tasks;
 using CleanMinimalApi.Application.Entities;
 
-public interface IReviewsRepository
+public interface ReviewsRepository
 {
     Task<Review> CreateReview(Guid authorId, Guid movieId, int stars, CancellationToken cancellationToken);
     Task<bool> DeleteReview(Guid id, CancellationToken cancellationToken);

@@ -18,7 +18,7 @@ public class ReadByIdHandlerTests
         // Arrange
         var query = new ReadByIdQuery { Id = Guid.Empty };
 
-        var context = Substitute.For<IAuthorsRepository>();
+        var context = Substitute.For<AuthorsRepository>();
         var handler = new ReadByIdHandler(context);
         var token = new CancellationTokenSource().Token;
 
@@ -48,7 +48,7 @@ public class ReadByIdHandlerTests
         // Arrange
         var query = new ReadByIdQuery { Id = Guid.Empty };
 
-        var context = Substitute.For<IAuthorsRepository>();
+        var context = Substitute.For<AuthorsRepository>();
         var handler = new ReadByIdHandler(context);
         var token = new CancellationTokenSource().Token;
 
