@@ -1,5 +1,3 @@
-using SimpleDateTimeProvider;
-
 namespace CleanMinimalApi.Infrastructure;
 
 using System.Diagnostics.CodeAnalysis;
@@ -7,6 +5,7 @@ using CleanMinimalApi.Application.Common.Interfaces;
 using CleanMinimalApi.Infrastructure.Persistance.InMemory.MovieReviews;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using SimpleDateTimeProvider;
 
 [ExcludeFromCodeCoverage]
 public static class DependencyInjection

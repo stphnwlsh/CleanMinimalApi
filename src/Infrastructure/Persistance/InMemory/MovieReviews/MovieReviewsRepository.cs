@@ -1,5 +1,3 @@
-using SimpleDateTimeProvider;
-
 namespace CleanMinimalApi.Infrastructure.Persistance.InMemory.MovieReviews;
 
 using CleanMinimalApi.Application.Common.Enums;
@@ -7,6 +5,7 @@ using CleanMinimalApi.Application.Common.Exceptions;
 using CleanMinimalApi.Application.Common.Interfaces;
 using CleanMinimalApi.Application.Entities;
 using Microsoft.EntityFrameworkCore;
+using SimpleDateTimeProvider;
 
 internal class MovieReviewsRepository : AuthorsRepository, MoviesRepository, ReviewsRepository
 {

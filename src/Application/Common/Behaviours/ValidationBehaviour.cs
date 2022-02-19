@@ -1,4 +1,4 @@
-﻿namespace CleanMinimalApi.Application.Common.Behaviours;
+namespace CleanMinimalApi.Application.Common.Behaviours;
 
 using System.Collections.Generic;
 using System.Linq;

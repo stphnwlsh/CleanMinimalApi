@@ -1,10 +1,9 @@
-using SimpleDateTimeProvider;
-
 namespace CleanMinimalApi.Infrastructure.Tests.Integration.Persistance.InMemory.MovieReviews;
 
 using System;
 using CleanMinimalApi.Infrastructure.Persistance.InMemory.MovieReviews;
 using Microsoft.EntityFrameworkCore;
+using SimpleDateTimeProvider;
 using Xunit;
 
 [CollectionDefinition("MovieReviews")]
