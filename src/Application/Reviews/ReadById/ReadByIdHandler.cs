@@ -8,7 +8,7 @@ using CleanMinimalApi.Application.Common.Interfaces;
 using CleanMinimalApi.Application.Entities;
 using MediatR;
 
-public class ReadByIdHandler : IRequestHandler<ReadByIdQuery, Review?>
+public class ReadByIdHandler : IRequestHandler<ReadByIdQuery, Review>
 {
     private readonly ReviewsRepository repository;
 
@@ -17,7 +17,7 @@ public class ReadByIdHandler : IRequestHandler<ReadByIdQuery, Review?>
         this.repository = repository;
     }
 
-    public async Task<Review?> Handle(ReadByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Review> Handle(ReadByIdQuery request, CancellationToken cancellationToken)
     {
         var result = await this.repository.ReadReviewById(request.Id, cancellationToken);
 

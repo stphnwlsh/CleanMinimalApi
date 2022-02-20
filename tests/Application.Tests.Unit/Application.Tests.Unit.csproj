@@ -5,11 +5,9 @@
     <RootNamespace>CleanMinimalApi.$(AssemblyName)</RootNamespace>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <LangVersion>latest</LangVersion>
-    <NoWarn>S3903,CA1707,CS8602</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>

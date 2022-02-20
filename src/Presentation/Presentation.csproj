@@ -6,7 +6,6 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Authors>Stephen Walsh</Authors>
     <Copyright>Stephen Walsh @ 2021</Copyright>
-    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <IsPackable>false</IsPackable>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
@@ -15,7 +14,6 @@
     <VersionSuffix></VersionSuffix>
     <GenerateAssemblyVersionAttribute>true</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyInformationalVersionAttribute>true</GenerateAssemblyInformationalVersionAttribute>
-    <NoWarn>S3903,CS8602,CS8618</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'CleanMinimalApi' " />

@@ -15,9 +15,9 @@ public class MovieReviewsDataFixture : IDisposable
 {
     private bool disposedValue;
 
-    internal MovieReviewsDbContext? Context { get; set; }
+    internal MovieReviewsDbContext Context { get; set; }
     internal IDateTimeProvider DateTimeProvider { get; set; }
-    internal MovieReviewsRepository? Repository { get; set; }
+    internal MovieReviewsRepository Repository { get; set; }
 
     public MovieReviewsDataFixture()
     {

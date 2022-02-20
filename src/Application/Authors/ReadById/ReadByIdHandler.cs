@@ -8,7 +8,7 @@ using CleanMinimalApi.Application.Common.Interfaces;
 using CleanMinimalApi.Application.Entities;
 using MediatR;
 
-public class ReadByIdHandler : IRequestHandler<ReadByIdQuery, Author?>
+public class ReadByIdHandler : IRequestHandler<ReadByIdQuery, Author>
 {
     private readonly AuthorsRepository repository;
 
@@ -17,7 +17,7 @@ public class ReadByIdHandler : IRequestHandler<ReadByIdQuery, Author?>
         this.repository = repository;
     }
 
-    public async Task<Author?> Handle(ReadByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Author> Handle(ReadByIdQuery request, CancellationToken cancellationToken)
     {
         var result = await this.repository.ReadAuthorById(request.Id, cancellationToken);
 

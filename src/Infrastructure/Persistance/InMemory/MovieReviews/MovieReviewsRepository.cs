@@ -32,7 +32,7 @@ internal class MovieReviewsRepository : AuthorsRepository, MoviesRepository, Rev
         return await this.context.Authors.Include(a => a.Reviews).ThenInclude(r => r.ReviewedMovie).AsNoTracking().ToListAsync(cancellationToken);
     }
 
-    public virtual async Task<Author?> ReadAuthorById(Guid id, CancellationToken cancellationToken)
+    public virtual async Task<Author> ReadAuthorById(Guid id, CancellationToken cancellationToken)
     {
         return await this.context.Authors.Where(r => r.Id == id).Include(a => a.Reviews).ThenInclude(r => r.ReviewedMovie).AsNoTracking().FirstOrDefaultAsync(cancellationToken);
     }
@@ -51,7 +51,7 @@ internal class MovieReviewsRepository : AuthorsRepository, MoviesRepository, Rev
         return await this.context.Movies.Include(m => m.Reviews).ThenInclude(r => r.ReviewAuthor).AsNoTracking().ToListAsync(cancellationToken);
     }
 
-    public virtual async Task<Movie?> ReadMovieById(Guid id, CancellationToken cancellationToken)
+    public virtual async Task<Movie> ReadMovieById(Guid id, CancellationToken cancellationToken)
     {
         return await this.context.Movies.Where(r => r.Id == id).Include(m => m.Reviews).ThenInclude(r => r.ReviewAuthor).AsNoTracking().FirstOrDefaultAsync(cancellationToken);
     }
@@ -103,7 +103,7 @@ internal class MovieReviewsRepository : AuthorsRepository, MoviesRepository, Rev
         return await this.context.Reviews.Include(r => r.ReviewAuthor).Include(r => r.ReviewedMovie).AsNoTracking().ToListAsync(cancellationToken);
     }
 
-    public async Task<Review?> ReadReviewById(Guid id, CancellationToken cancellationToken)
+    public async Task<Review> ReadReviewById(Guid id, CancellationToken cancellationToken)
     {
         return await this.context.Reviews.Where(r => r.Id == id).Include(r => r.ReviewAuthor).Include(r => r.ReviewedMovie).AsNoTracking().FirstOrDefaultAsync(cancellationToken);
     }
