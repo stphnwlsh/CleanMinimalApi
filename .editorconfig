@@ -1,5 +1,5 @@
-# Version: 4.0.0 (Using https://semver.org/)
-# Updated: 2021-10-12
+# Version: 4.1.0 (Using https://semver.org/)
+# Updated: 2021-11-15
 # See https://github.com/RehanSaeed/EditorConfig/releases for release notes.
 # See https://github.com/RehanSaeed/EditorConfig for updates to this file.
 # See http://EditorConfig.org for more information about .editorconfig files.
@@ -399,7 +399,6 @@ dotnet_naming_rule.interface_rule.style                = prefix_interface_with_i
 dotnet_naming_rule.interface_rule.severity             = none
 dotnet_diagnostic.IDE1006.severity                     = none
 dotnet_diagnostic.CA1715.severity                      = none
-dotnet_diagnostic.S101.severity                        = none
 
 # Generics Type Parameters use PascalCase and are prefixed with uppercase 'T'
 # https://docs.microsoft.com/dotnet/standard/design-guidelines/names-of-classes-structs-and-interfaces
