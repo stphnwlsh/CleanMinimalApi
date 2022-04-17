@@ -13,8 +13,8 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="Bogus" Version="34.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.3" />
-    <PackageReference Include="SimpleDateTimeProvider" Version="2022.4.3.27" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.4" />
+    <PackageReference Include="SimpleDateTimeProvider" Version="2022.4.17.28" />
   </ItemGroup>
 
   <ItemGroup>
