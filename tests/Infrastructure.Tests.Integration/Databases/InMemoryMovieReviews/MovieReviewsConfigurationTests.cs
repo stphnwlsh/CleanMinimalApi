@@ -1,4 +1,4 @@
-namespace CleanMinimalApi.Infrastructure.Tests.Integration.Persistance.InMemory.MovieReviews;
+namespace CleanMinimalApi.Infrastructure.Tests.Integration.Databases.InMemoryMovieReviews;
 
 using Application.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +10,7 @@ public class MovieReviewsConfigurationTests
 {
     private readonly MovieReviewsDataFixture fixture;
 
-    public MovieReviewsConfigurationTests(MovieReviewsDataFixture fixture)
-    {
-        this.fixture = fixture;
-    }
+    public MovieReviewsConfigurationTests(MovieReviewsDataFixture fixture) => this.fixture = fixture;
 
     #region Configuration
 

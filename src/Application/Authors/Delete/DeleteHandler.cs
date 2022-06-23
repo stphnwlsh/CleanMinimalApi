@@ -4,17 +4,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Enums;
 using Common.Exceptions;
-using Common.Interfaces;
 using MediatR;
 
 public class DeleteHandler : IRequestHandler<DeleteCommand, bool>
 {
-    private readonly AuthorsRepository repository;
+    private readonly IAuthorsRepository repository;
 
-    public DeleteHandler(AuthorsRepository repository)
-    {
-        this.repository = repository;
-    }
+    public DeleteHandler(IAuthorsRepository repository) => this.repository = repository;
 
     public async Task<bool> Handle(DeleteCommand request, CancellationToken cancellationToken)
     {

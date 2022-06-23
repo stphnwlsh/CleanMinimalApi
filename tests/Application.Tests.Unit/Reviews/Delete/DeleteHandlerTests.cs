@@ -3,7 +3,6 @@ namespace CleanMinimalApi.Application.Tests.Unit.Reviews.Delete;
 using System.Threading;
 using System.Threading.Tasks;
 using CleanMinimalApi.Application.Common.Exceptions;
-using CleanMinimalApi.Application.Common.Interfaces;
 using CleanMinimalApi.Application.Reviews.Delete;
 using NSubstitute;
 using Shouldly;

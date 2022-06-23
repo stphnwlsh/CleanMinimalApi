@@ -2,20 +2,17 @@ namespace CleanMinimalApi.Application.Reviews.ReadById;
 
 using System.Threading;
 using System.Threading.Tasks;
+using CleanMinimalApi.Application.Reviews;
 using Common.Enums;
 using Common.Exceptions;
-using Common.Interfaces;
 using Entities;
 using MediatR;
 
 public class ReadByIdHandler : IRequestHandler<ReadByIdQuery, Review>
 {
-    private readonly ReviewsRepository repository;
+    private readonly IReviewsRepository repository;
 
-    public ReadByIdHandler(ReviewsRepository repository)
-    {
-        this.repository = repository;
-    }
+    public ReadByIdHandler(IReviewsRepository repository) => this.repository = repository;
 
     public async Task<Review> Handle(ReadByIdQuery request, CancellationToken cancellationToken)
     {

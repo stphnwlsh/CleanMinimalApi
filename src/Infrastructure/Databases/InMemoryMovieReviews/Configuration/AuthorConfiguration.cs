@@ -1,7 +1,6 @@
-namespace CleanMinimalApi.Infrastructure.Persistance.InMemory.MovieReviews.Config;
+namespace CleanMinimalApi.Infrastructure.Databases.InMemoryMovieReviews.Configuration;
 
-using Application.Entities;
-using CleanMinimalApi.Infrastructure.Persistance.InMemory.Common.Config;
+using CleanMinimalApi.Infrastructure.Databases.InMemoryMovieReviews.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 internal class AuthorConfiguration : EntityConfiguration<Author>

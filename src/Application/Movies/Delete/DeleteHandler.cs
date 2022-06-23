@@ -2,19 +2,16 @@ namespace CleanMinimalApi.Application.Movies.Delete;
 
 using System.Threading;
 using System.Threading.Tasks;
+using CleanMinimalApi.Application.Reviews;
 using Common.Enums;
 using Common.Exceptions;
-using Common.Interfaces;
 using MediatR;
 
 public class DeleteHandler : IRequestHandler<DeleteCommand, bool>
 {
-    private readonly ReviewsRepository repository;
+    private readonly IReviewsRepository repository;
 
-    public DeleteHandler(ReviewsRepository repository)
-    {
-        this.repository = repository;
-    }
+    public DeleteHandler(IReviewsRepository repository) => this.repository = repository;
 
     public async Task<bool> Handle(DeleteCommand request, CancellationToken cancellationToken)
     {

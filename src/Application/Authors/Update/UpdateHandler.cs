@@ -4,18 +4,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Enums;
 using Common.Exceptions;
-using Common.Interfaces;
-using Entities;
 using MediatR;
 
 public class UpdateHandler : IRequestHandler<UpdateCommand, bool>
 {
-    private readonly AuthorsRepository repository;
+    private readonly IAuthorsRepository repository;
 
-    public UpdateHandler(AuthorsRepository repository)
-    {
-        this.repository = repository;
-    }
+    public UpdateHandler(IAuthorsRepository repository) => this.repository = repository;
 
     public async Task<bool> Handle(UpdateCommand request, CancellationToken cancellationToken)
     {

@@ -2,9 +2,8 @@ namespace CleanMinimalApi.Application.Tests.Unit.Movies.ReadAll;
 
 using System.Threading;
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Common.Interfaces;
-using Entities;
 using CleanMinimalApi.Application.Movies.ReadAll;
+using Entities;
 using NSubstitute;
 using Shouldly;
 using Xunit;

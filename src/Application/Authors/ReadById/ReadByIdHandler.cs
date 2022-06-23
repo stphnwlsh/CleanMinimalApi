@@ -4,18 +4,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Enums;
 using Common.Exceptions;
-using Common.Interfaces;
 using Entities;
 using MediatR;
 
 public class ReadByIdHandler : IRequestHandler<ReadByIdQuery, Author>
 {
-    private readonly AuthorsRepository repository;
+    private readonly IAuthorsRepository repository;
 
-    public ReadByIdHandler(AuthorsRepository repository)
-    {
-        this.repository = repository;
-    }
+    public ReadByIdHandler(IAuthorsRepository repository) => this.repository = repository;
 
     public async Task<Author> Handle(ReadByIdQuery request, CancellationToken cancellationToken)
     {

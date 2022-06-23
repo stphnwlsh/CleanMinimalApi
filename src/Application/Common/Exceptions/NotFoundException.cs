@@ -32,8 +32,5 @@ public class NotFoundException : Exception
 
     /// <summary>Throws an <see cref="NotFoundException"/></summary>
     /// <param name="entityType">The entity type of the <paramref name="argument"/> parameter.</param>
-    public static void Throw(EntityType entityType)
-    {
-        throw new NotFoundException($"The {entityType} with the supplied id was not found.");
-    }
+    public static void Throw(EntityType entityType) => throw new NotFoundException($"The {entityType} with the supplied id was not found.");
 }

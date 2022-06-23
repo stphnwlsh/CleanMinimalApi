@@ -1,9 +1,9 @@
-namespace CleanMinimalApi.Application.Common.Interfaces;
+namespace CleanMinimalApi.Application.Movies;
 
 using System.Threading.Tasks;
 using Entities;
 
-public interface MoviesRepository
+public interface IMoviesRepository
 {
     Task<List<Movie>> ReadAllMovies(CancellationToken cancellationToken);
     Task<Movie> ReadMovieById(Guid id, CancellationToken cancellationToken);

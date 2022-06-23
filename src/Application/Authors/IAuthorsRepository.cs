@@ -1,9 +1,9 @@
-namespace CleanMinimalApi.Application.Common.Interfaces;
+namespace CleanMinimalApi.Application.Authors;
 
 using System.Threading.Tasks;
 using Entities;
 
-public interface AuthorsRepository
+public interface IAuthorsRepository
 {
     #region CRUD
 

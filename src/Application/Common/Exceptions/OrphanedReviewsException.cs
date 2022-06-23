@@ -32,8 +32,5 @@ public class OrphanedReviewsException : Exception
 
     /// <summary>Throws an <see cref="OrphanedReviewsException"/></summary>
     /// <param name="entityType">The entity type of the <paramref name="argument"/> parameter.</param>
-    public static void Throw(EntityType entityType)
-    {
-        throw new NotFoundException($"The {entityType} has reviews that will be orphaned if deleted.");
-    }
+    public static void Throw(EntityType entityType) => throw new NotFoundException($"The {entityType} has reviews that will be orphaned if deleted.");
 }

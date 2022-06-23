@@ -1,4 +1,4 @@
-namespace CleanMinimalApi.Infrastructure.Tests.Integration.Persistance.InMemory.MovieReviews;
+namespace CleanMinimalApi.Infrastructure.Tests.Integration.Databases.InMemoryMovieReviews;
 
 using Application.Reviews.Create;
 using Application.Reviews.Update;
@@ -10,10 +10,7 @@ public class MovieReviewsRepositoryTests
 {
     private readonly MovieReviewsDataFixture fixture;
 
-    public MovieReviewsRepositoryTests(MovieReviewsDataFixture fixture)
-    {
-        this.fixture = fixture;
-    }
+    public MovieReviewsRepositoryTests(MovieReviewsDataFixture fixture) => this.fixture = fixture;
 
     #region Authors
 

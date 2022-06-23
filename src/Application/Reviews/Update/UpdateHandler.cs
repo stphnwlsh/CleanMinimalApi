@@ -2,19 +2,16 @@ namespace CleanMinimalApi.Application.Reviews.Update;
 
 using System.Threading;
 using System.Threading.Tasks;
+using CleanMinimalApi.Application.Reviews;
 using Common.Enums;
 using Common.Exceptions;
-using Common.Interfaces;
 using MediatR;
 
 public class UpdateHandler : IRequestHandler<UpdateCommand, bool>
 {
-    private readonly ReviewsRepository repository;
+    private readonly IReviewsRepository repository;
 
-    public UpdateHandler(ReviewsRepository repository)
-    {
-        this.repository = repository;
-    }
+    public UpdateHandler(IReviewsRepository repository) => this.repository = repository;
 
     public async Task<bool> Handle(UpdateCommand request, CancellationToken cancellationToken)
     {

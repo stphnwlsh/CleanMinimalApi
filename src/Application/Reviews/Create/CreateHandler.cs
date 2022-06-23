@@ -2,19 +2,20 @@ namespace CleanMinimalApi.Application.Reviews.Create;
 
 using System.Threading;
 using System.Threading.Tasks;
+using CleanMinimalApi.Application.Movies;
+using CleanMinimalApi.Application.Reviews;
 using Common.Enums;
 using Common.Exceptions;
-using Common.Interfaces;
 using Entities;
 using MediatR;
 
 public class CreateHandler : IRequestHandler<CreateCommand, Review>
 {
     private readonly AuthorsRepository authorsRepository;
-    private readonly MoviesRepository moviesRepository;
-    private readonly ReviewsRepository reviewsRepository;
+    private readonly IMoviesRepository moviesRepository;
+    private readonly IReviewsRepository reviewsRepository;
 
-    public CreateHandler(AuthorsRepository authorsRepository, MoviesRepository moviesRepository, ReviewsRepository reviewsRepository)
+    public CreateHandler(AuthorsRepository authorsRepository, IMoviesRepository moviesRepository, IReviewsRepository reviewsRepository)
     {
         this.authorsRepository = authorsRepository;
         this.moviesRepository = moviesRepository;

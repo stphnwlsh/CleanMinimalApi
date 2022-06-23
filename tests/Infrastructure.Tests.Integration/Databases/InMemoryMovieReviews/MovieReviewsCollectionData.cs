@@ -1,8 +1,8 @@
-namespace CleanMinimalApi.Infrastructure.Tests.Integration.Persistance.InMemory.MovieReviews;
+namespace CleanMinimalApi.Infrastructure.Tests.Integration.Databases.InMemoryMovieReviews;
 
 using System;
 using Application.Entities;
-using CleanMinimalApi.Infrastructure.Persistance.InMemory.MovieReviews;
+using CleanMinimalApi.Infrastructure.Databases.InMemoryMovieReviews;
 
 internal static class MovieReviewsCollectionData
 {
@@ -15,7 +15,7 @@ internal static class MovieReviewsCollectionData
             new Author { Id = Guid.NewGuid(), FirstName = "Three", LastName = "Three" }
         };
 
-        context.Authors.AddRange(authors);
+        context.Authors.AddRange((IEnumerable<Infrastructure.Databases.InMemoryMovieReviews.Models.Author>)authors);
 
         var movies = new List<Movie>()
         {
@@ -24,7 +24,7 @@ internal static class MovieReviewsCollectionData
             new Movie { Id = Guid.NewGuid(), Title = "Three" }
         };
 
-        context.Movies.AddRange(movies);
+        context.Movies.AddRange((IEnumerable<Infrastructure.Databases.InMemoryMovieReviews.Models.Movie>)movies);
 
         var reviews = new List<Review>()
         {
@@ -39,7 +39,7 @@ internal static class MovieReviewsCollectionData
             new Review { Id = Guid.NewGuid(), ReviewAuthorId = authors[2].Id, ReviewedMovieId = movies[2].Id, Stars = 1 }
         };
 
-        context.Reviews.AddRange(reviews);
+        context.Reviews.AddRange((IEnumerable<Infrastructure.Databases.InMemoryMovieReviews.Models.Review>)reviews);
 
         _ = context.SaveChanges();
 

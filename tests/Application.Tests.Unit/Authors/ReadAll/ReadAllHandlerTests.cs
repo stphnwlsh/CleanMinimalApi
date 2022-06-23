@@ -3,7 +3,6 @@ namespace CleanMinimalApi.Application.Tests.Unit.Authors.ReadAll;
 using System.Threading;
 using System.Threading.Tasks;
 using CleanMinimalApi.Application.Authors.ReadAll;
-using CleanMinimalApi.Application.Common.Interfaces;
 using Entities;
 using NSubstitute;
 using Shouldly;

@@ -1,4 +1,6 @@
-namespace CleanMinimalApi.Application.Entities;
+namespace CleanMinimalApi.Infrastructure.Databases.InMemoryMovieReviews.Models;
+
+using System.ComponentModel.DataAnnotations.Schema;
 
 public class Author : Entity
 {
@@ -6,5 +8,6 @@ public class Author : Entity
 
     public string LastName { get; set; }
 
+    [InverseProperty("ReviewAuthor")]
     public ICollection<Review> Reviews { get; init; }
 }

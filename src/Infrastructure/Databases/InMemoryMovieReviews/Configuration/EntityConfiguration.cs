@@ -1,6 +1,7 @@
-namespace CleanMinimalApi.Infrastructure.Persistance.InMemory.Common.Config;
+namespace CleanMinimalApi.Infrastructure.Databases.InMemoryMovieReviews.Configuration;
 
 using Application.Entities;
+using CleanMinimalApi.Infrastructure.Databases.InMemoryMovieReviews.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

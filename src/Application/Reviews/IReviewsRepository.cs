@@ -1,9 +1,9 @@
-namespace CleanMinimalApi.Application.Common.Interfaces;
+namespace CleanMinimalApi.Application.Reviews;
 
 using System.Threading.Tasks;
 using Entities;
 
-public interface ReviewsRepository
+public interface IReviewsRepository
 {
     Task<Review> CreateReview(Guid authorId, Guid movieId, int stars, CancellationToken cancellationToken);
     Task<bool> DeleteReview(Guid id, CancellationToken cancellationToken);

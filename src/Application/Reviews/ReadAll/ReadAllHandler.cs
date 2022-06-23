@@ -2,21 +2,15 @@ namespace CleanMinimalApi.Application.Reviews.ReadAll;
 
 using System.Threading;
 using System.Threading.Tasks;
-using Common.Interfaces;
+using CleanMinimalApi.Application.Reviews;
 using Entities;
 using MediatR;
 
 public class ReadAllHandler : IRequestHandler<ReadAllQuery, List<Review>>
 {
-    private readonly ReviewsRepository repository;
+    private readonly IReviewsRepository repository;
 
-    public ReadAllHandler(ReviewsRepository repository)
-    {
-        this.repository = repository;
-    }
+    public ReadAllHandler(IReviewsRepository repository) => this.repository = repository;
 
-    public async Task<List<Review>> Handle(ReadAllQuery request, CancellationToken cancellationToken)
-    {
-        return await this.repository.ReadAllReviews(cancellationToken);
-    }
+    public async Task<List<Review>> Handle(ReadAllQuery request, CancellationToken cancellationToken) => await this.repository.ReadAllReviews(cancellationToken);
 }

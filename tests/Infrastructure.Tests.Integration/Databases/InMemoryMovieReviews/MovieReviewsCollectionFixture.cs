@@ -1,7 +1,7 @@
-namespace CleanMinimalApi.Infrastructure.Tests.Integration.Persistance.InMemory.MovieReviews;
+namespace CleanMinimalApi.Infrastructure.Tests.Integration.Databases.InMemoryMovieReviews;
 
 using System;
-using CleanMinimalApi.Infrastructure.Persistance.InMemory.MovieReviews;
+using CleanMinimalApi.Infrastructure.Databases.InMemoryMovieReviews;
 using Microsoft.EntityFrameworkCore;
 using SimpleDateTimeProvider;
 using Xunit;

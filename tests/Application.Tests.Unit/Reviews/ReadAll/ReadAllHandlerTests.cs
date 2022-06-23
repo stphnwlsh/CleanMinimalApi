@@ -2,9 +2,8 @@ namespace CleanMinimalApi.Application.Tests.Unit.Reviews.ReadAll;
 
 using System.Threading;
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Common.Interfaces;
-using Entities;
 using CleanMinimalApi.Application.Reviews.ReadAll;
+using Entities;
 using NSubstitute;
 using Shouldly;
 using Xunit;

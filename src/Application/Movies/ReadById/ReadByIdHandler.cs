@@ -2,20 +2,17 @@ namespace CleanMinimalApi.Application.Movies.ReadById;
 
 using System.Threading;
 using System.Threading.Tasks;
+using CleanMinimalApi.Application.Movies;
 using Common.Enums;
 using Common.Exceptions;
-using Common.Interfaces;
 using Entities;
 using MediatR;
 
 public class ReadByIdHandler : IRequestHandler<ReadByIdQuery, Movie>
 {
-    private readonly MoviesRepository repository;
+    private readonly IMoviesRepository repository;
 
-    public ReadByIdHandler(MoviesRepository repository)
-    {
-        this.repository = repository;
-    }
+    public ReadByIdHandler(IMoviesRepository repository) => this.repository = repository;
 
     public async Task<Movie> Handle(ReadByIdQuery request, CancellationToken cancellationToken)
     {
