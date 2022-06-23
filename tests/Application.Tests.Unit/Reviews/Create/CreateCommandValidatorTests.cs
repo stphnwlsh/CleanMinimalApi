@@ -9,7 +9,7 @@ public class CreateCommandValidatorTests
     private static readonly CreateCommandValidator Validator = new();
 
     [Fact]
-    public void Validator_ShouldNotHaveValidationErrorFor_ReviewAuthorId()
+    public void ValidatorShouldNotHaveValidationErrorForReviewAuthorId()
     {
         // Arrange
         var command = new CreateCommand
@@ -27,7 +27,7 @@ public class CreateCommandValidatorTests
     }
 
     [Fact]
-    public void Validator_ShouldHaveValidationErrorFor_ReviewAuthorId()
+    public void ValidatorShouldHaveValidationErrorForReviewAuthorId()
     {
         // Arrange
         var command = new CreateCommand
@@ -45,7 +45,7 @@ public class CreateCommandValidatorTests
     }
 
     [Fact]
-    public void Validator_ShouldNotHaveValidationErrorFor_ReviewedMovieId()
+    public void ValidatorShouldNotHaveValidationErrorForReviewedMovieId()
     {
         // Arrange
         var command = new CreateCommand
@@ -63,7 +63,7 @@ public class CreateCommandValidatorTests
     }
 
     [Fact]
-    public void Validator_ShouldHaveValidationErrorFor_ReviewedMovieId()
+    public void ValidatorShouldHaveValidationErrorForReviewedMovieId()
     {
         // Arrange
         var command = new CreateCommand
@@ -87,7 +87,7 @@ public class CreateCommandValidatorTests
     [InlineData(3)]
     [InlineData(4)]
     [InlineData(5)]
-    public void Validator_ShouldNotHaveValidationErrorFor_Stars(int stars)
+    public void ValidatorShouldNotHaveValidationErrorForStars(int stars)
     {
         // Arrange
         var command = new CreateCommand
@@ -110,7 +110,7 @@ public class CreateCommandValidatorTests
     [InlineData(6)]
     [InlineData(100)]
     [InlineData(-100)]
-    public void Validator_ShouldHaveValidationErrorFor_Stars(int stars)
+    public void ValidatorShouldHaveValidationErrorForStars(int stars)
     {
         // Arrange
         var command = new CreateCommand

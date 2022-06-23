@@ -1,6 +1,6 @@
 namespace CleanMinimalApi.Infrastructure.Persistance.InMemory.Common.Config;
 
-using CleanMinimalApi.Application.Entities;
+using Application.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

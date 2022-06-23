@@ -1,6 +1,6 @@
 namespace CleanMinimalApi.Infrastructure.Tests.Integration.Persistance.InMemory.MovieReviews;
 
-using CleanMinimalApi.Application.Entities;
+using Application.Entities;
 using Microsoft.EntityFrameworkCore;
 using Shouldly;
 using Xunit;
@@ -18,7 +18,7 @@ public class MovieReviewsConfigurationTests
     #region Configuration
 
     [Fact]
-    public async void Database_ShouldBe_Configured()
+    public async void DatabaseShouldBeConfigured()
     {
         // Arrange
         var context = this.fixture.Context;

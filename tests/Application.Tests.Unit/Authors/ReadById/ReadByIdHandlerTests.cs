@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using CleanMinimalApi.Application.Authors.ReadById;
 using CleanMinimalApi.Application.Common.Exceptions;
 using CleanMinimalApi.Application.Common.Interfaces;
-using CleanMinimalApi.Application.Entities;
+using Entities;
 using NSubstitute;
 using Shouldly;
 using Xunit;
@@ -13,7 +13,7 @@ using Xunit;
 public class ReadByIdHandlerTests
 {
     [Fact]
-    public async Task Handle_ShouldPassThrough_Query()
+    public async Task HandleShouldPassThroughQuery()
     {
         // Arrange
         var query = new ReadByIdQuery { Id = Guid.Empty };
@@ -43,7 +43,7 @@ public class ReadByIdHandlerTests
 
 
     [Fact]
-    public async Task Handle_ShouldThrowException_DoesNotExist()
+    public async Task HandleShouldThrowExceptionDoesNotExist()
     {
         // Arrange
         var query = new ReadByIdQuery { Id = Guid.Empty };

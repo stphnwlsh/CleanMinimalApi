@@ -2,8 +2,8 @@ namespace CleanMinimalApi.Application.Movies.ReadAll;
 
 using System.Threading;
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Common.Interfaces;
-using CleanMinimalApi.Application.Entities;
+using Common.Interfaces;
+using Entities;
 using MediatR;
 
 public class ReadAllHandler : IRequestHandler<ReadAllQuery, List<Movie>>

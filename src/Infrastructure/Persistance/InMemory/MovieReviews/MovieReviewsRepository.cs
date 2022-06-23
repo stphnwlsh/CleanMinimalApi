@@ -3,7 +3,7 @@ namespace CleanMinimalApi.Infrastructure.Persistance.InMemory.MovieReviews;
 using CleanMinimalApi.Application.Common.Enums;
 using CleanMinimalApi.Application.Common.Exceptions;
 using CleanMinimalApi.Application.Common.Interfaces;
-using CleanMinimalApi.Application.Entities;
+using Application.Entities;
 using Microsoft.EntityFrameworkCore;
 using SimpleDateTimeProvider;
 
@@ -27,6 +27,23 @@ internal class MovieReviewsRepository : AuthorsRepository, MoviesRepository, Rev
 
     #region Authors
 
+    public async Task<Author> CreateAuthor(string firstName, string lastName, CancellationToken cancellationToken)
+    {
+        var author = new Author
+        {
+            FirstName = firstName,
+            LastName = lastName,
+            DateCreated = this.dateTimeProvider.UtcNow,
+            DateModified = this.dateTimeProvider.UtcNow
+        };
+
+        var id = this.context.Add(author).Entity.Id;
+
+        _ = await this.context.SaveChangesAsync(cancellationToken);
+
+        return await this.context.Authors.Where(r => r.Id == id).Include(r => r.Reviews).AsNoTracking().FirstAsync(cancellationToken);
+    }
+
     public virtual async Task<List<Author>> ReadAllAuthors(CancellationToken cancellationToken)
     {
         return await this.context.Authors.Include(a => a.Reviews).ThenInclude(r => r.ReviewedMovie).AsNoTracking().ToListAsync(cancellationToken);
@@ -37,9 +54,52 @@ internal class MovieReviewsRepository : AuthorsRepository, MoviesRepository, Rev
         return await this.context.Authors.Where(r => r.Id == id).Include(a => a.Reviews).ThenInclude(r => r.ReviewedMovie).AsNoTracking().FirstOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<bool> UpdateAuthor(Guid id, string firstName, string lastName, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var author = this.context.Authors.FirstOrDefault(r => r.Id == id);
+
+            NotFoundException.ThrowIfNull(author, EntityType.Author);
+
+            author.FirstName = firstName;
+            author.LastName = lastName;
+            author.DateModified = this.dateTimeProvider.UtcNow;
+
+            _ = this.context.Update(author);
+            _ = await this.context.SaveChangesAsync(cancellationToken);
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    public async Task<bool> DeleteAuthor(Guid id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            _ = this.context.Remove(this.context.Authors.Single(r => r.Id == id));
+            _ = await this.context.SaveChangesAsync(cancellationToken);
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     public virtual async Task<bool> AuthorExists(Guid id, CancellationToken cancellationToken)
     {
         return await this.context.Authors.AsNoTracking().AnyAsync(a => a.Id == id, cancellationToken);
+    }
+
+    public virtual async Task<bool> AuthorHasReviews(Guid id, CancellationToken cancellationToken)
+    {
+        return (await this.ReadAuthorById(id, cancellationToken)).Reviews.Any();
     }
 
     #endregion Authors

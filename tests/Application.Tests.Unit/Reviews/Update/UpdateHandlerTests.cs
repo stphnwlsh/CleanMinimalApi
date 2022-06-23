@@ -12,7 +12,7 @@ using Xunit;
 public class UpdateHandlerTests
 {
     [Fact]
-    public async Task Handle_ShouldPassThrough_Command()
+    public async Task HandleShouldPassThroughCommand()
     {
         // Arrange
         var command = new UpdateCommand
@@ -37,7 +37,7 @@ public class UpdateHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldThrowException_ReviewDoesNotExist()
+    public async Task HandleShouldThrowExceptionReviewDoesNotExist()
     {
         // Arrange
         var command = new UpdateCommand

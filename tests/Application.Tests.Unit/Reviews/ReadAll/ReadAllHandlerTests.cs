@@ -3,7 +3,7 @@ namespace CleanMinimalApi.Application.Tests.Unit.Reviews.ReadAll;
 using System.Threading;
 using System.Threading.Tasks;
 using CleanMinimalApi.Application.Common.Interfaces;
-using CleanMinimalApi.Application.Entities;
+using Entities;
 using CleanMinimalApi.Application.Reviews.ReadAll;
 using NSubstitute;
 using Shouldly;
@@ -12,7 +12,7 @@ using Xunit;
 public class ReadAllHandlerTests
 {
     [Fact]
-    public async Task Handle_ShouldPassThrough_Query()
+    public async Task HandleShouldPassThroughQuery()
     {
         // Arrange
         var query = new ReadAllQuery();

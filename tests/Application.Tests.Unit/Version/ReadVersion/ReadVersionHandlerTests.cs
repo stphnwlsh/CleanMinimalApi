@@ -9,7 +9,7 @@ using Xunit;
 public class ReadVersionHandlerTests
 {
     [Fact]
-    public async Task Handle_ShouldPassThrough_Query()
+    public async Task HandleShouldPassThroughQuery()
     {
         // Arrange
         var query = new ReadVersionQuery();

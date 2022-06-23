@@ -3,7 +3,7 @@ namespace CleanMinimalApi.Application.Versions.ReadVersion;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Entities;
+using Entities;
 using MediatR;
 
 public class ReadVersionHandler : IRequestHandler<ReadVersionQuery, ApplicationVersion>

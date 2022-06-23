@@ -2,8 +2,8 @@ namespace CleanMinimalApi.Application.Authors.ReadAll;
 
 using System.Threading;
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Common.Interfaces;
-using CleanMinimalApi.Application.Entities;
+using Common.Interfaces;
+using Entities;
 using MediatR;
 
 public class ReadAllHandler : IRequestHandler<ReadAllQuery, List<Author>>

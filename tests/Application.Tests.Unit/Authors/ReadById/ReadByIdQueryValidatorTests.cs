@@ -9,7 +9,7 @@ public class ReadByIdQueryValidatorTests
     private static readonly ReadByIdQueryValidator Validator = new();
 
     [Fact]
-    public void Validator_ShouldHaveValidationErrorFor_IdNull()
+    public void ValidatorShouldHaveValidationErrorForIdNull()
     {
         // Arrange
         var query = new ReadByIdQuery();
@@ -22,7 +22,7 @@ public class ReadByIdQueryValidatorTests
     }
 
     [Fact]
-    public void Validator_ShouldHaveValidationErrorFor_IdEmpty()
+    public void ValidatorShouldHaveValidationErrorForIdEmpty()
     {
         // Arrange
         var query = new ReadByIdQuery { Id = Guid.Empty };
@@ -35,7 +35,7 @@ public class ReadByIdQueryValidatorTests
     }
 
     [Fact]
-    public void Validator_ShouldNotHaveValidationErrorFor_Id()
+    public void ValidatorShouldNotHaveValidationErrorForId()
     {
         // Arrange
         var query = new ReadByIdQuery { Id = Guid.NewGuid() };

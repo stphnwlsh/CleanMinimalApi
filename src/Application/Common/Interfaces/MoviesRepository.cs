@@ -1,7 +1,7 @@
 namespace CleanMinimalApi.Application.Common.Interfaces;
 
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Entities;
+using Entities;
 
 public interface MoviesRepository
 {

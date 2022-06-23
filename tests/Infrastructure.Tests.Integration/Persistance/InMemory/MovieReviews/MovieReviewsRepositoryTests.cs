@@ -1,7 +1,7 @@
 namespace CleanMinimalApi.Infrastructure.Tests.Integration.Persistance.InMemory.MovieReviews;
 
-using CleanMinimalApi.Application.Reviews.Create;
-using CleanMinimalApi.Application.Reviews.Update;
+using Application.Reviews.Create;
+using Application.Reviews.Update;
 using Shouldly;
 using Xunit;
 
@@ -18,7 +18,7 @@ public class MovieReviewsRepositoryTests
     #region Authors
 
     [Fact]
-    public async void ReadAllAuthors_ShouldReturn_Authors()
+    public async void ReadAllAuthorsShouldReturnAuthors()
     {
         // Arrange
         var repository = this.fixture.Repository;
@@ -34,7 +34,7 @@ public class MovieReviewsRepositoryTests
 
 
     [Fact]
-    public async void ReadAuthorById_ShouldReturn_Author()
+    public async void ReadAuthorByIdShouldReturnAuthor()
     {
         // Arrange
         var repository = this.fixture.Repository;
@@ -54,7 +54,7 @@ public class MovieReviewsRepositoryTests
     }
 
     [Fact]
-    public async void ReadAuthorById_ShouldReturn_Null()
+    public async void ReadAuthorByIdShouldReturnNull()
     {
         // Arrange
         var repository = this.fixture.Repository;
@@ -68,7 +68,7 @@ public class MovieReviewsRepositoryTests
     }
 
     [Fact]
-    public async void AuthorExists_ShouldReturn_True()
+    public async void AuthorExistsShouldReturnTrue()
     {
         // Arrange
         var repository = this.fixture.Repository;
@@ -83,7 +83,7 @@ public class MovieReviewsRepositoryTests
     }
 
     [Fact]
-    public async void AuthorExists_ShouldReturn_False()
+    public async void AuthorExistsShouldReturnFalse()
     {
         // Arrange
         var repository = this.fixture.Repository;
@@ -101,7 +101,7 @@ public class MovieReviewsRepositoryTests
     #region Movies
 
     [Fact]
-    public async void ReadAllMovies_ShouldReturn_Movies()
+    public async void ReadAllMoviesShouldReturnMovies()
     {
         // Arrange
         var repository = this.fixture.Repository;
@@ -117,7 +117,7 @@ public class MovieReviewsRepositoryTests
 
 
     [Fact]
-    public async void ReadMovieById_ShouldReturn_Movie()
+    public async void ReadMovieByIdShouldReturnMovie()
     {
         // Arrange
         var repository = this.fixture.Repository;
@@ -136,7 +136,7 @@ public class MovieReviewsRepositoryTests
     }
 
     [Fact]
-    public async void ReadMovieById_ShouldReturn_Null()
+    public async void ReadMovieByIdShouldReturnNull()
     {
         // Arrange
         var repository = this.fixture.Repository;
@@ -150,7 +150,7 @@ public class MovieReviewsRepositoryTests
     }
 
     [Fact]
-    public async void MovieExists_ShouldReturn_True()
+    public async void MovieExistsShouldReturnTrue()
     {
         // Arrange
         var repository = this.fixture.Repository;
@@ -165,7 +165,7 @@ public class MovieReviewsRepositoryTests
     }
 
     [Fact]
-    public async void MovieExists_ShouldReturn_False()
+    public async void MovieExistsShouldReturnFalse()
     {
         // Arrange
         var repository = this.fixture.Repository;
@@ -183,7 +183,7 @@ public class MovieReviewsRepositoryTests
     #region Reviews
 
     [Fact]
-    public async void CreateReview_ShouldReturn_NewReviews()
+    public async void CreateReviewShouldReturnNewReviews()
     {
         // Arrange
         var review = new CreateCommand
@@ -211,7 +211,7 @@ public class MovieReviewsRepositoryTests
     }
 
     [Fact]
-    public async void DeleteReview_ShouldReturn_True()
+    public async void DeleteReviewShouldReturnTrue()
     {
         // Arrange
         var id = this.fixture.Context.Reviews.FirstOrDefault(r => r.Stars == 1).Id;
@@ -230,7 +230,7 @@ public class MovieReviewsRepositoryTests
     }
 
     [Fact]
-    public async void DeleteReview_ShouldReturn_False()
+    public async void DeleteReviewShouldReturnFalse()
     {
         // Arrange
         var token = new CancellationTokenSource().Token;
@@ -243,7 +243,7 @@ public class MovieReviewsRepositoryTests
     }
 
     [Fact]
-    public async void ReadAllReviews_ShouldReturn_Reviews()
+    public async void ReadAllReviewsShouldReturnReviews()
     {
         // Arrange
         var repository = this.fixture.Repository;
@@ -259,7 +259,7 @@ public class MovieReviewsRepositoryTests
 
 
     [Fact]
-    public async void ReadReviewById_ShouldReturn_Review()
+    public async void ReadReviewByIdShouldReturnReview()
     {
         // Arrange
         var repository = this.fixture.Repository;
@@ -285,7 +285,7 @@ public class MovieReviewsRepositoryTests
     }
 
     [Fact]
-    public async void ReadReviewById_ShouldReturn_Null()
+    public async void ReadReviewByIdShouldReturnNull()
     {
         // Arrange
         var repository = this.fixture.Repository;
@@ -299,7 +299,7 @@ public class MovieReviewsRepositoryTests
     }
 
     [Fact]
-    public async void ReviewExists_ShouldReturn_True()
+    public async void ReviewExistsShouldReturnTrue()
     {
         // Arrange
         var repository = this.fixture.Repository;
@@ -314,7 +314,7 @@ public class MovieReviewsRepositoryTests
     }
 
     [Fact]
-    public async void ReviewExists_ShouldReturn_False()
+    public async void ReviewExistsShouldReturnFalse()
     {
         // Arrange
         var repository = this.fixture.Repository;
@@ -328,7 +328,7 @@ public class MovieReviewsRepositoryTests
     }
 
     [Fact]
-    public async void UpdateReview_ShouldReturn_True()
+    public async void UpdateReviewShouldReturnTrue()
     {
         // Arrange
         var review = new UpdateCommand
@@ -356,7 +356,7 @@ public class MovieReviewsRepositoryTests
     }
 
     [Fact]
-    public async void UpdateReview_ShouldReturn_False()
+    public async void UpdateReviewShouldReturnFalse()
     {
         // Arrange
         var review = new UpdateCommand

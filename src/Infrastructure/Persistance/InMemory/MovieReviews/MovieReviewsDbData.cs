@@ -2,7 +2,7 @@ namespace CleanMinimalApi.Infrastructure.Persistance.InMemory.MovieReviews;
 
 using System;
 using Bogus;
-using CleanMinimalApi.Application.Entities;
+using Application.Entities;
 
 internal static class MovieReviewsDbData
 {

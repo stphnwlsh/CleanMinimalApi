@@ -12,7 +12,7 @@ using Xunit;
 public class CreateHandlerTests
 {
     [Fact]
-    public async Task Handle_ShouldPassThrough_Command()
+    public async Task HandleShouldPassThroughCommand()
     {
         // Arrange
         var command = new CreateCommand
@@ -41,7 +41,7 @@ public class CreateHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldThrowException_AuthorDoesNotExist()
+    public async Task HandleShouldThrowExceptionAuthorDoesNotExist()
     {
         // Arrange
         var command = new CreateCommand
@@ -71,7 +71,7 @@ public class CreateHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldThrowException_MovieDoesNotExist()
+    public async Task HandleShouldThrowExceptionMovieDoesNotExist()
     {
         // Arrange
         var command = new CreateCommand

@@ -2,9 +2,9 @@ namespace CleanMinimalApi.Application.Reviews.Delete;
 
 using System.Threading;
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Common.Enums;
-using CleanMinimalApi.Application.Common.Exceptions;
-using CleanMinimalApi.Application.Common.Interfaces;
+using Common.Enums;
+using Common.Exceptions;
+using Common.Interfaces;
 using MediatR;
 
 public class DeleteHandler : IRequestHandler<DeleteCommand, bool>

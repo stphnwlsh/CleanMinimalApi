@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using CleanMinimalApi.Application.Authors.ReadById;
 using CleanMinimalApi.Application.Common.Behaviours;
-using CleanMinimalApi.Application.Entities;
+using Entities;
 using FluentValidation;
 using MediatR;
 using NSubstitute;
@@ -15,7 +15,7 @@ using Xunit;
 public class ValidationBehaviourTests
 {
     [Fact]
-    public async void Handle_ShouldValidate_NoErrors()
+    public async void HandleShouldValidateNoErrors()
     {
         // Arrange
         var query = new ReadByIdQuery { Id = Guid.NewGuid() };
@@ -39,7 +39,7 @@ public class ValidationBehaviourTests
     }
 
     [Fact]
-    public void Handle_ShouldValidate_Errors()
+    public void HandleShouldValidateErrors()
     {
         // Arrange
         var query = new ReadByIdQuery { Id = Guid.Empty };
