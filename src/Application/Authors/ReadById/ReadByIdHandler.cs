@@ -2,20 +2,16 @@ namespace CleanMinimalApi.Application.Authors.ReadById;
 
 using System.Threading;
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Common.Enums;
-using CleanMinimalApi.Application.Common.Exceptions;
-using CleanMinimalApi.Application.Common.Interfaces;
-using CleanMinimalApi.Application.Entities;
+using Common.Enums;
+using Common.Exceptions;
+using Entities;
 using MediatR;
 
 public class ReadByIdHandler : IRequestHandler<ReadByIdQuery, Author>
 {
-    private readonly AuthorsRepository repository;
+    private readonly IAuthorsRepository repository;
 
-    public ReadByIdHandler(AuthorsRepository repository)
-    {
-        this.repository = repository;
-    }
+    public ReadByIdHandler(IAuthorsRepository repository) => this.repository = repository;
 
     public async Task<Author> Handle(ReadByIdQuery request, CancellationToken cancellationToken)
     {

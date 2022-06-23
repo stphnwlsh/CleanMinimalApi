@@ -1,6 +1,6 @@
 namespace CleanMinimalApi.Application.Reviews.Create;
 
-using CleanMinimalApi.Application.Entities;
+using Entities;
 using MediatR;
 
 public class CreateCommand : IRequest<Review>

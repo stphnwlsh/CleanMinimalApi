@@ -3,7 +3,6 @@ namespace CleanMinimalApi.Application.Tests.Unit.Reviews.Create;
 using System.Threading;
 using System.Threading.Tasks;
 using CleanMinimalApi.Application.Common.Exceptions;
-using CleanMinimalApi.Application.Common.Interfaces;
 using CleanMinimalApi.Application.Reviews.Create;
 using NSubstitute;
 using Shouldly;
@@ -12,7 +11,7 @@ using Xunit;
 public class CreateHandlerTests
 {
     [Fact]
-    public async Task Handle_ShouldPassThrough_Command()
+    public async Task HandleShouldPassThroughCommand()
     {
         // Arrange
         var command = new CreateCommand
@@ -41,7 +40,7 @@ public class CreateHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldThrowException_AuthorDoesNotExist()
+    public async Task HandleShouldThrowExceptionAuthorDoesNotExist()
     {
         // Arrange
         var command = new CreateCommand
@@ -71,7 +70,7 @@ public class CreateHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldThrowException_MovieDoesNotExist()
+    public async Task HandleShouldThrowExceptionMovieDoesNotExist()
     {
         // Arrange
         var command = new CreateCommand

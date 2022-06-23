@@ -2,7 +2,7 @@ namespace CleanMinimalApi.Application;
 
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using CleanMinimalApi.Application.Common.Behaviours;
+using Common.Behaviours;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;

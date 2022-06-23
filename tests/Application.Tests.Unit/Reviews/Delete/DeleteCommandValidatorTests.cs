@@ -9,7 +9,7 @@ public class DeleteCommandValidatorTests
     private static readonly DeleteCommandValidator Validator = new();
 
     [Fact]
-    public void Validator_ShouldHaveValidationErrorFor_IdNull()
+    public void ValidatorShouldHaveValidationErrorForIdNull()
     {
         // Arrange
         var command = new DeleteCommand();
@@ -22,7 +22,7 @@ public class DeleteCommandValidatorTests
     }
 
     [Fact]
-    public void Validator_ShouldHaveValidationErrorFor_IdEmpty()
+    public void ValidatorShouldHaveValidationErrorForIdEmpty()
     {
         // Arrange
         var command = new DeleteCommand { Id = Guid.Empty };
@@ -35,7 +35,7 @@ public class DeleteCommandValidatorTests
     }
 
     [Fact]
-    public void Validator_ShouldNotHaveValidationErrorFor_Id()
+    public void ValidatorShouldNotHaveValidationErrorForId()
     {
         // Arrange
         var command = new DeleteCommand { Id = Guid.NewGuid() };

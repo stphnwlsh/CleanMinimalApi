@@ -9,7 +9,7 @@ public class UpdateCommandValidatorTests
     private static readonly UpdateCommandValidator Validator = new();
 
     [Fact]
-    public void Validator_ShouldNotHaveValidationErrorFor_Id()
+    public void ValidatorShouldNotHaveValidationErrorForId()
     {
         // Arrange
         var command = new UpdateCommand
@@ -28,7 +28,7 @@ public class UpdateCommandValidatorTests
     }
 
     [Fact]
-    public void Validator_ShouldHaveValidationErrorFor_Id()
+    public void ValidatorShouldHaveValidationErrorForId()
     {
         // Arrange
         var command = new UpdateCommand
@@ -47,7 +47,7 @@ public class UpdateCommandValidatorTests
     }
 
     [Fact]
-    public void Validator_ShouldNotHaveValidationErrorFor_ReviewAuthorId()
+    public void ValidatorShouldNotHaveValidationErrorForReviewAuthorId()
     {
         // Arrange
         var command = new UpdateCommand
@@ -66,7 +66,7 @@ public class UpdateCommandValidatorTests
     }
 
     [Fact]
-    public void Validator_ShouldHaveValidationErrorFor_ReviewAuthorId()
+    public void ValidatorShouldHaveValidationErrorForReviewAuthorId()
     {
         // Arrange
         var command = new UpdateCommand
@@ -85,7 +85,7 @@ public class UpdateCommandValidatorTests
     }
 
     [Fact]
-    public void Validator_ShouldNotHaveValidationErrorFor_ReviewedMovieId()
+    public void ValidatorShouldNotHaveValidationErrorForReviewedMovieId()
     {
         // Arrange
         var command = new UpdateCommand
@@ -104,7 +104,7 @@ public class UpdateCommandValidatorTests
     }
 
     [Fact]
-    public void Validator_ShouldHaveValidationErrorFor_ReviewedMovieId()
+    public void ValidatorShouldHaveValidationErrorForReviewedMovieId()
     {
         // Arrange
         var command = new UpdateCommand
@@ -129,7 +129,7 @@ public class UpdateCommandValidatorTests
     [InlineData(3)]
     [InlineData(4)]
     [InlineData(5)]
-    public void Validator_ShouldNotHaveValidationErrorFor_Stars(int stars)
+    public void ValidatorShouldNotHaveValidationErrorForStars(int stars)
     {
         // Arrange
         var command = new UpdateCommand
@@ -153,7 +153,7 @@ public class UpdateCommandValidatorTests
     [InlineData(6)]
     [InlineData(100)]
     [InlineData(-100)]
-    public void Validator_ShouldHaveValidationErrorFor_Stars(int stars)
+    public void ValidatorShouldHaveValidationErrorForStars(int stars)
     {
         // Arrange
         var command = new UpdateCommand

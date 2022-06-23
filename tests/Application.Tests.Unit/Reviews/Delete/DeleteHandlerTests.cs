@@ -3,7 +3,6 @@ namespace CleanMinimalApi.Application.Tests.Unit.Reviews.Delete;
 using System.Threading;
 using System.Threading.Tasks;
 using CleanMinimalApi.Application.Common.Exceptions;
-using CleanMinimalApi.Application.Common.Interfaces;
 using CleanMinimalApi.Application.Reviews.Delete;
 using NSubstitute;
 using Shouldly;
@@ -12,7 +11,7 @@ using Xunit;
 public class DeleteHandlerTests
 {
     [Fact]
-    public async Task Handle_ShouldPassThrough_Command()
+    public async Task HandleShouldPassThroughCommand()
     {
         // Arrange
         var command = new DeleteCommand { Id = Guid.Empty };
@@ -32,7 +31,7 @@ public class DeleteHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldThrowException_AuthorDoesNotExist()
+    public async Task HandleShouldThrowExceptionAuthorDoesNotExist()
     {
         // Arrange
         var command = new DeleteCommand { Id = Guid.Empty };

@@ -2,9 +2,8 @@ namespace CleanMinimalApi.Application.Tests.Unit.Movies.ReadAll;
 
 using System.Threading;
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Common.Interfaces;
-using CleanMinimalApi.Application.Entities;
 using CleanMinimalApi.Application.Movies.ReadAll;
+using Entities;
 using NSubstitute;
 using Shouldly;
 using Xunit;
@@ -12,7 +11,7 @@ using Xunit;
 public class ReadAllHandlerTests
 {
     [Fact]
-    public async Task Handle_ShouldPassThrough_Query()
+    public async Task HandleShouldPassThroughQuery()
     {
         // Arrange
         var query = new ReadAllQuery();

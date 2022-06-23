@@ -1,6 +1,6 @@
 namespace CleanMinimalApi.Application.Movies.ReadById;
 
-using CleanMinimalApi.Application.Entities;
+using Entities;
 using MediatR;
 
 public class ReadByIdQuery : IRequest<Movie>

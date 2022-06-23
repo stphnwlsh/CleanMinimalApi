@@ -3,7 +3,6 @@ namespace CleanMinimalApi.Application.Tests.Unit.Reviews.Update;
 using System.Threading;
 using System.Threading.Tasks;
 using CleanMinimalApi.Application.Common.Exceptions;
-using CleanMinimalApi.Application.Common.Interfaces;
 using CleanMinimalApi.Application.Reviews.Update;
 using NSubstitute;
 using Shouldly;
@@ -12,7 +11,7 @@ using Xunit;
 public class UpdateHandlerTests
 {
     [Fact]
-    public async Task Handle_ShouldPassThrough_Command()
+    public async Task HandleShouldPassThroughCommand()
     {
         // Arrange
         var command = new UpdateCommand
@@ -37,7 +36,7 @@ public class UpdateHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldThrowException_ReviewDoesNotExist()
+    public async Task HandleShouldThrowExceptionReviewDoesNotExist()
     {
         // Arrange
         var command = new UpdateCommand

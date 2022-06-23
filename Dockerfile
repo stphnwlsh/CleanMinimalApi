@@ -11,10 +11,9 @@ FROM ${BASE_IMAGE_REPO}/${BASE_IMAGE_BUILD}:${BASE_IMAGE_BUILD_TAG} AS build
 # Build, Test and Publish ARGS
 ARG VERSION_PREFIX=1.0.0.0
 ARG VERSION_SUFFIX
-ARG ENVIRONMENT=docker
 
 # Build, Test and Publish ENVS
-ENV DOTNET_ENVIRONMENT=${ENVIRONMENT}
+ENV DOTNET_ENVIRONMENT=docker
 
 WORKDIR /sln
 
@@ -53,5 +52,6 @@ RUN dotnet publish ./src/**/Presentation.csproj --no-restore -c Release -v quiet
 FROM ${BASE_IMAGE_REPO}/${BASE_IMAGE_RUNTIME}:${BASE_IMAGE_RUNTIME_TAG} AS run
 WORKDIR /
 EXPOSE 80
+EXPOSE 443
 COPY --from=publish /sln/app .
 ENTRYPOINT ["dotnet", "Presentation.dll"]
