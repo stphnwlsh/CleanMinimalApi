@@ -3,7 +3,7 @@ namespace CleanMinimalApi.Application.Common.Exceptions;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
-using CleanMinimalApi.Application.Common.Enums;
+using Enums;
 
 [Serializable]
 [ExcludeFromCodeCoverage]
