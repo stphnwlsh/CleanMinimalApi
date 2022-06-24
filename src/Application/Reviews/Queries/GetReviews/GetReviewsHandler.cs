@@ -2,7 +2,7 @@ namespace CleanMinimalApi.Application.Reviews.Queries.GetReviews;
 
 using System.Threading;
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Entities;
+using Entities;
 using MediatR;
 
 public class GetReviewsHandler : IRequestHandler<GetReviewsQuery, List<Review>>

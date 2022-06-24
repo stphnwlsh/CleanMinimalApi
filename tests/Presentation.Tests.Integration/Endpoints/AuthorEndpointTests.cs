@@ -1,9 +1,10 @@
-namespace CleanMinimalApi.Presentation.Tests.Integration;
+namespace CleanMinimalApi.Presentation.Tests.Integration.Endpoints;
 
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Entities;
+using Application.Authors.Entities;
+using CleanMinimalApi.Presentation.Tests.Integration.Extensions;
 using Shouldly;
 using Xunit;
 
@@ -12,7 +13,7 @@ public class AuthorEndpointTests
     private static readonly MinimalApiApplication Application = new();
 
     [Fact]
-    public async Task ListAuthors_ShouldReturn_Ok()
+    public async Task GetAuthors_ShouldReturn_Ok()
     {
         // Arrange
         using var client = Application.CreateClient();
@@ -51,7 +52,7 @@ public class AuthorEndpointTests
     }
 
     [Fact]
-    public async Task LookupAuthor_ShouldReturn_Ok()
+    public async Task GetAuthorById_ShouldReturn_Ok()
     {
         // Arrange
         using var client = Application.CreateClient();

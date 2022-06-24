@@ -1,11 +1,14 @@
-namespace CleanMinimalApi.Presentation.Tests.Integration;
+namespace CleanMinimalApi.Presentation.Tests.Integration.Endpoints;
 
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Entities;
+using Application.Authors.Entities;
+using Application.Movies.Entities;
+using Application.Reviews.Entities;
+using CleanMinimalApi.Presentation.Tests.Integration.Extensions;
 using Shouldly;
 using Xunit;
 
@@ -14,7 +17,7 @@ public class ReviewEndpointTests
     private static readonly MinimalApiApplication Application = new();
 
     [Fact]
-    public async Task CreateNote_ShouldReturn_Created()
+    public async Task CreateReview_ShouldReturn_Created()
     {
         // Arrange
         using var client = Application.CreateClient();
@@ -50,7 +53,7 @@ public class ReviewEndpointTests
     }
 
     [Fact]
-    public async Task Reviews_ShouldDelete_Review()
+    public async Task DeleteReview_ShouldDelete_Review()
     {
         // Arrange
         using var client = Application.CreateClient();
@@ -67,7 +70,7 @@ public class ReviewEndpointTests
     }
 
     [Fact]
-    public async Task ListReviews_ShouldReturn_Ok()
+    public async Task GetReviews_ShouldReturn_Ok()
     {
         // Arrange
         using var client = Application.CreateClient();
@@ -106,7 +109,7 @@ public class ReviewEndpointTests
     }
 
     [Fact]
-    public async Task LookupReview_ShouldReturn_Ok()
+    public async Task GetReviewById_ShouldReturn_Ok()
     {
         // Arrange
         using var client = Application.CreateClient();
@@ -141,7 +144,7 @@ public class ReviewEndpointTests
     }
 
     [Fact]
-    public async Task UpdateNote_ShouldReturn_NoContent()
+    public async Task UpdateReview_ShouldReturn_NoContent()
     {
         // Arrange
         using var client = Application.CreateClient();
@@ -160,8 +163,8 @@ public class ReviewEndpointTests
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
-        using var validateResponse = await client.GetAsync("/reviews");
-        var validateResult = (await reviewResponse.Content.ReadAsStringAsync()).Deserialize<List<Review>>()[0];
+        using var validateResponse = await client.GetAsync($"/reviews/{reviewResult.Id}");
+        var validateResult = (await validateResponse.Content.ReadAsStringAsync()).Deserialize<Review>();
 
         _ = validateResult.ShouldNotBeNull();
 

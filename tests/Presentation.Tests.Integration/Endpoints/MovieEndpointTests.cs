@@ -1,9 +1,10 @@
-namespace CleanMinimalApi.Presentation.Tests.Integration;
+namespace CleanMinimalApi.Presentation.Tests.Integration.Endpoints;
 
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Entities;
+using Application.Movies.Entities;
+using CleanMinimalApi.Presentation.Tests.Integration.Extensions;
 using Shouldly;
 using Xunit;
 
@@ -12,7 +13,7 @@ public class MovieEndpointTests
     private static readonly MinimalApiApplication Application = new();
 
     [Fact]
-    public async Task ListMovies_ShouldReturn_Ok()
+    public async Task GetMovies_ShouldReturn_Ok()
     {
         // Arrange
         using var client = Application.CreateClient();
@@ -52,7 +53,7 @@ public class MovieEndpointTests
     }
 
     [Fact]
-    public async Task LookupMovie_ShouldReturn_Ok()
+    public async Task GetMovieById_ShouldReturn_Ok()
     {
         // Arrange
         using var client = Application.CreateClient();

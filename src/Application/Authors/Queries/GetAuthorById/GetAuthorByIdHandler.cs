@@ -2,9 +2,9 @@ namespace CleanMinimalApi.Application.Authors.Queries.GetAuthorById;
 
 using System.Threading;
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Common.Enums;
-using CleanMinimalApi.Application.Common.Exceptions;
-using CleanMinimalApi.Application.Entities;
+using Entities;
+using Common.Enums;
+using Common.Exceptions;
 using MediatR;
 
 public class GetAuthorByIdHandler : IRequestHandler<GetAuthorByIdQuery, Author>

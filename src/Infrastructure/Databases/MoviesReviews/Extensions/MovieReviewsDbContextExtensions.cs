@@ -1,10 +1,12 @@
-namespace CleanMinimalApi.Infrastructure.Databases.InMemoryMoviesReviews;
+namespace CleanMinimalApi.Infrastructure.Databases.MoviesReviews.Extensions;
 
 using System;
 using Bogus;
-using CleanMinimalApi.Application.Entities;
+using Application.Authors.Entities;
+using Application.Movies.Entities;
+using Application.Reviews.Entities;
 
-internal static class MovieReviewsDbData
+internal static class MovieReviewsDbContextExtensions
 {
     public static MovieReviewsDbContext AddData(this MovieReviewsDbContext context)
     {

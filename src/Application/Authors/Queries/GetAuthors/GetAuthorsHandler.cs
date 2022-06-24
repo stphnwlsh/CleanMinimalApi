@@ -2,7 +2,7 @@ namespace CleanMinimalApi.Application.Authors.Queries.GetAuthors;
 
 using System.Threading;
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Entities;
+using Entities;
 using MediatR;
 
 public class GetAuthorsHandler : IRequestHandler<GetAuthorsQuery, List<Author>>

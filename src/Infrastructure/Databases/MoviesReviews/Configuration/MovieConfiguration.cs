@@ -1,6 +1,6 @@
 namespace CleanMinimalApi.Infrastructure.Databases.InMemoryMoviesReviews.Configuration;
 
-using CleanMinimalApi.Application.Entities;
+using Application.Movies.Entities;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 internal class MovieConfiguration : EntityConfiguration<Movie>

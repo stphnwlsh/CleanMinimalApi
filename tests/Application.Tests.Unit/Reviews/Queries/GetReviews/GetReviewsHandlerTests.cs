@@ -3,7 +3,7 @@ namespace CleanMinimalApi.Application.Tests.Unit.Reviews.Queries.GetReviews;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Reviews;
-using CleanMinimalApi.Application.Entities;
+using CleanMinimalApi.Application.Reviews.Entities;
 using CleanMinimalApi.Application.Reviews.Queries.GetReviews;
 using NSubstitute;
 using Shouldly;

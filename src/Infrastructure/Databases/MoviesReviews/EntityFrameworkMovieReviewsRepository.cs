@@ -1,20 +1,23 @@
-namespace CleanMinimalApi.Infrastructure.Databases.InMemoryMoviesReviews;
+namespace CleanMinimalApi.Infrastructure.Databases.MoviesReviews;
 
-using CleanMinimalApi.Application.Authors;
-using CleanMinimalApi.Application.Common.Enums;
-using CleanMinimalApi.Application.Common.Exceptions;
-using CleanMinimalApi.Application.Entities;
-using CleanMinimalApi.Application.Movies;
-using CleanMinimalApi.Application.Reviews;
+using Application.Authors;
+using Application.Authors.Entities;
+using Application.Common.Enums;
+using Application.Common.Exceptions;
+using Application.Movies;
+using Application.Movies.Entities;
+using Application.Reviews;
+using Application.Reviews.Entities;
+using Extensions;
 using Microsoft.EntityFrameworkCore;
 using SimpleDateTimeProvider;
 
-internal class MovieReviewsRepository : IAuthorsRepository, IMoviesRepository, IReviewsRepository
+internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMoviesRepository, IReviewsRepository
 {
     private readonly MovieReviewsDbContext context;
     private readonly IDateTimeProvider dateTimeProvider;
 
-    public MovieReviewsRepository(MovieReviewsDbContext context, IDateTimeProvider dateTimeProvider)
+    public EntityFrameworkMovieReviewsRepository(MovieReviewsDbContext context, IDateTimeProvider dateTimeProvider)
     {
         this.context = context;
         this.dateTimeProvider = dateTimeProvider;

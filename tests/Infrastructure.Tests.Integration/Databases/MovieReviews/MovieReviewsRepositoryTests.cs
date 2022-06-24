@@ -1,7 +1,7 @@
-namespace CleanMinimalApi.Infrastructure.Tests.Integration.Databases.InMemoryMovieReviews;
+namespace CleanMinimalApi.Infrastructure.Tests.Integration.Databases.MovieReviews;
 
-using CleanMinimalApi.Application.Reviews.Commands.CreateReview;
-using CleanMinimalApi.Application.Reviews.Commands.UpdateReview;
+using Application.Reviews.Commands.CreateReview;
+using Application.Reviews.Commands.UpdateReview;
 using Shouldly;
 using Xunit;
 

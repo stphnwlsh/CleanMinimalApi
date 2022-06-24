@@ -1,6 +1,6 @@
 namespace CleanMinimalApi.Application.Movies.GetMovies;
 
-using CleanMinimalApi.Application.Entities;
+using Entities;
 using MediatR;
 
 public class GetMoviesQuery : IRequest<List<Movie>>

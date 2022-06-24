@@ -1,7 +1,8 @@
-namespace CleanMinimalApi.Infrastructure.Tests.Integration.Databases.InMemoryMovieReviews;
+namespace CleanMinimalApi.Infrastructure.Tests.Integration.Databases.MovieReviews;
 
 using System;
-using Infrastructure.Databases.InMemoryMoviesReviews;
+using CleanMinimalApi.Infrastructure.Tests.Integration.Databases.MovieReviews.Extensions;
+using Infrastructure.Databases.MoviesReviews;
 using Microsoft.EntityFrameworkCore;
 using SimpleDateTimeProvider;
 using Xunit;
@@ -17,7 +18,7 @@ public class MovieReviewsDataFixture : IDisposable
 
     internal MovieReviewsDbContext Context { get; set; }
     internal IDateTimeProvider DateTimeProvider { get; set; }
-    internal MovieReviewsRepository Repository { get; set; }
+    internal EntityFrameworkMovieReviewsRepository Repository { get; set; }
 
     public MovieReviewsDataFixture()
     {
@@ -32,7 +33,7 @@ public class MovieReviewsDataFixture : IDisposable
             UtcNow = new DateTime(1999, 12, 31, 23, 51, 01)
         };
 
-        this.Repository = new MovieReviewsRepository(this.Context, this.DateTimeProvider);
+        this.Repository = new EntityFrameworkMovieReviewsRepository(this.Context, this.DateTimeProvider);
 
         if (this.Context != null)
         {

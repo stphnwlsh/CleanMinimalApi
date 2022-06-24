@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using Application.Authors;
 using Application.Movies;
 using Application.Reviews;
-using Databases.InMemoryMoviesReviews;
+using Databases.MoviesReviews;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleDateTimeProvider;
@@ -17,10 +17,10 @@ public static class DependencyInjection
         _ = services.AddEntityFrameworkInMemoryDatabase();
         _ = services.AddDbContext<MovieReviewsDbContext>(options => options.UseInMemoryDatabase($"Movies-{Guid.NewGuid()}"), ServiceLifetime.Singleton);
 
-        _ = services.AddSingleton<MovieReviewsRepository>();
-        _ = services.AddSingleton<IAuthorsRepository>(p => p.GetRequiredService<MovieReviewsRepository>());
-        _ = services.AddSingleton<IMoviesRepository>(x => x.GetRequiredService<MovieReviewsRepository>());
-        _ = services.AddSingleton<IReviewsRepository>(x => x.GetRequiredService<MovieReviewsRepository>());
+        _ = services.AddSingleton<EntityFrameworkMovieReviewsRepository>();
+        _ = services.AddSingleton<IAuthorsRepository>(p => p.GetRequiredService<EntityFrameworkMovieReviewsRepository>());
+        _ = services.AddSingleton<IMoviesRepository>(x => x.GetRequiredService<EntityFrameworkMovieReviewsRepository>());
+        _ = services.AddSingleton<IReviewsRepository>(x => x.GetRequiredService<EntityFrameworkMovieReviewsRepository>());
 
         _ = services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
 

@@ -1,7 +1,9 @@
-namespace CleanMinimalApi.Infrastructure.Databases.InMemoryMoviesReviews;
+namespace CleanMinimalApi.Infrastructure.Databases.MoviesReviews;
 
 using System.Reflection;
-using CleanMinimalApi.Application.Entities;
+using Application.Authors.Entities;
+using Application.Movies.Entities;
+using Application.Reviews.Entities;
 using Microsoft.EntityFrameworkCore;
 
 internal class MovieReviewsDbContext : DbContext

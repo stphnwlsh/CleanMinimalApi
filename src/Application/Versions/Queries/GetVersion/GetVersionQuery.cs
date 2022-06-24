@@ -1,8 +1,8 @@
 namespace CleanMinimalApi.Application.Versions.Queries.GetVersion;
 
-using CleanMinimalApi.Application.Entities;
+using Entities;
 using MediatR;
 
-public class GetVersionQuery : IRequest<ApplicationVersion>
+public class GetVersionQuery : IRequest<Version>
 {
 }

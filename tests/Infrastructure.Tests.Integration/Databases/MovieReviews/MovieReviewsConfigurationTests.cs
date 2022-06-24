@@ -1,6 +1,8 @@
-namespace CleanMinimalApi.Infrastructure.Tests.Integration.Databases.InMemoryMovieReviews;
+namespace CleanMinimalApi.Infrastructure.Tests.Integration.Databases.MovieReviews;
 
-using CleanMinimalApi.Application.Entities;
+using Application.Authors.Entities;
+using Application.Movies.Entities;
+using Application.Reviews.Entities;
 using Microsoft.EntityFrameworkCore;
 using Shouldly;
 using Xunit;

@@ -1,5 +1,7 @@
 using System.Net.Mime;
-using CleanMinimalApi.Application.Entities;
+using CleanMinimalApi.Application.Authors.Entities;
+using CleanMinimalApi.Application.Movies.Entities;
+using CleanMinimalApi.Application.Reviews.Entities;
 using CleanMinimalApi.Presentation.Errors;
 using CleanMinimalApi.Presentation.Extensions;
 using MediatR;
@@ -10,13 +12,17 @@ using Movies = CleanMinimalApi.Application.Movies;
 using Reviews = CleanMinimalApi.Application.Reviews;
 using Versions = CleanMinimalApi.Application.Versions;
 
-var app = WebApplication.CreateBuilder(args).ConfigureBuilder().Build().ConfigureApp();
+var app = WebApplication
+    .CreateBuilder(args)
+    .ConfigureBuilder()
+    .Build()
+    .ConfigureApp();
 
 #region Versions
 
 _ = app.MapGet("/version", async (IMediator mediator) => Results.Ok(await mediator.Send(new Versions.Queries.GetVersion.GetVersionQuery())))
     .WithGroupName("Version")
-    .Produces<ApplicationVersion>(StatusCodes.Status200OK, contentType: MediaTypeNames.Application.Json)
+    .Produces<Version>(StatusCodes.Status200OK, contentType: MediaTypeNames.Application.Json)
     .Produces<ApiError>(StatusCodes.Status500InternalServerError, contentType: MediaTypeNames.Application.Json);
 
 #endregion Versions

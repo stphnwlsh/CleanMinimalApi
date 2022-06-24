@@ -1,6 +1,6 @@
 namespace CleanMinimalApi.Application.Authors.Queries.GetAuthorById;
 
-using CleanMinimalApi.Application.Entities;
+using Entities;
 using MediatR;
 
 public class GetAuthorByIdQuery : IRequest<Author>

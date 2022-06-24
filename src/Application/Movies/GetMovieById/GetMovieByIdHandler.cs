@@ -2,9 +2,9 @@ namespace CleanMinimalApi.Application.Movies.GetMovieById;
 
 using System.Threading;
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Common.Enums;
-using CleanMinimalApi.Application.Common.Exceptions;
-using CleanMinimalApi.Application.Entities;
+using Common.Enums;
+using Common.Exceptions;
+using Entities;
 using MediatR;
 
 public class GetMovieByIdHandler : IRequestHandler<GetMovieByIdQuery, Movie>

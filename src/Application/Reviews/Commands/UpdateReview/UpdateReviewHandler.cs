@@ -2,8 +2,8 @@ namespace CleanMinimalApi.Application.Reviews.Commands.UpdateReview;
 
 using System.Threading;
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Common.Enums;
-using CleanMinimalApi.Application.Common.Exceptions;
+using Common.Enums;
+using Common.Exceptions;
 using MediatR;
 
 public class UpdateReviewHandler : IRequestHandler<UpdateReviewCommand, bool>

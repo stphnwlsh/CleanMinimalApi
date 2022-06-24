@@ -2,8 +2,8 @@ namespace CleanMinimalApi.Application.Tests.Unit.Reviews.Queries.GetReviewById;
 
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Reviews.Entities;
 using CleanMinimalApi.Application.Common.Exceptions;
-using CleanMinimalApi.Application.Entities;
 using CleanMinimalApi.Application.Reviews;
 using CleanMinimalApi.Application.Reviews.Queries.GetReviewById;
 using NSubstitute;

@@ -1,7 +1,9 @@
-namespace CleanMinimalApi.Presentation.Tests.Integration;
+namespace CleanMinimalApi.Presentation.Tests.Integration.Endpoints;
+
 using System.Net;
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Entities;
+using CleanMinimalApi.Application.Versions.Entities;
+using CleanMinimalApi.Presentation.Tests.Integration.Extensions;
 using Shouldly;
 using Xunit;
 
@@ -10,14 +12,14 @@ public class VersionEndpointTests
     private static readonly MinimalApiApplication Application = new();
 
     [Fact]
-    public async Task Version_ShouldReturn_Ok()
+    public async Task GetVersion_ShouldReturn_Ok()
     {
         // Arrange
         using var client = Application.CreateClient();
 
         // Act
         using var response = await client.GetAsync("/version");
-        var result = (await response.Content.ReadAsStringAsync()).Deserialize<ApplicationVersion>();
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Version>();
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);

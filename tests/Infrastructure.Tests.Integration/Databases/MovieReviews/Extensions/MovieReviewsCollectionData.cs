@@ -1,10 +1,12 @@
-namespace CleanMinimalApi.Infrastructure.Tests.Integration.Databases.InMemoryMovieReviews;
+namespace CleanMinimalApi.Infrastructure.Tests.Integration.Databases.MovieReviews.Extensions;
 
 using System;
-using CleanMinimalApi.Application.Entities;
-using Infrastructure.Databases.InMemoryMoviesReviews;
+using Application.Authors.Entities;
+using Application.Movies.Entities;
+using Application.Reviews.Entities;
+using Infrastructure.Databases.MoviesReviews;
 
-internal static class MovieReviewsCollectionData
+internal static class MovieReviewsDbContextExtensions
 {
     public static MovieReviewsDbContext AddTestData(this MovieReviewsDbContext context)
     {

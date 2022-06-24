@@ -1,7 +1,7 @@
 namespace CleanMinimalApi.Application.Movies;
 
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Entities;
+using Entities;
 
 public interface IMoviesRepository
 {

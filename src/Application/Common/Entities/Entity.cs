@@ -1,4 +1,4 @@
-namespace CleanMinimalApi.Application.Entities;
+namespace CleanMinimalApi.Application.Common.Entities;
 
 public abstract class Entity
 {

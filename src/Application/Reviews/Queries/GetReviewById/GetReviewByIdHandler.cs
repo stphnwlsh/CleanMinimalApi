@@ -2,9 +2,9 @@ namespace CleanMinimalApi.Application.Reviews.Queries.GetReviewById;
 
 using System.Threading;
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Common.Enums;
-using CleanMinimalApi.Application.Common.Exceptions;
-using CleanMinimalApi.Application.Entities;
+using Common.Enums;
+using Common.Exceptions;
+using Entities;
 using MediatR;
 
 public class GetReviewByIdHandler : IRequestHandler<GetReviewByIdQuery, Review>

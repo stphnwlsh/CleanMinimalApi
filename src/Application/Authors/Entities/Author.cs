@@ -1,6 +1,8 @@
-namespace CleanMinimalApi.Application.Entities;
+namespace CleanMinimalApi.Application.Authors.Entities;
 
 using System.ComponentModel.DataAnnotations.Schema;
+using CleanMinimalApi.Application.Common.Entities;
+using CleanMinimalApi.Application.Reviews.Entities;
 
 public class Author : Entity
 {

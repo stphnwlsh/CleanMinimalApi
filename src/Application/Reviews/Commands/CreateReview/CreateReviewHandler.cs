@@ -2,11 +2,11 @@ namespace CleanMinimalApi.Application.Reviews.Commands.CreateReview;
 
 using System.Threading;
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Authors;
-using CleanMinimalApi.Application.Common.Enums;
-using CleanMinimalApi.Application.Common.Exceptions;
-using CleanMinimalApi.Application.Entities;
-using CleanMinimalApi.Application.Movies;
+using Authors;
+using Common.Enums;
+using Common.Exceptions;
+using Movies;
+using Entities;
 using MediatR;
 
 public class CreateReviewHandler : IRequestHandler<CreateReviewCommand, Review>
