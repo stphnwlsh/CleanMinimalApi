@@ -12,11 +12,12 @@ using Movies = CleanMinimalApi.Application.Movies;
 using Reviews = CleanMinimalApi.Application.Reviews;
 using Versions = CleanMinimalApi.Application.Versions;
 
-var app = WebApplication
-    .CreateBuilder(args)
-    .ConfigureBuilder()
-    .Build()
-    .ConfigureApp();
+var builder = WebApplication
+                .CreateBuilder(args)
+                .ConfigureBuilder();
+var app = builder
+            .Build()
+            .ConfigureApplication();
 
 #region Versions
 

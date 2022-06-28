@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 
 [ExcludeFromCodeCoverage]
-public static class GlobalExceptionHandlerExtensions
+public static class ApplicationBuilderExtensions
 {
     public static IApplicationBuilder UseGlobalExceptionHandler(this IApplicationBuilder app)
     {
