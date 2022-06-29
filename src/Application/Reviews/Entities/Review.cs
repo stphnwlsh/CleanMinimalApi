@@ -8,7 +8,7 @@ public class Review : Entity
 {
     public int Stars { get; set; }
 
-    public Movie ReviewedMovie { get; init; }
+    public Movie ReviewedMovie { get; set; }
 
-    public Author ReviewAuthor { get; init; }
+    public Author ReviewAuthor { get; set; }
 }
