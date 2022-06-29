@@ -1,7 +1,4 @@
 using System.Net.Mime;
-using CleanMinimalApi.Application.Authors.Entities;
-using CleanMinimalApi.Application.Movies.Entities;
-using CleanMinimalApi.Application.Reviews.Entities;
 using CleanMinimalApi.Presentation.Errors;
 using CleanMinimalApi.Presentation.Extensions;
 using MediatR;
@@ -32,12 +29,12 @@ _ = app.MapGet("/version", async (IMediator mediator) => Results.Ok(await mediat
 
 _ = app.MapGet("/authors", async (IMediator mediator) => Results.Ok(await mediator.Send(new Authors.Queries.GetAuthors.GetAuthorsQuery())))
     .WithGroupName("Authors")
-    .Produces<List<Author>>(StatusCodes.Status200OK, contentType: MediaTypeNames.Application.Json)
+    .Produces<List<Authors.Entities.Author>>(StatusCodes.Status200OK, contentType: MediaTypeNames.Application.Json)
     .Produces<ApiError>(StatusCodes.Status500InternalServerError, contentType: MediaTypeNames.Application.Json);
 
 _ = app.MapGet("/authors/{id}", async (IMediator mediator, Guid id) => Results.Ok(await mediator.Send(new Authors.Queries.GetAuthorById.GetAuthorByIdQuery { Id = id })))
     .WithGroupName("Authors")
-    .Produces<Author>(StatusCodes.Status200OK, contentType: MediaTypeNames.Application.Json)
+    .Produces<Authors.Entities.Author>(StatusCodes.Status200OK, contentType: MediaTypeNames.Application.Json)
     .Produces<ApiError>(StatusCodes.Status400BadRequest, contentType: MediaTypeNames.Application.Json)
     .Produces<ApiError>(StatusCodes.Status404NotFound, contentType: MediaTypeNames.Application.Json)
     .Produces<ApiError>(StatusCodes.Status500InternalServerError, contentType: MediaTypeNames.Application.Json);
@@ -48,12 +45,12 @@ _ = app.MapGet("/authors/{id}", async (IMediator mediator, Guid id) => Results.O
 
 _ = app.MapGet("/movies", async (IMediator mediator) => Results.Ok(await mediator.Send(new Movies.GetMovies.GetMoviesQuery())))
     .WithGroupName("Movies")
-    .Produces<List<Movie>>(StatusCodes.Status200OK, contentType: MediaTypeNames.Application.Json)
+    .Produces<List<Movies.Entities.Movie>>(StatusCodes.Status200OK, contentType: MediaTypeNames.Application.Json)
     .Produces<ApiError>(StatusCodes.Status500InternalServerError, contentType: MediaTypeNames.Application.Json);
 
 _ = app.MapGet("/movies/{id}", async (IMediator mediator, Guid id) => Results.Ok(await mediator.Send(new Movies.GetMovieById.GetMovieByIdQuery { Id = id })))
     .WithGroupName("Movies")
-    .Produces<Movie>(StatusCodes.Status200OK, contentType: MediaTypeNames.Application.Json)
+    .Produces<Movies.Entities.Movie>(StatusCodes.Status200OK, contentType: MediaTypeNames.Application.Json)
     .Produces<ApiError>(StatusCodes.Status400BadRequest, contentType: MediaTypeNames.Application.Json)
     .Produces<ApiError>(StatusCodes.Status404NotFound, contentType: MediaTypeNames.Application.Json)
     .Produces<ApiError>(StatusCodes.Status500InternalServerError, contentType: MediaTypeNames.Application.Json);
@@ -64,7 +61,7 @@ _ = app.MapGet("/movies/{id}", async (IMediator mediator, Guid id) => Results.Ok
 
 _ = app.MapPost("/reviews", async (IMediator mediator, HttpRequest httpRequest, Reviews.Commands.CreateReview.CreateReviewCommand command) => Results.Created(UriHelper.GetEncodedUrl(httpRequest), await mediator.Send(command)))
     .WithGroupName("Reviews")
-    .Produces<Review>(StatusCodes.Status201Created, contentType: MediaTypeNames.Application.Json)
+    .Produces<Reviews.Entities.Review>(StatusCodes.Status201Created, contentType: MediaTypeNames.Application.Json)
     .Produces<ApiError>(StatusCodes.Status400BadRequest, contentType: MediaTypeNames.Application.Json)
     .Produces<ApiError>(StatusCodes.Status500InternalServerError, contentType: MediaTypeNames.Application.Json);
 
@@ -82,12 +79,12 @@ _ = app.MapDelete("/reviews/{id}", async (IMediator mediator, Guid id) =>
 
 _ = app.MapGet("/reviews", async (IMediator mediator) => Results.Ok(await mediator.Send(new Reviews.Queries.GetReviews.GetReviewsQuery())))
     .WithGroupName("Reviews")
-    .Produces<List<Review>>(StatusCodes.Status200OK, contentType: MediaTypeNames.Application.Json)
+    .Produces<List<Reviews.Entities.Review>>(StatusCodes.Status200OK, contentType: MediaTypeNames.Application.Json)
     .Produces<ApiError>(StatusCodes.Status500InternalServerError, contentType: MediaTypeNames.Application.Json);
 
 _ = app.MapGet("/reviews/{id}", async (IMediator mediator, Guid id) => Results.Ok(await mediator.Send(new Reviews.Queries.GetReviewById.GetReviewByIdQuery { Id = id })))
     .WithGroupName("Reviews")
-    .Produces<Review>(StatusCodes.Status200OK, contentType: MediaTypeNames.Application.Json)
+    .Produces<Reviews.Entities.Review>(StatusCodes.Status200OK, contentType: MediaTypeNames.Application.Json)
     .Produces<ApiError>(StatusCodes.Status400BadRequest, contentType: MediaTypeNames.Application.Json)
     .Produces<ApiError>(StatusCodes.Status404NotFound, contentType: MediaTypeNames.Application.Json)
     .Produces<ApiError>(StatusCodes.Status500InternalServerError, contentType: MediaTypeNames.Application.Json);
