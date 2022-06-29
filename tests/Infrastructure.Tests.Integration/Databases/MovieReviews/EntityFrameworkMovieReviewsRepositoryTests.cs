@@ -6,11 +6,11 @@ using Shouldly;
 using Xunit;
 
 [Collection("MovieReviews")]
-public class MovieReviewsRepositoryTests
+public class EntityFrameworkMovieReviewsRepositoryTests
 {
     private readonly MovieReviewsDataFixture fixture;
 
-    public MovieReviewsRepositoryTests(MovieReviewsDataFixture fixture)
+    public EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture fixture)
     {
         this.fixture = fixture;
     }
@@ -200,8 +200,8 @@ public class MovieReviewsRepositoryTests
         // Assert
         _ = result.ShouldNotBeNull();
         result.Id.ShouldNotBe(Guid.Empty);
-        result.ReviewAuthorId.ShouldBe(review.AuthorId);
-        result.ReviewedMovieId.ShouldBe(review.MovieId);
+        result.ReviewAuthor.Id.ShouldBe(review.AuthorId);
+        result.ReviewedMovie.Id.ShouldBe(review.MovieId);
         result.Stars.ShouldBe(review.Stars);
         result.DateCreated.ShouldBe(this.fixture.DateTimeProvider.UtcNow);
         result.DateModified.ShouldBe(this.fixture.DateTimeProvider.UtcNow);
@@ -273,14 +273,12 @@ public class MovieReviewsRepositoryTests
         _ = result.ShouldNotBeNull();
         result.Id.ShouldNotBe(Guid.Empty);
         result.Stars.ShouldBe(5);
-        result.ReviewAuthorId.ShouldNotBe(Guid.Empty);
         _ = result.ReviewAuthor.ShouldNotBeNull();
-        result.ReviewAuthor.Id.ShouldBe(result.ReviewAuthorId);
+        result.ReviewAuthor.Id.ShouldNotBe(Guid.Empty);
         result.ReviewAuthor.FirstName.ShouldBe("Two");
         result.ReviewAuthor.LastName.ShouldBe("Two");
-        result.ReviewedMovieId.ShouldNotBe(Guid.Empty);
         _ = result.ReviewedMovie.ShouldNotBeNull();
-        result.ReviewedMovie.Id.ShouldBe(result.ReviewedMovieId);
+        result.ReviewedMovie.Id.ShouldNotBe(Guid.Empty);
         result.ReviewedMovie.Title.ShouldBe("Two");
     }
 

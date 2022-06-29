@@ -1,6 +1,8 @@
 namespace CleanMinimalApi.Infrastructure.Tests.Integration.Databases.MovieReviews;
 
 using System;
+using AutoMapper;
+using CleanMinimalApi.Infrastructure.Databases.MoviesReviews.Mapping;
 using CleanMinimalApi.Infrastructure.Tests.Integration.Databases.MovieReviews.Extensions;
 using Infrastructure.Databases.MoviesReviews;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +12,9 @@ using Xunit;
 [CollectionDefinition("MovieReviews")]
 public class MovieReviewsCollectionFixture : ICollectionFixture<MovieReviewsDataFixture>
 {
+    // This class has no code, and is never created. Its purpose is simply
+    // to be the place to apply [CollectionDefinition] and all the
+    // ICollectionFixture<> interfaces.
 }
 
 public class MovieReviewsDataFixture : IDisposable
@@ -18,6 +23,7 @@ public class MovieReviewsDataFixture : IDisposable
 
     internal MovieReviewsDbContext Context { get; set; }
     internal IDateTimeProvider DateTimeProvider { get; set; }
+    internal IMapper Mapper { get; set; }
     internal EntityFrameworkMovieReviewsRepository Repository { get; set; }
 
     public MovieReviewsDataFixture()
@@ -33,7 +39,18 @@ public class MovieReviewsDataFixture : IDisposable
             UtcNow = new DateTime(1999, 12, 31, 23, 51, 01)
         };
 
-        this.Repository = new EntityFrameworkMovieReviewsRepository(this.Context, this.DateTimeProvider);
+        this.Mapper = new MapperConfiguration(cfg =>
+            cfg
+                .AddProfiles(new List<Profile>()
+                {
+                    new AuthorMappingProfile(),
+                    new EntitiyMappingProfile(),
+                    new MovieMappingProfile(),
+                    new ReviewMappingProfile()
+                }))
+                .CreateMapper();
+
+        this.Repository = new EntityFrameworkMovieReviewsRepository(this.Context, this.DateTimeProvider, this.Mapper);
 
         if (this.Context != null)
         {
