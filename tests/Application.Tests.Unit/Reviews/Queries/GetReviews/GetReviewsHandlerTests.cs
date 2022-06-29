@@ -24,9 +24,7 @@ public class GetReviewsHandlerTests
         _ = context.GetReviews(token).Returns(new List<Review> {
             new Review{
                 Id = Guid.Empty,
-                Stars = 5,
-                ReviewAuthorId = Guid.Empty,
-                ReviewedMovieId = Guid.Empty
+                Stars = 5
             }
         });
 
@@ -40,7 +38,5 @@ public class GetReviewsHandlerTests
         result.Count.ShouldBe(1);
         result[0].Id.ShouldBe(Guid.Empty);
         result[0].Stars.ShouldBe(5);
-        result[0].ReviewAuthorId.ShouldBe(Guid.Empty);
-        result[0].ReviewedMovieId.ShouldBe(Guid.Empty);
     }
 }

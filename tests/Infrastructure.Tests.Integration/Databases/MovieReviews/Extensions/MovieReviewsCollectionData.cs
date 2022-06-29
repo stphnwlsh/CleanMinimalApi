@@ -1,9 +1,7 @@
 namespace CleanMinimalApi.Infrastructure.Tests.Integration.Databases.MovieReviews.Extensions;
 
 using System;
-using Application.Authors.Entities;
-using Application.Movies.Entities;
-using Application.Reviews.Entities;
+using CleanMinimalApi.Infrastructure.Databases.MoviesReviews.Models;
 using Infrastructure.Databases.MoviesReviews;
 
 internal static class MovieReviewsDbContextExtensions

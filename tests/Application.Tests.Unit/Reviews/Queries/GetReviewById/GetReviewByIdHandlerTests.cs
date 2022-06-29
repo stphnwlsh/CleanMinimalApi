@@ -25,9 +25,7 @@ public class GetReviewByIdHandlerTests
         _ = context.GetReviewById(Arg.Any<Guid>(), token).Returns(new Review
         {
             Id = Guid.Empty,
-            Stars = 5,
-            ReviewAuthorId = Guid.Empty,
-            ReviewedMovieId = Guid.Empty
+            Stars = 5
         });
 
         // Act
@@ -39,8 +37,6 @@ public class GetReviewByIdHandlerTests
         _ = result.ShouldNotBeNull();
         result.Id.ShouldBe(Guid.Empty);
         result.Stars.ShouldBe(5);
-        result.ReviewAuthorId.ShouldBe(Guid.Empty);
-        result.ReviewedMovieId.ShouldBe(Guid.Empty);
     }
 
 

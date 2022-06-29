@@ -17,6 +17,8 @@ public static class DependencyInjection
         _ = services.AddEntityFrameworkInMemoryDatabase();
         _ = services.AddDbContext<MovieReviewsDbContext>(options => options.UseInMemoryDatabase($"Movies-{Guid.NewGuid()}"), ServiceLifetime.Singleton);
 
+        _ = services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
         _ = services.AddSingleton<EntityFrameworkMovieReviewsRepository>();
         _ = services.AddSingleton<IAuthorsRepository>(p => p.GetRequiredService<EntityFrameworkMovieReviewsRepository>());
         _ = services.AddSingleton<IMoviesRepository>(x => x.GetRequiredService<EntityFrameworkMovieReviewsRepository>());

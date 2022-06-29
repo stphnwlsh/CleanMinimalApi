@@ -170,8 +170,6 @@ public class ReviewEndpointTests
 
         validateResult.Id.ShouldBe(reviewResult.Id);
         validateResult.Stars.ShouldBe(5);
-        validateResult.ReviewAuthorId.ShouldBe(authorResult.Id);
-        validateResult.ReviewedMovieId.ShouldBe(movieResult.Id);
 
         _ = validateResult.ReviewAuthor.ShouldNotBeNull();
         validateResult.ReviewAuthor.Id.ShouldBe(authorResult.Id);
