@@ -1,8 +1,8 @@
 namespace CleanMinimalApi.Infrastructure.Databases.MoviesReviews.Configuration;
 
-using CleanMinimalApi.Infrastructure.Databases.MoviesReviews.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Models;
 
 internal abstract class EntityConfiguration<T> : IEntityTypeConfiguration<T>
         where T : Entity

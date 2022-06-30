@@ -1,4 +1,4 @@
-namespace CleanMinimalApi.Application.Movies.GetMovieById;
+namespace CleanMinimalApi.Application.Movies.Queries.GetMovieById;
 
 using System.Threading;
 using System.Threading.Tasks;

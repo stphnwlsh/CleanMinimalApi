@@ -2,7 +2,7 @@ namespace CleanMinimalApi.Infrastructure.Databases.MoviesReviews.Models;
 
 using System.ComponentModel.DataAnnotations.Schema;
 
-public class Review : Entity
+internal record Review : Entity
 {
     public int Stars { get; set; }
 

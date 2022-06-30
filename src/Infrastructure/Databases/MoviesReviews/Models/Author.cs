@@ -2,7 +2,7 @@ namespace CleanMinimalApi.Infrastructure.Databases.MoviesReviews.Models;
 
 using System.ComponentModel.DataAnnotations.Schema;
 
-public class Author : Entity
+internal record Author : Entity
 {
     public string FirstName { get; init; }
 

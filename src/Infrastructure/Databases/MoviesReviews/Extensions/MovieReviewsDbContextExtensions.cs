@@ -2,7 +2,7 @@ namespace CleanMinimalApi.Infrastructure.Databases.MoviesReviews.Extensions;
 
 using System;
 using Bogus;
-using CleanMinimalApi.Infrastructure.Databases.MoviesReviews.Models;
+using Models;
 
 internal static class MovieReviewsDbContextExtensions
 {
