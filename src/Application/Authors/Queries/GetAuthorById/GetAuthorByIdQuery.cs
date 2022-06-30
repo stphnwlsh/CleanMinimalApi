@@ -5,5 +5,5 @@ using MediatR;
 
 public class GetAuthorByIdQuery : IRequest<Author>
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; init; }
 }

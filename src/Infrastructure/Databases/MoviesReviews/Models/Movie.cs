@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 public class Movie : Entity
 {
-    public string Title { get; set; }
+    public string Title { get; init; }
 
     [InverseProperty("ReviewedMovie")]
     public ICollection<Review> Reviews { get; init; }

@@ -3,6 +3,7 @@ using CleanMinimalApi.Presentation.Errors;
 using CleanMinimalApi.Presentation.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Authors = CleanMinimalApi.Application.Authors;
 using Movies = CleanMinimalApi.Application.Movies;
@@ -27,12 +28,12 @@ _ = app.MapGet("/version", async (IMediator mediator) => Results.Ok(await mediat
 
 #region Authors
 
-_ = app.MapGet("/authors", async (IMediator mediator) => Results.Ok(await mediator.Send(new Authors.Queries.GetAuthors.GetAuthorsQuery())))
+_ = app.MapGet("/authors", async ([FromServices] IMediator mediator) => Results.Ok(await mediator.Send(new Authors.Queries.GetAuthors.GetAuthorsQuery())))
     .WithGroupName("Authors")
     .Produces<List<Authors.Entities.Author>>(StatusCodes.Status200OK, contentType: MediaTypeNames.Application.Json)
     .Produces<ApiError>(StatusCodes.Status500InternalServerError, contentType: MediaTypeNames.Application.Json);
 
-_ = app.MapGet("/authors/{id}", async (IMediator mediator, Guid id) => Results.Ok(await mediator.Send(new Authors.Queries.GetAuthorById.GetAuthorByIdQuery { Id = id })))
+_ = app.MapGet("/authors/{id:guid}", async ([FromServices] IMediator mediator, Guid id) => Results.Ok(await mediator.Send(new Authors.Queries.GetAuthorById.GetAuthorByIdQuery { Id = id })))
     .WithGroupName("Authors")
     .Produces<Authors.Entities.Author>(StatusCodes.Status200OK, contentType: MediaTypeNames.Application.Json)
     .Produces<ApiError>(StatusCodes.Status400BadRequest, contentType: MediaTypeNames.Application.Json)
