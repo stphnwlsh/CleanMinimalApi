@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Application.Authors.Entities;
 using Application.Movies.Entities;
 using Application.Reviews.Entities;
-using CleanMinimalApi.Presentation.Tests.Integration.Extensions;
+using Extensions;
 using Shouldly;
 using Xunit;
 
@@ -22,15 +22,15 @@ public class ReviewEndpointTests
         // Arrange
         using var client = Application.CreateClient();
 
-        using var authorResponse = await client.GetAsync("/authors");
+        using var authorResponse = await client.GetAsync("/api/authors");
         var authorResult = (await authorResponse.Content.ReadAsStringAsync()).Deserialize<List<Author>>()[0];
-        using var movieResponse = await client.GetAsync("/movies");
+        using var movieResponse = await client.GetAsync("/api/movies");
         var movieResult = (await movieResponse.Content.ReadAsStringAsync()).Deserialize<List<Movie>>()[0];
         var json = (new { Stars = 5, AuthorId = authorResult.Id, MovieId = movieResult.Id }).Serialize();
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
         // Act
-        using var response = await client.PostAsync("/reviews", content);
+        using var response = await client.PostAsync("/api/reviews", content);
         var result = (await response.Content.ReadAsStringAsync()).Deserialize<Review>();
 
         // Assert
@@ -57,16 +57,16 @@ public class ReviewEndpointTests
     {
         // Arrange
         using var client = Application.CreateClient();
-        using var reviewResponse = await client.GetAsync("/reviews");
+        using var reviewResponse = await client.GetAsync("/api/reviews");
         var reviewResult = (await reviewResponse.Content.ReadAsStringAsync()).Deserialize<List<Review>>()[0];
 
         // Act
-        using var response = await client.DeleteAsync($"/reviews/{reviewResult.Id}");
+        using var response = await client.DeleteAsync($"/api/reviews/{reviewResult.Id}");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
-        (await client.GetAsync($"/reviews/{reviewResult.Id}")).StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        (await client.GetAsync($"/api/reviews/{reviewResult.Id}")).StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     [Fact]
@@ -76,7 +76,7 @@ public class ReviewEndpointTests
         using var client = Application.CreateClient();
 
         // Act
-        using var response = await client.GetAsync("/reviews");
+        using var response = await client.GetAsync("/api/reviews");
         var result = (await response.Content.ReadAsStringAsync()).Deserialize<List<Review>>();
 
         // Assert
@@ -113,11 +113,11 @@ public class ReviewEndpointTests
     {
         // Arrange
         using var client = Application.CreateClient();
-        using var reviewResponse = await client.GetAsync("/reviews");
+        using var reviewResponse = await client.GetAsync("/api/reviews");
         var reviewResult = (await reviewResponse.Content.ReadAsStringAsync()).Deserialize<List<Review>>()[0];
 
         // Act
-        using var response = await client.GetAsync($"/reviews/{reviewResult.Id}");
+        using var response = await client.GetAsync($"/api/reviews/{reviewResult.Id}");
         var result = (await response.Content.ReadAsStringAsync()).Deserialize<Review>();
 
         // Assert
@@ -148,22 +148,22 @@ public class ReviewEndpointTests
     {
         // Arrange
         using var client = Application.CreateClient();
-        using var authorResponse = await client.GetAsync("/authors");
+        using var authorResponse = await client.GetAsync("/api/authors");
         var authorResult = (await authorResponse.Content.ReadAsStringAsync()).Deserialize<List<Author>>()[0];
-        using var movieResponse = await client.GetAsync("/movies");
+        using var movieResponse = await client.GetAsync("/api/movies");
         var movieResult = (await movieResponse.Content.ReadAsStringAsync()).Deserialize<List<Movie>>()[0];
-        using var reviewResponse = await client.GetAsync("/reviews");
+        using var reviewResponse = await client.GetAsync("/api/reviews");
         var reviewResult = (await reviewResponse.Content.ReadAsStringAsync()).Deserialize<List<Review>>()[0];
         var json = (new { Stars = 5, AuthorId = authorResult.Id, MovieId = movieResult.Id }).Serialize();
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
         // Act
-        using var response = await client.PutAsync($"/reviews/{reviewResult.Id}", content);
+        using var response = await client.PutAsync($"/api/reviews/{reviewResult.Id}", content);
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
-        using var validateResponse = await client.GetAsync($"/reviews/{reviewResult.Id}");
+        using var validateResponse = await client.GetAsync($"/api/reviews/{reviewResult.Id}");
         var validateResult = (await validateResponse.Content.ReadAsStringAsync()).Deserialize<Review>();
 
         _ = validateResult.ShouldNotBeNull();

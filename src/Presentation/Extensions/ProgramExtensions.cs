@@ -5,13 +5,13 @@ using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Application;
 using Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using Application;
 
 [ExcludeFromCodeCoverage]
 public static class ProgramExtensions
@@ -51,24 +51,30 @@ public static class ProgramExtensions
         _ = builder.Services.AddEndpointsApiExplorer();
         _ = builder.Services.AddSwaggerGen(options =>
         {
-            options.SwaggerDoc("v1", new OpenApiInfo
-            {
-                Version = "V1",
-                Title = $"CleanMinimalApi API - {ti.ToTitleCase(builder.Environment.EnvironmentName)} ",
-                Description = "An example to share an implementation of Minimal API in .NET 6.",
-                Contact = new OpenApiContact
+            options.SwaggerDoc("v1",
+                new OpenApiInfo
                 {
-                    Name = "CleanMinimalApi API",
-                    Email = "cleanminimalapi@stphnwlsh.dev",
-                    Url = new Uri("https://github.com/stphnwlsh/cleanminimalapi")
-                },
-                License = new OpenApiLicense()
-                {
-                    Name = "CleanMinimalApi API - License - MIT",
-                    Url = new Uri("https://opensource.org/licenses/MIT")
-                }
-            });
-            options.TagActionsBy(api => new[] { api.GroupName });
+                    Version = "v1",
+                    Title = $"CleanMinimalApi API - {ti.ToTitleCase(builder.Environment.EnvironmentName)} ",
+                    Description = "An example to share an implementation of Minimal API in .NET 6.",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "CleanMinimalApi API",
+                        Email = "cleanminimalapi@stphnwlsh.dev",
+                        Url = new Uri("https://github.com/stphnwlsh/cleanminimalapi")
+                    },
+                    License = new OpenApiLicense()
+                    {
+                        Name = "CleanMinimalApi API - License - MIT",
+                        Url = new Uri("https://opensource.org/licenses/MIT")
+                    },
+                    TermsOfService = new Uri("https://github.com/stphnwlsh/cleanminimalapi")
+                });
+
+            var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+
+            options.EnableAnnotations();
             options.DocInclusionPredicate((name, api) => true);
         });
 

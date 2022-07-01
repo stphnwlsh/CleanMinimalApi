@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CleanMinimalApi.Application.Movies;
 using CleanMinimalApi.Application.Movies.Entities;
-using CleanMinimalApi.Application.Movies.GetMovies;
+using CleanMinimalApi.Application.Movies.Queries.GetMovies;
 using NSubstitute;
 using Shouldly;
 using Xunit;

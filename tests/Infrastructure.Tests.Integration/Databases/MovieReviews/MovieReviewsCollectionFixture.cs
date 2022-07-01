@@ -3,7 +3,7 @@ namespace CleanMinimalApi.Infrastructure.Tests.Integration.Databases.MovieReview
 using System;
 using AutoMapper;
 using CleanMinimalApi.Infrastructure.Databases.MoviesReviews.Mapping;
-using CleanMinimalApi.Infrastructure.Tests.Integration.Databases.MovieReviews.Extensions;
+using Extensions;
 using Infrastructure.Databases.MoviesReviews;
 using Microsoft.EntityFrameworkCore;
 using SimpleDateTimeProvider;
