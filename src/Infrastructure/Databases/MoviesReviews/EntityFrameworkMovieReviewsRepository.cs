@@ -1,14 +1,14 @@
 namespace CleanMinimalApi.Infrastructure.Databases.MoviesReviews;
 
+using Application.Authors;
 using Application.Common.Enums;
 using Application.Common.Exceptions;
+using Application.Movies;
+using Application.Reviews;
 using AutoMapper;
-using CleanMinimalApi.Application.Authors;
-using CleanMinimalApi.Application.Movies;
-using CleanMinimalApi.Application.Reviews;
-using CleanMinimalApi.Infrastructure.Databases.MoviesReviews.Models;
 using Extensions;
 using Microsoft.EntityFrameworkCore;
+using Models;
 using SimpleDateTimeProvider;
 using ApplicationAuthor = Application.Authors.Entities.Author;
 using ApplicationMovie = Application.Movies.Entities.Movie;

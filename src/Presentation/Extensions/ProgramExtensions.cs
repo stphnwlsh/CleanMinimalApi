@@ -49,21 +49,33 @@ public static class ProgramExtensions
         var ti = CultureInfo.CurrentCulture.TextInfo;
 
         _ = builder.Services.AddEndpointsApiExplorer();
-        _ = builder.Services.AddSwaggerGen(c =>
+        _ = builder.Services.AddSwaggerGen(options =>
         {
-            c.SwaggerDoc("v1", new OpenApiInfo
-            {
-                Version = "V1",
-                Title = $"CleanMinimalApi {ti.ToTitleCase(builder.Environment.EnvironmentName)} API",
-                Description = "An example API to show an implementation of .net 6's Minimal Api feature.",
-                Contact = new OpenApiContact
+            options.SwaggerDoc("v1",
+                new OpenApiInfo
                 {
-                    Name = "Example Person",
-                    Email = "example@person.com"
-                }
-            });
-            c.TagActionsBy(api => new[] { api.GroupName });
-            c.DocInclusionPredicate((name, api) => true);
+                    Version = "v1",
+                    Title = $"CleanMinimalApi API - {ti.ToTitleCase(builder.Environment.EnvironmentName)} ",
+                    Description = "An example to share an implementation of Minimal API in .NET 6.",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "CleanMinimalApi API",
+                        Email = "cleanminimalapi@stphnwlsh.dev",
+                        Url = new Uri("https://github.com/stphnwlsh/cleanminimalapi")
+                    },
+                    License = new OpenApiLicense()
+                    {
+                        Name = "CleanMinimalApi API - License - MIT",
+                        Url = new Uri("https://opensource.org/licenses/MIT")
+                    },
+                    TermsOfService = new Uri("https://github.com/stphnwlsh/cleanminimalapi")
+                });
+
+            var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+
+            options.EnableAnnotations();
+            options.DocInclusionPredicate((name, api) => true);
         });
 
         #endregion Swagger

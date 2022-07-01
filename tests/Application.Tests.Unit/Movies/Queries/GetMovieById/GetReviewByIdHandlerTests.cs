@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Application.Movies.Entities;
 using CleanMinimalApi.Application.Common.Exceptions;
 using CleanMinimalApi.Application.Movies;
-using CleanMinimalApi.Application.Movies.GetMovieById;
+using CleanMinimalApi.Application.Movies.Queries.GetMovieById;
 using NSubstitute;
 using Shouldly;
 using Xunit;

@@ -1,4 +1,4 @@
-namespace CleanMinimalApi.Application.Movies.GetMovies;
+namespace CleanMinimalApi.Application.Movies.Queries.GetMovies;
 
 using Entities;
 using MediatR;

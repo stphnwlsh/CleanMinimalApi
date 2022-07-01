@@ -4,5 +4,5 @@ using MediatR;
 
 public class DeleteReviewCommand : IRequest<bool>
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; init; }
 }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Application.Movies.Entities;
-using CleanMinimalApi.Presentation.Tests.Integration.Extensions;
+using Extensions;
 using Shouldly;
 using Xunit;
 
@@ -19,7 +19,7 @@ public class MovieEndpointTests
         using var client = Application.CreateClient();
 
         // Act
-        using var response = await client.GetAsync("/movies");
+        using var response = await client.GetAsync("/api/movies");
         var result = (await response.Content.ReadAsStringAsync()).Deserialize<List<Movie>>();
 
         // Assert
@@ -57,11 +57,11 @@ public class MovieEndpointTests
     {
         // Arrange
         using var client = Application.CreateClient();
-        using var authorResponse = await client.GetAsync("/movies");
+        using var authorResponse = await client.GetAsync("/api/movies");
         var authorResult = (await authorResponse.Content.ReadAsStringAsync()).Deserialize<List<Movie>>()[0];
 
         // Act
-        using var response = await client.GetAsync($"/movies/{authorResult.Id}");
+        using var response = await client.GetAsync($"/api/movies/{authorResult.Id}");
         var result = (await response.Content.ReadAsStringAsync()).Deserialize<Movie>();
 
         // Assert

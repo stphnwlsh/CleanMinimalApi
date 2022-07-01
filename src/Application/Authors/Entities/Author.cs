@@ -3,7 +3,7 @@ namespace CleanMinimalApi.Application.Authors.Entities;
 using CleanMinimalApi.Application.Common.Entities;
 using CleanMinimalApi.Application.Reviews.Entities;
 
-public class Author : Entity
+public record Author : Entity
 {
     public string FirstName { get; set; }
 

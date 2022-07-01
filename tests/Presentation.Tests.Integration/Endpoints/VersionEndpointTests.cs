@@ -2,8 +2,8 @@ namespace CleanMinimalApi.Presentation.Tests.Integration.Endpoints;
 
 using System.Net;
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Versions.Entities;
-using CleanMinimalApi.Presentation.Tests.Integration.Extensions;
+using Application.Versions.Entities;
+using Extensions;
 using Shouldly;
 using Xunit;
 
@@ -18,7 +18,7 @@ public class VersionEndpointTests
         using var client = Application.CreateClient();
 
         // Act
-        using var response = await client.GetAsync("/version");
+        using var response = await client.GetAsync("/api/version");
         var result = (await response.Content.ReadAsStringAsync()).Deserialize<Version>();
 
         // Assert
