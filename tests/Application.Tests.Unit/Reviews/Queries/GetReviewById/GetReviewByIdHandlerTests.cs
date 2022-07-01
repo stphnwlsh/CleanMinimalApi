@@ -2,10 +2,10 @@ namespace CleanMinimalApi.Application.Tests.Unit.Reviews.Queries.GetReviewById;
 
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Common.Exceptions;
+using Application.Reviews;
 using Application.Reviews.Entities;
-using CleanMinimalApi.Application.Common.Exceptions;
-using CleanMinimalApi.Application.Reviews;
-using CleanMinimalApi.Application.Reviews.Queries.GetReviewById;
+using Application.Reviews.Queries.GetReviewById;
 using NSubstitute;
 using Shouldly;
 using Xunit;

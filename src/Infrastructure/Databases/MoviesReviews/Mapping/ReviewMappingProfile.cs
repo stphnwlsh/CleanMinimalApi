@@ -4,7 +4,7 @@ using AutoMapper;
 using Application = Application.Reviews.Entities;
 using Infrastructure = Models;
 
-public class ReviewMappingProfile : Profile
+internal class ReviewMappingProfile : Profile
 {
     public ReviewMappingProfile()
     {

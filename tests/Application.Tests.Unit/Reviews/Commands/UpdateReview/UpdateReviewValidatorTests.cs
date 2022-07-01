@@ -1,6 +1,6 @@
 namespace CleanMinimalApi.Application.Tests.Unit.Reviews.Commands.UpdateReview;
 
-using CleanMinimalApi.Application.Reviews.Commands.UpdateReview;
+using Application.Reviews.Commands.UpdateReview;
 using FluentValidation.TestHelper;
 using Xunit;
 

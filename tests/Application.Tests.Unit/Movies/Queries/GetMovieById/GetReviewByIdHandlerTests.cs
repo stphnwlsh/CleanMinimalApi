@@ -2,10 +2,10 @@ namespace CleanMinimalApi.Application.Tests.Unit.Movies.Queries.GetMovieById;
 
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Common.Exceptions;
+using Application.Movies;
 using Application.Movies.Entities;
-using CleanMinimalApi.Application.Common.Exceptions;
-using CleanMinimalApi.Application.Movies;
-using CleanMinimalApi.Application.Movies.Queries.GetMovieById;
+using Application.Movies.Queries.GetMovieById;
 using NSubstitute;
 using Shouldly;
 using Xunit;

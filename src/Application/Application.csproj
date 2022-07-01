@@ -24,4 +24,8 @@
     </AssemblyAttribute>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Movies\Queries" />
+  </ItemGroup>
+
 </Project>

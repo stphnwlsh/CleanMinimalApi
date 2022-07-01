@@ -1,6 +1,6 @@
 namespace CleanMinimalApi.Application.Tests.Unit.Reviews.Commands.DeleteReview;
 
-using CleanMinimalApi.Application.Reviews.Commands.DeleteReview;
+using Application.Reviews.Commands.DeleteReview;
 using FluentValidation.TestHelper;
 using Xunit;
 

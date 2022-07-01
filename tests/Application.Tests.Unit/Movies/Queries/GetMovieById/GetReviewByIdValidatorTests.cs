@@ -1,6 +1,6 @@
 namespace CleanMinimalApi.Application.Tests.Unit.Movies.Queries.GetMovieById;
 
-using CleanMinimalApi.Application.Reviews.Queries.GetReviewById;
+using Application.Reviews.Queries.GetReviewById;
 using FluentValidation.TestHelper;
 using Xunit;
 

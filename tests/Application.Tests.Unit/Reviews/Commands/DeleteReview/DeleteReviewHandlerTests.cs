@@ -2,9 +2,9 @@ namespace CleanMinimalApi.Application.Tests.Unit.Reviews.Commands.DeleteReview;
 
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Common.Exceptions;
 using Application.Reviews;
-using CleanMinimalApi.Application.Common.Exceptions;
-using CleanMinimalApi.Application.Reviews.Commands.DeleteReview;
+using Application.Reviews.Commands.DeleteReview;
 using NSubstitute;
 using Shouldly;
 using Xunit;

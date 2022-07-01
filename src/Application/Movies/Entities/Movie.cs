@@ -1,7 +1,7 @@
 namespace CleanMinimalApi.Application.Movies.Entities;
 
-using CleanMinimalApi.Application.Common.Entities;
-using CleanMinimalApi.Application.Reviews.Entities;
+using Application.Common.Entities;
+using Application.Reviews.Entities;
 
 public record Movie : Entity
 {

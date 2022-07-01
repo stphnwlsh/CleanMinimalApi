@@ -2,9 +2,9 @@ namespace CleanMinimalApi.Application.Tests.Unit.Authors.Queries.GetAuthors;
 
 using System.Threading;
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Authors;
-using CleanMinimalApi.Application.Authors.Entities;
-using CleanMinimalApi.Application.Authors.Queries.GetAuthors;
+using Application.Authors;
+using Application.Authors.Entities;
+using Application.Authors.Queries.GetAuthors;
 using NSubstitute;
 using Shouldly;
 using Xunit;

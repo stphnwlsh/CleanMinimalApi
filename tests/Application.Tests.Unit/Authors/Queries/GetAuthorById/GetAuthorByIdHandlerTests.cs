@@ -2,10 +2,10 @@ namespace CleanMinimalApi.Application.Tests.Unit.Authors.Queries.GetAuthorById;
 
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Authors;
 using Application.Authors.Entities;
-using CleanMinimalApi.Application.Authors;
-using CleanMinimalApi.Application.Authors.Queries.GetAuthorById;
-using CleanMinimalApi.Application.Common.Exceptions;
+using Application.Authors.Queries.GetAuthorById;
+using Application.Common.Exceptions;
 using NSubstitute;
 using Shouldly;
 using Xunit;

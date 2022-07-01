@@ -2,9 +2,9 @@ namespace CleanMinimalApi.Application.Tests.Unit.Movies.Queries.GetMovies;
 
 using System.Threading;
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Movies;
-using CleanMinimalApi.Application.Movies.Entities;
-using CleanMinimalApi.Application.Movies.Queries.GetMovies;
+using Application.Movies;
+using Application.Movies.Entities;
+using Application.Movies.Queries.GetMovies;
 using NSubstitute;
 using Shouldly;
 using Xunit;
