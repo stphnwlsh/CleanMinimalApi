@@ -1,0 +1,29 @@
+version: "3.9"
+services:
+    api:
+      build:
+        context: .
+        target: run
+        args:
+          VERSION_PREFIX: 1.0.0.0
+          VERSION_SUFFIX: docker
+      ports:
+          - "8080:80"
+          - "8081:443"
+      environment:
+        DOTNET_ENVIRONMENT: docker
+      networks:
+        - cleanminimalapi_network
+      depends_on:
+        - seq
+    seq:
+      image: datalust/seq:latest
+      ports:
+        - "5341:80"
+      environment:
+        ACCEPT_EULA: Y
+      networks:
+        - cleanwebapi_network
+networks:
+  cleanwebapi_network:
+    driver: bridge
