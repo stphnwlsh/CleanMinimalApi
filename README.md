@@ -1,6 +1,6 @@
 # Clean Minimal API
 
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/stphnwlsh/CleanMinimalApi/Build%20Pipeline?label=Build%20Pipeline&logo=github&logoColor=white&style=for-the-badge)](https://github.com/stphnwlsh/CleanMinimalApi/actions/workflows/build-pipeline.yml)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/stphnwlsh/cleanminimalapi/build-pipeline.yml?label=Build%20Pipeline%20&logo=github&style=for-the-badge)](https://github.com/stphnwlsh/CleanMinimalApi/actions/workflows/build-pipeline.yml)
 [![Codecov](https://img.shields.io/codecov/c/github/stphnwlsh/CleanMinimalApi?label=Code%20Coverage&logo=codecov&logoColor=white&style=for-the-badge)](https://codecov.io/gh/stphnwlsh/CleanMinimalApi)
 ![Nuget](https://img.shields.io/nuget/v/CleanMinimalApi.Template?label=nuget%20template&logo=nuget&logoColor=white&style=for-the-badge)
 
