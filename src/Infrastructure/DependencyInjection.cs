@@ -20,6 +20,7 @@ public static class DependencyInjection
         _ = services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
         _ = services.AddSingleton<EntityFrameworkMovieReviewsRepository>();
+
         _ = services.AddSingleton<IAuthorsRepository>(p => p.GetRequiredService<EntityFrameworkMovieReviewsRepository>());
         _ = services.AddSingleton<IMoviesRepository>(x => x.GetRequiredService<EntityFrameworkMovieReviewsRepository>());
         _ = services.AddSingleton<IReviewsRepository>(x => x.GetRequiredService<EntityFrameworkMovieReviewsRepository>());
