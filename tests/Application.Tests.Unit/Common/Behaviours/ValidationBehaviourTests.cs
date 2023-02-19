@@ -32,7 +32,7 @@ public class ValidationBehaviourTests
         });
 
         // Act
-        var result = await handler.Handle(query, token, deletgate);
+        var result = await handler.Handle(query, deletgate, token);
 
         // Assert
         _ = result.ShouldNotBeNull();
@@ -49,7 +49,7 @@ public class ValidationBehaviourTests
         var deletgate = Substitute.For<RequestHandlerDelegate<Author>>();
 
         // Act
-        var exception = Should.Throw<ValidationException>(async () => await handler.Handle(query, token, deletgate));
+        var exception = Should.Throw<ValidationException>(async () => await handler.Handle(query, deletgate, token));
 
         // Assert
         _ = exception.ShouldNotBeNull();
