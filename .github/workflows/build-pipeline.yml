@@ -5,6 +5,7 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   analyse:
@@ -140,6 +141,7 @@ jobs:
   template:
     name: Nuget Template
     runs-on: ubuntu-latest
+    needs: pipeline
 
     strategy:
       fail-fast: true
