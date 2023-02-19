@@ -28,17 +28,17 @@ jobs:
 
     - name: Initialize
       id: initialize
-      uses: github/codeql-action/init@v1
+      uses: github/codeql-action/init@v2
       with:
         languages: ${{ matrix.language }}
 
     - name: Build
       id: build
-      uses: github/codeql-action/autobuild@v1
+      uses: github/codeql-action/autobuild@v2
 
     - name: Analysis
       id: analysis
-      uses: github/codeql-action/analyze@v1
+      uses: github/codeql-action/analyze@v2
 
   pipeline:
     name: Build, Test and Publish
