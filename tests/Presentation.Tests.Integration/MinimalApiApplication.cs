@@ -2,7 +2,7 @@ namespace CleanMinimalApi.Presentation.Tests.Integration;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Hosting;
 
-internal class MinimalApiApplication : WebApplicationFactory<Program>
+internal sealed class MinimalApiApplication : WebApplicationFactory<Program>
 {
     private readonly string environment;
 
