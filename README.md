@@ -48,7 +48,7 @@ Breaking the Clean Architecture pattern is the fact that the Infrastructure proj
 
 ### Project Structure
 
-It's streamlined into 3 functional projects.  All serve their own purpse and segregate aspects of the application to allow easier replacement and updating.
+It's streamlined into 3 functional projects.  All serve their own purpose and segregate aspects of the application to allow easier replacement and updating.
 
 1. **Presentation** - Setting up the interactions between the Application layer and the consumer.  In the project that's via a Minimal API but it could be many other things.  The Minimal API uses endpoints to funnel the actions to the layer that owns the domain.
 1. **Application** - This project owns the domain and business logic.  There's validation of the Commands and Queries and handling of domain entities in their own separated structures.  Each domain type has it's own interface to a datasource downstream, this project doesn't care what fulfills this contract, as long as someone does.
