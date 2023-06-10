@@ -40,7 +40,7 @@ docker pull stphnwlsh/cleanminimalapi
 
 ## Architecture
 
-This solution is loosly based on Clean Architecture patterns, it's by no means perfect.  I prefer to call it "Lean Mean Clean Architecture".  Inspiration has been taken from [Jason Taylor's Clean Architecture Template](https://github.com/jasontaylordev/CleanArchitecture), but I have made some structural decisions to take some things further and scaled back others.
+This solution is loosely based on Clean Architecture patterns, it's by no means perfect.  I prefer to call it "Lean Mean Clean Architecture".  Inspiration has been taken from [Jason Taylor's Clean Architecture Template](https://github.com/jasontaylordev/CleanArchitecture), but I have made some structural decisions to take some things further and scaled back others.
 
 There's a little CQRS type stuff going on here but it's more in style than real separated functions for reading and writing as under the covers they are the same data source.
 
@@ -48,7 +48,7 @@ Breaking the Clean Architecture pattern is the fact that the Infrastructure proj
 
 ### Project Structure
 
-It's streamlined into 3 functional projects.  All serve their own purpse and segregate aspects of the application to allow easier replacement and updating.
+It's streamlined into 3 functional projects.  All serve their own purpose and segregate aspects of the application to allow easier replacement and updating.
 
 1. **Presentation** - Setting up the interactions between the Application layer and the consumer.  In the project that's via a Minimal API but it could be many other things.  The Minimal API uses endpoints to funnel the actions to the layer that owns the domain.
 1. **Application** - This project owns the domain and business logic.  There's validation of the Commands and Queries and handling of domain entities in their own separated structures.  Each domain type has it's own interface to a datasource downstream, this project doesn't care what fulfills this contract, as long as someone does.
