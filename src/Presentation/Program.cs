@@ -1,16 +1,14 @@
-using CleanMinimalApi.Presentation.Endpoints.Authors;
-using CleanMinimalApi.Presentation.Endpoints.Movies;
-using CleanMinimalApi.Presentation.Endpoints.Reviews;
-using CleanMinimalApi.Presentation.Endpoints.Version;
+using CleanMinimalApi.Presentation.Endpoints;
 using CleanMinimalApi.Presentation.Extensions;
 using Serilog;
 
 var builder = WebApplication
-                .CreateBuilder(args)
-                .ConfigureBuilder();
+    .CreateBuilder(args)
+    .ConfigureApplicationBuilder();
+
 var app = builder
-            .Build()
-            .ConfigureApplication();
+    .Build()
+    .ConfigureApplication();
 
 _ = app.MapVersionEndpoints();
 _ = app.MapAuthorEndpoints();

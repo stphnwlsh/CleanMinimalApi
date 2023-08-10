@@ -21,8 +21,10 @@ public class GetMoviesHandlerTests
         var handler = new GetMoviesHandler(context);
         var token = new CancellationTokenSource().Token;
 
-        _ = context.GetMovies(token).Returns(new List<Movie> {
-            new Movie{
+        _ = context.GetMovies(token).Returns(new List<Movie>
+        {
+            new Movie
+            {
                 Id = Guid.Empty,
                 Title = "Title"
             }

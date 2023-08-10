@@ -68,14 +68,13 @@ public class MovieReviewsDataFixture : IDisposable
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!this.disposedValue)
+        if (disposing)
         {
-            if (disposing)
+            if (this.Context != null)
             {
-                this.Context?.Dispose();
+                this.Context.Dispose();
+                this.Context = null;
             }
-
-            this.disposedValue = true;
         }
     }
 }

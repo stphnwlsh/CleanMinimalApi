@@ -7,15 +7,20 @@ using Extensions;
 using Shouldly;
 using Xunit;
 
-public class VersionEndpointTests
+public class VersionEndpointTests : IDisposable
 {
-    private static readonly MinimalApiApplication Application = new();
+    private MinimalApiApplication application;
+
+    public VersionEndpointTests()
+    {
+        this.application = new();
+    }
 
     [Fact]
     public async Task GetVersion_ShouldReturn_Ok()
     {
         // Arrange
-        using var client = Application.CreateClient();
+        using var client = this.application.CreateClient();
 
         // Act
         using var response = await client.GetAsync("/api/version");
@@ -30,5 +35,23 @@ public class VersionEndpointTests
         result.FileVersion.ShouldNotBeNullOrWhiteSpace();
         _ = result.InformationalVersion.ShouldBeOfType<string>();
         result.InformationalVersion.ShouldNotBeNullOrWhiteSpace();
+    }
+
+    public void Dispose()
+    {
+        this.Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            if (this.application != null)
+            {
+                this.application.Dispose();
+                this.application = null;
+            }
+        }
     }
 }

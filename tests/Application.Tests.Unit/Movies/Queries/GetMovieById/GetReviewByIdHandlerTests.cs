@@ -35,6 +35,7 @@ public class ReadByIdHandlerTests
         _ = await context.Received(1).GetMovieById(query.Id, token);
 
         _ = result.ShouldNotBeNull();
+
         result.Id.ShouldBe(Guid.Empty);
         result.Title.ShouldBe("Title");
     }

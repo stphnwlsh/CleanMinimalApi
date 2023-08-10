@@ -1,18 +1,19 @@
-namespace CleanMinimalApi.Application.Tests.Unit.Reviews.Commands.CreateReview;
+namespace CleanMinimalApi.Presentation.Tests.Unit.Reviews.Commands.UpdateReview;
 
-using Application.Reviews.Commands.CreateReview;
 using FluentValidation.TestHelper;
+using Presentation.Requests;
+using Presentation.Validators;
 using Xunit;
 
-public class CreateReviewValidatorTests
+public class UpdateReviewValidatorTests
 {
-    private static readonly CreateReviewValidator Validator = new();
+    private static readonly UpdateReviewValidator Validator = new();
 
     [Fact]
     public void Validator_ShouldNotHaveValidationErrorFor_ReviewAuthorId()
     {
         // Arrange
-        var command = new CreateReviewCommand
+        var request = new UpdateReviewRequest
         {
             AuthorId = Guid.NewGuid(),
             MovieId = Guid.NewGuid(),
@@ -20,17 +21,17 @@ public class CreateReviewValidatorTests
         };
 
         // Act
-        var result = Validator.TestValidate(command);
+        var result = Validator.TestValidate(request);
 
         // Assert
-        result.ShouldNotHaveValidationErrorFor(command => command.AuthorId);
+        result.ShouldNotHaveValidationErrorFor(request => request.AuthorId);
     }
 
     [Fact]
     public void Validator_ShouldHaveValidationErrorFor_ReviewAuthorId()
     {
         // Arrange
-        var command = new CreateReviewCommand
+        var request = new UpdateReviewRequest
         {
             AuthorId = Guid.Empty,
             MovieId = Guid.NewGuid(),
@@ -38,17 +39,17 @@ public class CreateReviewValidatorTests
         };
 
         // Act
-        var result = Validator.TestValidate(command);
+        var result = Validator.TestValidate(request);
 
         // Assert
-        _ = result.ShouldHaveValidationErrorFor(command => command.AuthorId).WithErrorMessage("An author id was not supplied to create the review.");
+        _ = result.ShouldHaveValidationErrorFor(request => request.AuthorId).WithErrorMessage("An author id was not supplied to Update the review.");
     }
 
     [Fact]
     public void Validator_ShouldNotHaveValidationErrorFor_ReviewedMovieId()
     {
         // Arrange
-        var command = new CreateReviewCommand
+        var request = new UpdateReviewRequest
         {
             AuthorId = Guid.NewGuid(),
             MovieId = Guid.NewGuid(),
@@ -56,17 +57,17 @@ public class CreateReviewValidatorTests
         };
 
         // Act
-        var result = Validator.TestValidate(command);
+        var result = Validator.TestValidate(request);
 
         // Assert
-        result.ShouldNotHaveValidationErrorFor(command => command.MovieId);
+        result.ShouldNotHaveValidationErrorFor(request => request.MovieId);
     }
 
     [Fact]
     public void Validator_ShouldHaveValidationErrorFor_ReviewedMovieId()
     {
         // Arrange
-        var command = new CreateReviewCommand
+        var request = new UpdateReviewRequest
         {
             AuthorId = Guid.NewGuid(),
             MovieId = Guid.Empty,
@@ -74,10 +75,10 @@ public class CreateReviewValidatorTests
         };
 
         // Act
-        var result = Validator.TestValidate(command);
+        var result = Validator.TestValidate(request);
 
         // Assert
-        _ = result.ShouldHaveValidationErrorFor(command => command.MovieId).WithErrorMessage("A movie id was not supplied to create the review.");
+        _ = result.ShouldHaveValidationErrorFor(request => request.MovieId).WithErrorMessage("A movie id was not supplied to Update the review.");
     }
 
 
@@ -90,7 +91,7 @@ public class CreateReviewValidatorTests
     public void Validator_ShouldNotHaveValidationErrorFor_Stars(int stars)
     {
         // Arrange
-        var command = new CreateReviewCommand
+        var request = new UpdateReviewRequest
         {
             AuthorId = Guid.NewGuid(),
             MovieId = Guid.NewGuid(),
@@ -98,10 +99,10 @@ public class CreateReviewValidatorTests
         };
 
         // Act
-        var result = Validator.TestValidate(command);
+        var result = Validator.TestValidate(request);
 
         // Assert
-        result.ShouldNotHaveValidationErrorFor(command => command.Stars);
+        result.ShouldNotHaveValidationErrorFor(request => request.Stars);
     }
 
     [Theory]
@@ -113,7 +114,7 @@ public class CreateReviewValidatorTests
     public void Validator_ShouldHaveValidationErrorFor_Stars(int stars)
     {
         // Arrange
-        var command = new CreateReviewCommand
+        var request = new UpdateReviewRequest
         {
             AuthorId = Guid.NewGuid(),
             MovieId = Guid.NewGuid(),
@@ -121,9 +122,9 @@ public class CreateReviewValidatorTests
         };
 
         // Act
-        var result = Validator.TestValidate(command);
+        var result = Validator.TestValidate(request);
 
         // Assert
-        _ = result.ShouldHaveValidationErrorFor(command => command.Stars).WithErrorMessage("A star rating must be between 1 and 5.");
+        _ = result.ShouldHaveValidationErrorFor(request => request.Stars).WithErrorMessage("A star rating must be between 1 and 5.");
     }
 }

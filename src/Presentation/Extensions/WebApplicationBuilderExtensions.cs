@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Application;
+using FluentValidation;
 using Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Json;
@@ -14,9 +15,9 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 
 [ExcludeFromCodeCoverage]
-public static class ProgramExtensions
+public static class WebApplicationBuilderExtensions
 {
-    public static WebApplicationBuilder ConfigureBuilder(this WebApplicationBuilder builder)
+    public static WebApplicationBuilder ConfigureApplicationBuilder(this WebApplicationBuilder builder)
     {
         #region Logging
 
@@ -25,8 +26,12 @@ public static class ProgramExtensions
             var assembly = Assembly.GetEntryAssembly();
 
             _ = loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration)
-                    .Enrich.WithProperty("Assembly Version", assembly?.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version)
-                    .Enrich.WithProperty("Assembly Informational Version", assembly?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion);
+                .Enrich.WithProperty(
+                    "Assembly Version",
+                    assembly?.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version)
+                .Enrich.WithProperty(
+                    "Assembly Informational Version",
+                    assembly?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion);
         });
 
         #endregion Logging
@@ -55,7 +60,7 @@ public static class ProgramExtensions
                 new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = $"CleanMinimalApi API - {ti.ToTitleCase(builder.Environment.EnvironmentName)} ",
+                    Title = $"CleanMinimalApi API - {ti.ToTitleCase(builder.Environment.EnvironmentName)}",
                     Description = "An example to share an implementation of Minimal API in .NET 6.",
                     Contact = new OpenApiContact
                     {
@@ -63,7 +68,7 @@ public static class ProgramExtensions
                         Email = "cleanminimalapi@stphnwlsh.dev",
                         Url = new Uri("https://github.com/stphnwlsh/cleanminimalapi")
                     },
-                    License = new OpenApiLicense()
+                    License = new OpenApiLicense
                     {
                         Name = "CleanMinimalApi API - License - MIT",
                         Url = new Uri("https://opensource.org/licenses/MIT")
@@ -72,13 +77,19 @@ public static class ProgramExtensions
                 });
 
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-            options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 
-            options.EnableAnnotations();
+            options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             options.DocInclusionPredicate((name, api) => true);
         });
 
         #endregion Swagger
+
+        #region Validation
+
+        //_ = builder.Services.AddSingleton(typeof(IEndpointFilter), typeof(ValidationFilter<>));
+        _ = builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+        #endregion Validation
 
         #region Project Dependencies
 
@@ -88,43 +99,5 @@ public static class ProgramExtensions
         #endregion Project Dependencies
 
         return builder;
-    }
-
-    public static WebApplication ConfigureApplication(this WebApplication app)
-    {
-        #region Exceptions
-
-        _ = app.UseGlobalExceptionHandler();
-
-        #endregion Exceptions
-
-        #region Logging
-
-        _ = app.UseSerilogRequestLogging();
-
-        #endregion Logging
-
-        #region Swagger
-
-        var ti = CultureInfo.CurrentCulture.TextInfo;
-
-        _ = app.UseSwagger();
-        _ = app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", $"CleanMinimalApi - {ti.ToTitleCase(app.Environment.EnvironmentName)} - V1"));
-
-        #endregion Swagger
-
-        #region Security
-
-        _ = app.UseHsts();
-
-        #endregion Security
-
-        #region API Configuration
-
-        _ = app.UseHttpsRedirection();
-
-        #endregion API Configuration
-
-        return app;
     }
 }

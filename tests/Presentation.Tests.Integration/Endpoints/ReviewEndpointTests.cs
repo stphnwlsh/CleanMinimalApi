@@ -12,15 +12,20 @@ using Extensions;
 using Shouldly;
 using Xunit;
 
-public class ReviewEndpointTests
+public class ReviewEndpointTests : IDisposable
 {
-    private static readonly MinimalApiApplication Application = new();
+    private MinimalApiApplication application;
+
+    public ReviewEndpointTests()
+    {
+        this.application = new();
+    }
 
     [Fact]
     public async Task CreateReview_ShouldReturn_Created()
     {
         // Arrange
-        using var client = Application.CreateClient();
+        using var client = this.application.CreateClient();
 
         using var authorResponse = await client.GetAsync("/api/authors");
         var authorResult = (await authorResponse.Content.ReadAsStringAsync()).Deserialize<List<Author>>()[0];
@@ -53,10 +58,10 @@ public class ReviewEndpointTests
     }
 
     [Fact]
-    public async Task DeleteReview_ShouldDelete_Review()
+    public async Task DeleteReview_ShouldReturn_NoContent()
     {
         // Arrange
-        using var client = Application.CreateClient();
+        using var client = this.application.CreateClient();
         using var reviewResponse = await client.GetAsync("/api/reviews");
         var reviewResult = (await reviewResponse.Content.ReadAsStringAsync()).Deserialize<List<Review>>()[0];
 
@@ -73,7 +78,7 @@ public class ReviewEndpointTests
     public async Task GetReviews_ShouldReturn_Ok()
     {
         // Arrange
-        using var client = Application.CreateClient();
+        using var client = this.application.CreateClient();
 
         // Act
         using var response = await client.GetAsync("/api/reviews");
@@ -112,7 +117,7 @@ public class ReviewEndpointTests
     public async Task GetReviewById_ShouldReturn_Ok()
     {
         // Arrange
-        using var client = Application.CreateClient();
+        using var client = this.application.CreateClient();
         using var reviewResponse = await client.GetAsync("/api/reviews");
         var reviewResult = (await reviewResponse.Content.ReadAsStringAsync()).Deserialize<List<Review>>()[0];
 
@@ -147,7 +152,7 @@ public class ReviewEndpointTests
     public async Task UpdateReview_ShouldReturn_NoContent()
     {
         // Arrange
-        using var client = Application.CreateClient();
+        using var client = this.application.CreateClient();
         using var authorResponse = await client.GetAsync("/api/authors");
         var authorResult = (await authorResponse.Content.ReadAsStringAsync()).Deserialize<List<Author>>()[0];
         using var movieResponse = await client.GetAsync("/api/movies");
@@ -179,5 +184,23 @@ public class ReviewEndpointTests
         _ = validateResult.ReviewedMovie.ShouldNotBeNull();
         validateResult.ReviewedMovie.Id.ShouldBe(movieResult.Id);
         validateResult.ReviewedMovie.Title.ShouldBe(movieResult.Title);
+    }
+
+    public void Dispose()
+    {
+        this.Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            if (this.application != null)
+            {
+                this.application.Dispose();
+                this.application = null;
+            }
+        }
     }
 }
