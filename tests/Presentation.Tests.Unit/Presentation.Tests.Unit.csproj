@@ -27,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Applicaiton\Applicaiton.csproj" />
     <ProjectReference Include="..\..\src\Presentation\Presentation.csproj" />
   </ItemGroup>
 
