@@ -11,8 +11,11 @@ public class NotFoundExceptionTests
     public void ThrowIfNull_ShouldNotThrow_NotFoundException()
     {
         // Arrange
-        var argument = new Author { Id = Guid.NewGuid() };
         var entityType = EntityType.Author;
+        var argument = new Author
+        {
+            Id = Guid.NewGuid()
+        };
 
         // Act
         var result = Should.NotThrow(() =>
@@ -30,8 +33,8 @@ public class NotFoundExceptionTests
     public void ThrowIfNull_ShouldThrow_NotFoundException()
     {
         // Arrange
-        Author argument = null;
         var entityType = EntityType.Author;
+        Author argument = null;
 
         // Act
         var result = Should.Throw<NotFoundException>(() =>

@@ -15,8 +15,6 @@ public class MovieReviewsConfigurationTests
         this.fixture = fixture;
     }
 
-    #region Configuration
-
     [Fact]
     public async void Database_ShouldBe_Configured()
     {
@@ -51,6 +49,4 @@ public class MovieReviewsConfigurationTests
         _ = review.ReviewedMovieId.ShouldBeOfType<Guid>();
         _ = review.ReviewedMovie.ShouldBeOfType<Movie>();
     }
-
-    #endregion Configuration
 }

@@ -1,15 +1,15 @@
 namespace CleanMinimalApi.Presentation.Tests.Unit.Endpoints;
 
 using System.Threading.Tasks;
-using Shouldly;
-using Xunit;
-using NSubstitute;
 using MediatR;
-using Presentation.Endpoints;
-using Entities = Application.Versions.Entities;
-using Queries = Application.Versions.Queries;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using NSubstitute;
+using Presentation.Endpoints;
+using Shouldly;
+using Xunit;
+using Entities = Application.Versions.Entities;
+using Queries = Application.Versions.Queries;
 
 public class VersionEndpointTests
 {

@@ -63,7 +63,8 @@ public class ReviewEndpointTests : IDisposable
         // Arrange
         using var client = this.application.CreateClient();
         using var reviewResponse = await client.GetAsync("/api/reviews");
-        var reviewResult = (await reviewResponse.Content.ReadAsStringAsync()).Deserialize<List<Review>>()[0];
+        var reviewResult = (await reviewResponse.Content.ReadAsStringAsync())
+            .Deserialize<List<Review>>()[0];
 
         // Act
         using var response = await client.DeleteAsync($"/api/reviews/{reviewResult.Id}");
@@ -82,7 +83,8 @@ public class ReviewEndpointTests : IDisposable
 
         // Act
         using var response = await client.GetAsync("/api/reviews");
-        var result = (await response.Content.ReadAsStringAsync()).Deserialize<List<Review>>();
+        var result = (await response.Content.ReadAsStringAsync())
+            .Deserialize<List<Review>>();
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -119,7 +121,8 @@ public class ReviewEndpointTests : IDisposable
         // Arrange
         using var client = this.application.CreateClient();
         using var reviewResponse = await client.GetAsync("/api/reviews");
-        var reviewResult = (await reviewResponse.Content.ReadAsStringAsync()).Deserialize<List<Review>>()[0];
+        var reviewResult = (await reviewResponse.Content.ReadAsStringAsync())
+            .Deserialize<List<Review>>()[0];
 
         // Act
         using var response = await client.GetAsync($"/api/reviews/{reviewResult.Id}");
@@ -153,12 +156,19 @@ public class ReviewEndpointTests : IDisposable
     {
         // Arrange
         using var client = this.application.CreateClient();
+
         using var authorResponse = await client.GetAsync("/api/authors");
-        var authorResult = (await authorResponse.Content.ReadAsStringAsync()).Deserialize<List<Author>>()[0];
+        var authorResult = (await authorResponse.Content.ReadAsStringAsync())
+            .Deserialize<List<Author>>()[0];
+
         using var movieResponse = await client.GetAsync("/api/movies");
-        var movieResult = (await movieResponse.Content.ReadAsStringAsync()).Deserialize<List<Movie>>()[0];
+        var movieResult = (await movieResponse.Content.ReadAsStringAsync())
+            .Deserialize<List<Movie>>()[0];
+
         using var reviewResponse = await client.GetAsync("/api/reviews");
-        var reviewResult = (await reviewResponse.Content.ReadAsStringAsync()).Deserialize<List<Review>>()[0];
+        var reviewResult = (await reviewResponse.Content.ReadAsStringAsync())
+            .Deserialize<List<Review>>()[0];
+
         var json = (new { Stars = 5, AuthorId = authorResult.Id, MovieId = movieResult.Id }).Serialize();
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 

@@ -9,19 +9,6 @@ public class GenericIdentityValidatorTests
     private static readonly GenericIdentityValidator Validator = new();
 
     [Fact]
-    public void Validator_ShouldHaveValidationErrorFor_Empty()
-    {
-        // Arrange
-        var guid = Guid.Empty;
-
-        // Act
-        var result = Validator.TestValidate(guid);
-
-        // Assert
-        _ = result.ShouldHaveValidationErrorFor(guid => guid);
-    }
-
-    [Fact]
     public void Validator_ShouldNotHaveValidationErrorFor_Guid()
     {
         // Arrange
@@ -32,5 +19,18 @@ public class GenericIdentityValidatorTests
 
         // Assert
         result.ShouldNotHaveValidationErrorFor(guid => guid);
+    }
+
+    [Fact]
+    public void Validator_ShouldHaveValidationErrorFor_Empty()
+    {
+        // Arrange
+        var guid = Guid.Empty;
+
+        // Act
+        var result = Validator.TestValidate(guid);
+
+        // Assert
+        _ = result.ShouldHaveValidationErrorFor(guid => guid);
     }
 }

@@ -2,8 +2,8 @@ namespace CleanMinimalApi.Application.Tests.Unit.Version.Queries.GetVersion;
 
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Versions.Queries.GetVersion;
 using Application.Versions.Entities;
+using Application.Versions.Queries.GetVersion;
 using Shouldly;
 using Xunit;
 

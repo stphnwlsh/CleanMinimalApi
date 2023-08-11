@@ -26,7 +26,9 @@ public class MovieReviewsDataFixture : IDisposable
 
     public MovieReviewsDataFixture()
     {
-        var options = new DbContextOptionsBuilder<MovieReviewsDbContext>().UseInMemoryDatabase($"TestMovies-{Guid.NewGuid()}").Options;
+        var options = new DbContextOptionsBuilder<MovieReviewsDbContext>()
+            .UseInMemoryDatabase($"TestMovies-{Guid.NewGuid()}")
+            .Options;
 
         this.Context = new MovieReviewsDbContext(options);
 

@@ -30,6 +30,7 @@ public class VersionEndpointTests : IDisposable
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
         _ = result.ShouldNotBeNull();
+        _ = result.ShouldBeOfType<Version>();
 
         _ = result.FileVersion.ShouldBeOfType<string>();
         result.FileVersion.ShouldNotBeNullOrWhiteSpace();
