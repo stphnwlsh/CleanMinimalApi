@@ -2,10 +2,10 @@ namespace CleanMinimalApi.Presentation.Tests.Integration.Endpoints;
 
 using System.Net;
 using System.Threading.Tasks;
-using Application.Versions.Entities;
 using Extensions;
 using Shouldly;
 using Xunit;
+using Entities = Application.Versions.Entities;
 
 public class VersionEndpointTests : IDisposable
 {
@@ -24,13 +24,13 @@ public class VersionEndpointTests : IDisposable
 
         // Act
         using var response = await client.GetAsync("/api/version");
-        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Version>();
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Entities.Version>();
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
         _ = result.ShouldNotBeNull();
-        _ = result.ShouldBeOfType<Version>();
+        _ = result.ShouldBeOfType<Entities.Version>();
 
         _ = result.FileVersion.ShouldBeOfType<string>();
         result.FileVersion.ShouldNotBeNullOrWhiteSpace();

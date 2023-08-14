@@ -24,7 +24,7 @@ public static class ReviewsEndpoints
             .WithTags("reviews")
             .WithOpenApi();
 
-        _ = root.MapGet("/", GetAllReviews)
+        _ = root.MapGet("/", GetReviews)
             .Produces<List<Entities.Review>>()
             .ProducesProblem(StatusCodes.Status500InternalServerError)
             .WithSummary("Lookup all Reviews")
@@ -68,7 +68,7 @@ public static class ReviewsEndpoints
         return app;
     }
 
-    public static async Task<IResult> GetAllReviews(IMediator mediator)
+    public static async Task<IResult> GetReviews(IMediator mediator)
     {
         try
         {

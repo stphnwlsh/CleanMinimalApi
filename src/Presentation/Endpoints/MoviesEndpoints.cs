@@ -18,7 +18,7 @@ public static class MoviesEndpoints
             .WithTags("movies")
             .WithOpenApi();
 
-        _ = root.MapGet("/", GetAllMovies)
+        _ = root.MapGet("/", GetMovies)
             .Produces<List<Entities.Movie>>()
             .ProducesProblem(StatusCodes.Status500InternalServerError)
             .WithSummary("Lookup all Movies")
@@ -36,7 +36,7 @@ public static class MoviesEndpoints
         return app;
     }
 
-    public static async Task<IResult> GetAllMovies(IMediator mediator)
+    public static async Task<IResult> GetMovies(IMediator mediator)
     {
         try
         {

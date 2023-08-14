@@ -18,7 +18,7 @@ public static class AuthorsEndpoints
             .WithTags("authors")
             .WithOpenApi();
 
-        _ = root.MapGet("/", GetAllAuthors)
+        _ = root.MapGet("/", GetAuthors)
             .Produces<List<Entities.Author>>()
             .ProducesProblem(StatusCodes.Status500InternalServerError)
             .WithSummary("Lookup all Authors")
@@ -36,7 +36,7 @@ public static class AuthorsEndpoints
         return app;
     }
 
-    public static async Task<IResult> GetAllAuthors(IMediator mediator)
+    public static async Task<IResult> GetAuthors(IMediator mediator)
     {
         try
         {

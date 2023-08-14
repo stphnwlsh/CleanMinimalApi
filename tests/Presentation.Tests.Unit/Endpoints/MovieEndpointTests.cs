@@ -1,90 +1,74 @@
-// namespace CleanMinimalApi.Presentation.Tests.Unit.Endpoints;
+namespace CleanMinimalApi.Presentation.Tests.Unit.Endpoints;
 
-// using System.Collections.Generic;
-// using System.Net;
-// using System.Threading.Tasks;
-// using Application.Movies.Entities;
-// using Extensions;
-// using Shouldly;
-// using Xunit;
+using System.Threading.Tasks;
+using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using NSubstitute;
+using Presentation.Endpoints;
+using Shouldly;
+using Xunit;
+using Entities = Application.Movies.Entities;
+using Queries = Application.Movies.Queries;
 
-// public class MovieEndpointTests
-// {
-//     private static readonly MinimalApiApplication Application = new();
+public class MovieEndpointTests
+{
+    [Fact]
+    public async Task GetMovies_ShouldReturn_Ok()
+    {
+        // Arrange
+        var mediator = Substitute.For<IMediator>();
 
-//     [Fact]
-//     public async Task GetMovies_ShouldReturn_Ok()
-//     {
-//         // Arrange
-//         using var client = Application.CreateClient();
+        _ = mediator.Send(Arg.Any<Queries.GetMovies.GetMoviesQuery>()).ReturnsForAnyArgs(new List<Entities.Movie>
+        {
+            new Entities.Movie
+            {
+                Id = Guid.Empty,
+                Title = "Lorem Ipsum"
+            }
+        });
 
-//         // Act
-//         using var response = await client.GetAsync("/api/movies");
-//         var result = (await response.Content.ReadAsStringAsync()).Deserialize<List<Movie>>();
+        // Act
+        var response = await MoviesEndpoints.GetMovies(mediator);
 
-//         // Assert
-//         response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        // Assert
+        var result = response.ShouldBeOfType<Ok<List<Entities.Movie>>>();
 
-//         _ = result.ShouldNotBeNull();
+        result.StatusCode.ShouldBe(StatusCodes.Status200OK);
 
-//         result.ShouldNotBeEmpty();
-//         result.Count.ShouldBe(50);
+        var value = result.Value.ShouldBeOfType<List<Entities.Movie>>();
 
-//         foreach (var movie in result)
-//         {
-//             _ = movie.ShouldNotBeNull();
-//             _ = movie.Id.ShouldBeOfType<Guid>();
-//             _ = movie.Title.ShouldBeOfType<string>();
-//             movie.Title.ShouldNotBeNullOrWhiteSpace();
+        _ = value[0].Id.ShouldBeOfType<Guid>();
+        value[0].Id.ShouldBe(Guid.Empty);
+        _ = value[0].Title.ShouldBeOfType<string>();
+        value[0].Title.ShouldBe("Lorem Ipsum");
+    }
 
-//             foreach (var review in movie.Reviews)
-//             {
-//                 _ = review.Stars.ShouldBeOfType<int>();
-//                 review.Stars.ShouldBeInRange(1, 5);
+    [Fact]
+    public async Task GetMovieById_ShouldReturn_Ok()
+    {
+        // Arrange
+        var mediator = Substitute.For<IMediator>();
 
-//                 _ = review.ReviewAuthor.ShouldNotBeNull();
-//                 _ = review.ReviewAuthor.Id.ShouldBeOfType<Guid>();
-//                 _ = review.ReviewAuthor.FirstName.ShouldBeOfType<string>();
-//                 review.ReviewAuthor.FirstName.ShouldNotBeNullOrWhiteSpace();
-//                 _ = review.ReviewAuthor.LastName.ShouldBeOfType<string>();
-//                 review.ReviewAuthor.LastName.ShouldNotBeNullOrWhiteSpace();
-//             }
-//         }
-//     }
+        _ = mediator.Send(Arg.Any<Queries.GetMovieById.GetMovieByIdQuery>()).ReturnsForAnyArgs(new Entities.Movie
+        {
+            Id = Guid.Empty,
+            Title = "Lorem Ipsum",
+        });
 
-//     [Fact]
-//     public async Task GetMovieById_ShouldReturn_Ok()
-//     {
-//         // Arrange
-//         using var client = Application.CreateClient();
-//         using var authorResponse = await client.GetAsync("/api/movies");
-//         var authorResult = (await authorResponse.Content.ReadAsStringAsync()).Deserialize<List<Movie>>()[0];
+        // Act
+        var response = await MoviesEndpoints.GetMovieById(Guid.Empty, mediator);
 
-//         // Act
-//         using var response = await client.GetAsync($"/api/movies/{authorResult.Id}");
-//         var result = (await response.Content.ReadAsStringAsync()).Deserialize<Movie>();
+        // Assert
+        var result = response.ShouldBeOfType<Ok<Entities.Movie>>();
 
-//         // Assert
-//         response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        result.StatusCode.ShouldBe(StatusCodes.Status200OK);
 
-//         _ = result.ShouldNotBeNull();
+        var value = result.Value.ShouldBeOfType<Entities.Movie>();
 
-//         result.Id.ShouldBe(authorResult.Id);
-//         _ = result.Title.ShouldBeOfType<string>();
-//         result.Title.ShouldNotBeNullOrWhiteSpace();
-//         result.Reviews.ShouldNotBeEmpty();
-
-//         foreach (var review in result.Reviews)
-//         {
-//             _ = review.Stars.ShouldBeOfType<int>();
-//             review.Stars.ShouldBeInRange(1, 5);
-
-//             _ = review.ReviewAuthor.ShouldNotBeNull();
-//             _ = review.ReviewAuthor.Id.ShouldBeOfType<Guid>();
-//             _ = review.ReviewAuthor.FirstName.ShouldBeOfType<string>();
-//             review.ReviewAuthor.FirstName.ShouldNotBeNullOrWhiteSpace();
-//             _ = review.ReviewAuthor.LastName.ShouldBeOfType<string>();
-//             review.ReviewAuthor.LastName.ShouldNotBeNullOrWhiteSpace();
-//         }
-//     }
-// }
+        _ = value.Id.ShouldBeOfType<Guid>();
+        value.Id.ShouldBe(Guid.Empty);
+        _ = value.Title.ShouldBeOfType<string>();
+        value.Title.ShouldBe("Lorem Ipsum");
+    }
+}

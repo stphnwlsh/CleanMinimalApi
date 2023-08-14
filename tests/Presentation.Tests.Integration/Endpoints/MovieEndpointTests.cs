@@ -3,10 +3,10 @@ namespace CleanMinimalApi.Presentation.Tests.Integration.Endpoints;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using Application.Movies.Entities;
 using Extensions;
 using Shouldly;
 using Xunit;
+using Entities = Application.Movies.Entities;
 
 public class MovieEndpointTests : IDisposable
 {
@@ -26,7 +26,7 @@ public class MovieEndpointTests : IDisposable
         // Act
         using var response = await client.GetAsync("/api/movies");
         var result = (await response.Content.ReadAsStringAsync())
-            .Deserialize<List<Movie>>();
+            .Deserialize<List<Entities.Movie>>();
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -65,11 +65,11 @@ public class MovieEndpointTests : IDisposable
         using var client = this.application.CreateClient();
         using var movieResponse = await client.GetAsync("/api/movies");
         var movieResult = (await movieResponse.Content.ReadAsStringAsync())
-            .Deserialize<List<Movie>>()[0];
+            .Deserialize<List<Entities.Movie>>()[0];
 
         // Act
         using var response = await client.GetAsync($"/api/movies/{movieResult.Id}");
-        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Movie>();
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Entities.Movie>();
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);

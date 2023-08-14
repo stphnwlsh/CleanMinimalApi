@@ -3,10 +3,10 @@ namespace CleanMinimalApi.Presentation.Tests.Integration.Endpoints;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using Application.Authors.Entities;
 using Extensions;
 using Shouldly;
 using Xunit;
+using Entities = Application.Authors.Entities;
 
 public class AuthorEndpointTests : IDisposable
 {
@@ -26,7 +26,7 @@ public class AuthorEndpointTests : IDisposable
         // Act
         using var response = await client.GetAsync("/api/authors");
         var result = (await response.Content.ReadAsStringAsync())
-            .Deserialize<List<Author>>();
+            .Deserialize<List<Entities.Author>>();
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -64,11 +64,11 @@ public class AuthorEndpointTests : IDisposable
         using var client = this.application.CreateClient();
         using var authorResponse = await client.GetAsync("/api/authors");
         var authorResult = (await authorResponse.Content.ReadAsStringAsync())
-            .Deserialize<List<Author>>()[0];
+            .Deserialize<List<Entities.Author>>()[0];
 
         // Act
         using var response = await client.GetAsync($"/api/authors/{authorResult.Id}");
-        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Author>();
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Entities.Author>();
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
