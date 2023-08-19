@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using Presentation.Endpoints;
 using Shouldly;
 using Xunit;
@@ -39,5 +40,29 @@ public class VersionEndpointTests
         value.FileVersion.ShouldBe("1.2.3.4");
         _ = value.InformationalVersion.ShouldBeOfType<string>();
         value.InformationalVersion.ShouldBe("5.6.7.8");
+    }
+
+    [Fact]
+    public async Task GetVersion_ShouldReturn_Problem()
+    {
+        // Arrange
+        var mediator = Substitute.For<IMediator>();
+
+        _ = mediator
+            .Send(Arg.Any<Queries.GetVersion.GetVersionQuery>())
+            .Throws(new ApplicationException("Expected Exception"));
+
+        // Act
+        var response = await VersionEndpoints.GetVersion(mediator);
+
+        // Assert
+        var result = response.ShouldBeOfType<ProblemHttpResult>();
+
+        result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
+
+        result.ProblemDetails.Title.ShouldBe("An error occurred while processing your request.");
+        result.ProblemDetails.Instance.ShouldBe("Expected Exception");
+        result.ProblemDetails.Status.ShouldBe(StatusCodes.Status500InternalServerError);
+        result.ProblemDetails.Detail.ShouldNotBeNullOrEmpty();
     }
 }

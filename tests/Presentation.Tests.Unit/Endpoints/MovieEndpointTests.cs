@@ -1,10 +1,12 @@
 namespace CleanMinimalApi.Presentation.Tests.Unit.Endpoints;
 
 using System.Threading.Tasks;
+using CleanMinimalApi.Application.Common.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using Presentation.Endpoints;
 using Shouldly;
 using Xunit;
@@ -45,6 +47,31 @@ public class MovieEndpointTests
     }
 
     [Fact]
+    public async Task GetMovies_ShouldReturn_Problem()
+    {
+        // Arrange
+        var mediator = Substitute.For<IMediator>();
+
+        _ = mediator
+            .Send(Arg.Any<Queries.GetMovies.GetMoviesQuery>())
+            .Throws(new ApplicationException("Expected Exception"));
+
+        // Act
+        var response = await MoviesEndpoints.GetMovies(mediator);
+
+        // Assert
+        var result = response.ShouldBeOfType<ProblemHttpResult>();
+
+        result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
+
+        result.ProblemDetails.Title.ShouldBe("An error occurred while processing your request.");
+        result.ProblemDetails.Instance.ShouldBe("Expected Exception");
+        result.ProblemDetails.Status.ShouldBe(StatusCodes.Status500InternalServerError);
+        result.ProblemDetails.Detail.ShouldNotBeNullOrEmpty();
+    }
+
+
+    [Fact]
     public async Task GetMovieById_ShouldReturn_Ok()
     {
         // Arrange
@@ -70,5 +97,48 @@ public class MovieEndpointTests
         value.Id.ShouldBe(Guid.Empty);
         _ = value.Title.ShouldBeOfType<string>();
         value.Title.ShouldBe("Lorem Ipsum");
+    }
+    [Fact]
+    public async Task GetMovieById_ShouldReturn_NotFound()
+    {
+        // Arrange
+        var mediator = Substitute.For<IMediator>();
+
+        _ = mediator
+            .Send(Arg.Any<Queries.GetMovieById.GetMovieByIdQuery>())
+            .Throws(new NotFoundException("Expected Exception"));
+
+        // Act
+        var response = await MoviesEndpoints.GetMovieById(Guid.Empty, mediator);
+
+        // Assert
+        var result = response.ShouldBeOfType<NotFound<string>>();
+
+        result.StatusCode.ShouldBe(StatusCodes.Status404NotFound);
+        result.Value.ShouldBe("Expected Exception");
+    }
+
+    [Fact]
+    public async Task GetMovieById_ShouldReturn_Problem()
+    {
+        // Arrange
+        var mediator = Substitute.For<IMediator>();
+
+        _ = mediator
+            .Send(Arg.Any<Queries.GetMovieById.GetMovieByIdQuery>())
+            .Throws(new ApplicationException("Expected Exception"));
+
+        // Act
+        var response = await MoviesEndpoints.GetMovieById(Guid.Empty, mediator);
+
+        // Assert
+        var result = response.ShouldBeOfType<ProblemHttpResult>();
+
+        result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
+
+        result.ProblemDetails.Title.ShouldBe("An error occurred while processing your request.");
+        result.ProblemDetails.Instance.ShouldBe("Expected Exception");
+        result.ProblemDetails.Status.ShouldBe(StatusCodes.Status500InternalServerError);
+        result.ProblemDetails.Detail.ShouldNotBeNullOrEmpty();
     }
 }

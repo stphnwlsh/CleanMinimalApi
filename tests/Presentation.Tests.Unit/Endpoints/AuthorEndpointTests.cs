@@ -1,6 +1,7 @@
 namespace CleanMinimalApi.Presentation.Tests.Unit.Endpoints;
 
 using System.Threading.Tasks;
+using CleanMinimalApi.Application.Common.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -102,5 +103,49 @@ public class AuthorEndpointTests
         value.FirstName.ShouldBe("Lorem");
         _ = value.LastName.ShouldBeOfType<string>();
         value.LastName.ShouldBe("Ipsum");
+    }
+
+    [Fact]
+    public async Task GetAuthorById_ShouldReturn_NotFound()
+    {
+        // Arrange
+        var mediator = Substitute.For<IMediator>();
+
+        _ = mediator
+            .Send(Arg.Any<Queries.GetAuthorById.GetAuthorByIdQuery>())
+            .Throws(new NotFoundException("Expected Exception"));
+
+        // Act
+        var response = await AuthorsEndpoints.GetAuthorById(Guid.Empty, mediator);
+
+        // Assert
+        var result = response.ShouldBeOfType<NotFound<string>>();
+
+        result.StatusCode.ShouldBe(StatusCodes.Status404NotFound);
+        result.Value.ShouldBe("Expected Exception");
+    }
+
+    [Fact]
+    public async Task GetAuthorById_ShouldReturn_Problem()
+    {
+        // Arrange
+        var mediator = Substitute.For<IMediator>();
+
+        _ = mediator
+            .Send(Arg.Any<Queries.GetAuthorById.GetAuthorByIdQuery>())
+            .Throws(new ApplicationException("Expected Exception"));
+
+        // Act
+        var response = await AuthorsEndpoints.GetAuthorById(Guid.Empty, mediator);
+
+        // Assert
+        var result = response.ShouldBeOfType<ProblemHttpResult>();
+
+        result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
+
+        result.ProblemDetails.Title.ShouldBe("An error occurred while processing your request.");
+        result.ProblemDetails.Instance.ShouldBe("Expected Exception");
+        result.ProblemDetails.Status.ShouldBe(StatusCodes.Status500InternalServerError);
+        result.ProblemDetails.Detail.ShouldNotBeNullOrEmpty();
     }
 }
