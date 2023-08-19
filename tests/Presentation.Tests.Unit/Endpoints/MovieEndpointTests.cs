@@ -21,14 +21,16 @@ public class MovieEndpointTests
         // Arrange
         var mediator = Substitute.For<IMediator>();
 
-        _ = mediator.Send(Arg.Any<Queries.GetMovies.GetMoviesQuery>()).ReturnsForAnyArgs(new List<Entities.Movie>
-        {
-            new Entities.Movie
+        _ = mediator
+            .Send(Arg.Any<Queries.GetMovies.GetMoviesQuery>())
+            .ReturnsForAnyArgs(new List<Entities.Movie>
             {
-                Id = Guid.Empty,
-                Title = "Lorem Ipsum"
-            }
-        });
+                new Entities.Movie
+                {
+                    Id = Guid.Empty,
+                    Title = "Lorem Ipsum"
+                }
+            });
 
         // Act
         var response = await MoviesEndpoints.GetMovies(mediator);
@@ -76,11 +78,13 @@ public class MovieEndpointTests
         // Arrange
         var mediator = Substitute.For<IMediator>();
 
-        _ = mediator.Send(Arg.Any<Queries.GetMovieById.GetMovieByIdQuery>()).ReturnsForAnyArgs(new Entities.Movie
-        {
-            Id = Guid.Empty,
-            Title = "Lorem Ipsum",
-        });
+        _ = mediator
+            .Send(Arg.Any<Queries.GetMovieById.GetMovieByIdQuery>())
+            .ReturnsForAnyArgs(new Entities.Movie
+            {
+                Id = Guid.Empty,
+                Title = "Lorem Ipsum",
+            });
 
         // Act
         var response = await MoviesEndpoints.GetMovieById(Guid.Empty, mediator);

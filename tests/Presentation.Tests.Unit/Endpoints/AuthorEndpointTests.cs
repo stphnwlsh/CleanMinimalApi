@@ -21,15 +21,17 @@ public class AuthorEndpointTests
         // Arrange
         var mediator = Substitute.For<IMediator>();
 
-        _ = mediator.Send(Arg.Any<Queries.GetAuthors.GetAuthorsQuery>()).ReturnsForAnyArgs(new List<Entities.Author>
-        {
-            new Entities.Author
+        _ = mediator
+            .Send(Arg.Any<Queries.GetAuthors.GetAuthorsQuery>())
+            .ReturnsForAnyArgs(new List<Entities.Author>
             {
-                Id = Guid.Empty,
-                FirstName = "Lorem",
-                LastName = "Ipsum"
-            }
-        });
+                new Entities.Author
+                {
+                    Id = Guid.Empty,
+                    FirstName = "Lorem",
+                    LastName = "Ipsum"
+                }
+            });
 
         // Act
         var response = await AuthorsEndpoints.GetAuthors(mediator);
