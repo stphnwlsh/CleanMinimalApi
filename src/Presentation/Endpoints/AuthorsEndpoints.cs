@@ -1,6 +1,5 @@
 namespace CleanMinimalApi.Presentation.Endpoints;
 
-using System.Diagnostics.CodeAnalysis;
 using CleanMinimalApi.Application.Common.Exceptions;
 using CleanMinimalApi.Presentation.Filters;
 using MediatR;
@@ -9,7 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Entities = Application.Authors.Entities;
 using Queries = Application.Authors.Queries;
 
-[ExcludeFromCodeCoverage]
 public static class AuthorsEndpoints
 {
     public static WebApplication MapAuthorEndpoints(this WebApplication app)
@@ -24,7 +22,7 @@ public static class AuthorsEndpoints
             .WithSummary("Lookup all Authors")
             .WithDescription("\n    GET /Authors");
 
-        _ = root.MapGet("/{id:guid}", GetAuthorById)
+        _ = root.MapGet("/{id}", GetAuthorById)
             .AddEndpointFilter<ValidationFilter<Guid>>()
             .Produces<Entities.Author>()
             .ProducesValidationProblem()

@@ -1,3 +1,127 @@
+namespace CleanMinimalApi.Presentation.Tests.Unit.Endpoints;
+
+using System.Threading.Tasks;
+using CleanMinimalApi.Application.Authors.Entities;
+using CleanMinimalApi.Application.Movies.Entities;
+using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using NSubstitute;
+using Presentation.Endpoints;
+using Shouldly;
+using Xunit;
+using Entities = Application.Reviews.Entities;
+using Queries = Application.Reviews.Queries;
+
+public class ReviewEndpointTests
+{
+    [Fact]
+    public async Task GetReviews_ShouldReturn_Ok()
+    {
+        // Arrange
+        var mediator = Substitute.For<IMediator>();
+
+        _ = mediator.Send(Arg.Any<Queries.GetReviews.GetReviewsQuery>()).ReturnsForAnyArgs(new List<Entities.Review>
+        {
+            new Entities.Review
+            {
+                Id = Guid.Empty,
+                Stars = 5,
+                ReviewAuthor = new Author
+                {
+                    Id = Guid.Empty,
+                    FirstName = "Lorem",
+                    LastName = "Ipsum"
+                },
+                ReviewedMovie = new Movie
+                {
+                    Id = Guid.Empty,
+                    Title = "Lorem Ipsum"
+                }
+            }
+        });
+
+        // Act
+        var response = await ReviewsEndpoints.GetReviews(mediator);
+
+        // Assert
+        var result = response.ShouldBeOfType<Ok<List<Entities.Review>>>();
+
+        result.StatusCode.ShouldBe(StatusCodes.Status200OK);
+
+        var value = result.Value.ShouldBeOfType<List<Entities.Review>>();
+
+        _ = value[0].Id.ShouldBeOfType<Guid>();
+        value[0].Id.ShouldBe(Guid.Empty);
+        _ = value[0].Stars.ShouldBeOfType<int>();
+        value[0].Stars.ShouldBe(5);
+
+        _ = value[0].ReviewAuthor.Id.ShouldBeOfType<Guid>();
+        value[0].ReviewAuthor.Id.ShouldBe(Guid.Empty);
+        _ = value[0].ReviewAuthor.FirstName.ShouldBeOfType<string>();
+        value[0].ReviewAuthor.FirstName.ShouldBe("Lorem");
+        _ = value[0].ReviewAuthor.LastName.ShouldBeOfType<string>();
+        value[0].ReviewAuthor.LastName.ShouldBe("Ipsum");
+
+        _ = value[0].ReviewedMovie.Id.ShouldBeOfType<Guid>();
+        value[0].ReviewedMovie.Id.ShouldBe(Guid.Empty);
+        _ = value[0].ReviewedMovie.Title.ShouldBeOfType<string>();
+        value[0].ReviewedMovie.Title.ShouldBe("Lorem Ipsum");
+    }
+
+    [Fact]
+    public async Task GetReviewById_ShouldReturn_Ok()
+    {
+        // Arrange
+        var mediator = Substitute.For<IMediator>();
+
+        _ = mediator.Send(Arg.Any<Queries.GetReviewById.GetReviewByIdQuery>()).ReturnsForAnyArgs(new Entities.Review
+        {
+            Id = Guid.Empty,
+            Stars = 5,
+            ReviewAuthor = new Author
+            {
+                Id = Guid.Empty,
+                FirstName = "Lorem",
+                LastName = "Ipsum"
+            },
+            ReviewedMovie = new Movie
+            {
+                Id = Guid.Empty,
+                Title = "Lorem Ipsum"
+            }
+        });
+
+        // Act
+        var response = await ReviewsEndpoints.GetReviewById(Guid.Empty, mediator);
+
+        // Assert
+        var result = response.ShouldBeOfType<Ok<Entities.Review>>();
+
+        result.StatusCode.ShouldBe(StatusCodes.Status200OK);
+
+        var value = result.Value.ShouldBeOfType<Entities.Review>();
+
+        _ = value.Id.ShouldBeOfType<Guid>();
+        value.Id.ShouldBe(Guid.Empty);
+        _ = value.Stars.ShouldBeOfType<int>();
+        value.Stars.ShouldBe(5);
+
+        _ = value.ReviewAuthor.Id.ShouldBeOfType<Guid>();
+        value.ReviewAuthor.Id.ShouldBe(Guid.Empty);
+        _ = value.ReviewAuthor.FirstName.ShouldBeOfType<string>();
+        value.ReviewAuthor.FirstName.ShouldBe("Lorem");
+        _ = value.ReviewAuthor.LastName.ShouldBeOfType<string>();
+        value.ReviewAuthor.LastName.ShouldBe("Ipsum");
+
+        _ = value.ReviewedMovie.Id.ShouldBeOfType<Guid>();
+        value.ReviewedMovie.Id.ShouldBe(Guid.Empty);
+        _ = value.ReviewedMovie.Title.ShouldBeOfType<string>();
+        value.ReviewedMovie.Title.ShouldBe("Lorem Ipsum");
+    }
+}
+
+
 // namespace CleanMinimalApi.Presentation.Tests.Unit.Endpoints;
 
 // using System.Collections.Generic;
@@ -6,7 +130,7 @@
 // using System.Text;
 // using System.Threading.Tasks;
 // using Application.Authors.Entities;
-// using Application.Movies.Entities;
+// using Application.Reviews.Entities;
 // using Application.Reviews.Entities;
 // using Extensions;
 // using Shouldly;
@@ -25,8 +149,8 @@
 //         using var authorResponse = await client.GetAsync("/api/authors");
 //         var authorResult = (await authorResponse.Content.ReadAsStringAsync()).Deserialize<List<Author>>()[0];
 //         using var movieResponse = await client.GetAsync("/api/movies");
-//         var movieResult = (await movieResponse.Content.ReadAsStringAsync()).Deserialize<List<Movie>>()[0];
-//         var json = (new { Stars = 5, AuthorId = authorResult.Id, MovieId = movieResult.Id }).Serialize();
+//         var movieResult = (await movieResponse.Content.ReadAsStringAsync()).Deserialize<List<Review>>()[0];
+//         var json = (new { Stars = 5, AuthorId = authorResult.Id, ReviewId = movieResult.Id }).Serialize();
 //         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
 //         // Act
@@ -47,9 +171,9 @@
 //         result.ReviewAuthor.FirstName.ShouldBe(authorResult.FirstName);
 //         result.ReviewAuthor.LastName.ShouldBe(authorResult.LastName);
 
-//         _ = result.ReviewedMovie.ShouldNotBeNull();
-//         result.ReviewedMovie.Id.ShouldBe(movieResult.Id);
-//         result.ReviewedMovie.Title.ShouldBe(movieResult.Title);
+//         _ = result.ReviewedReview.ShouldNotBeNull();
+//         result.ReviewedReview.Id.ShouldBe(movieResult.Id);
+//         result.ReviewedReview.Title.ShouldBe(movieResult.Title);
 //     }
 
 //     [Fact]
@@ -70,80 +194,6 @@
 //     }
 
 //     [Fact]
-//     public async Task GetReviews_ShouldReturn_Ok()
-//     {
-//         // Arrange
-//         using var client = Application.CreateClient();
-
-//         // Act
-//         using var response = await client.GetAsync("/api/reviews");
-//         var result = (await response.Content.ReadAsStringAsync()).Deserialize<List<Review>>();
-
-//         // Assert
-//         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-
-//         _ = result.ShouldNotBeNull();
-
-//         result.ShouldNotBeEmpty();
-//         result.Count.ShouldBe(150);
-
-//         foreach (var review in result)
-//         {
-//             _ = review.ShouldNotBeNull();
-//             _ = review.Id.ShouldBeOfType<Guid>();
-//             _ = review.Stars.ShouldBeOfType<int>();
-//             review.Stars.ShouldBeInRange(1, 5);
-
-//             _ = review.ReviewAuthor.ShouldNotBeNull();
-//             _ = review.ReviewAuthor.Id.ShouldBeOfType<Guid>();
-//             _ = review.ReviewAuthor.FirstName.ShouldBeOfType<string>();
-//             review.ReviewAuthor.FirstName.ShouldNotBeNullOrWhiteSpace();
-//             _ = review.ReviewAuthor.LastName.ShouldBeOfType<string>();
-//             review.ReviewAuthor.LastName.ShouldNotBeNullOrWhiteSpace();
-
-//             _ = review.ReviewedMovie.ShouldNotBeNull();
-//             _ = review.ReviewedMovie.Id.ShouldBeOfType<Guid>();
-//             _ = review.ReviewedMovie.Title.ShouldBeOfType<string>();
-//             review.ReviewedMovie.Title.ShouldNotBeNullOrWhiteSpace();
-//         }
-//     }
-
-//     [Fact]
-//     public async Task GetReviewById_ShouldReturn_Ok()
-//     {
-//         // Arrange
-//         using var client = Application.CreateClient();
-//         using var reviewResponse = await client.GetAsync("/api/reviews");
-//         var reviewResult = (await reviewResponse.Content.ReadAsStringAsync()).Deserialize<List<Review>>()[0];
-
-//         // Act
-//         using var response = await client.GetAsync($"/api/reviews/{reviewResult.Id}");
-//         var result = (await response.Content.ReadAsStringAsync()).Deserialize<Review>();
-
-//         // Assert
-//         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-
-//         _ = result.ShouldNotBeNull();
-
-//         _ = result.ShouldNotBeNull();
-//         _ = result.Id.ShouldBeOfType<Guid>();
-//         result.Id.ShouldBe(reviewResult.Id);
-//         _ = result.Stars.ShouldBeOfType<int>();
-//         result.Stars.ShouldBeInRange(1, 5);
-
-//         _ = result.ReviewAuthor.ShouldNotBeNull();
-//         _ = result.ReviewAuthor.Id.ShouldBeOfType<Guid>();
-//         _ = result.ReviewAuthor.FirstName.ShouldBeOfType<string>();
-//         result.ReviewAuthor.FirstName.ShouldNotBeNullOrWhiteSpace();
-//         _ = result.ReviewAuthor.LastName.ShouldBeOfType<string>();
-//         result.ReviewAuthor.LastName.ShouldNotBeNullOrWhiteSpace();
-
-//         _ = result.ReviewedMovie.ShouldNotBeNull();
-//         _ = result.ReviewedMovie.Id.ShouldBeOfType<Guid>();
-//         _ = result.ReviewedMovie.Title.ShouldBeOfType<string>();
-//     }
-
-//     [Fact]
 //     public async Task UpdateReview_ShouldReturn_NoContent()
 //     {
 //         // Arrange
@@ -151,10 +201,10 @@
 //         using var authorResponse = await client.GetAsync("/api/authors");
 //         var authorResult = (await authorResponse.Content.ReadAsStringAsync()).Deserialize<List<Author>>()[0];
 //         using var movieResponse = await client.GetAsync("/api/movies");
-//         var movieResult = (await movieResponse.Content.ReadAsStringAsync()).Deserialize<List<Movie>>()[0];
+//         var movieResult = (await movieResponse.Content.ReadAsStringAsync()).Deserialize<List<Review>>()[0];
 //         using var reviewResponse = await client.GetAsync("/api/reviews");
 //         var reviewResult = (await reviewResponse.Content.ReadAsStringAsync()).Deserialize<List<Review>>()[0];
-//         var json = (new { Stars = 5, AuthorId = authorResult.Id, MovieId = movieResult.Id }).Serialize();
+//         var json = (new { Stars = 5, AuthorId = authorResult.Id, ReviewId = movieResult.Id }).Serialize();
 //         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
 //         // Act
@@ -176,8 +226,8 @@
 //         validateResult.ReviewAuthor.FirstName.ShouldBe(authorResult.FirstName);
 //         validateResult.ReviewAuthor.LastName.ShouldBe(authorResult.LastName);
 
-//         _ = validateResult.ReviewedMovie.ShouldNotBeNull();
-//         validateResult.ReviewedMovie.Id.ShouldBe(movieResult.Id);
-//         validateResult.ReviewedMovie.Title.ShouldBe(movieResult.Title);
+//         _ = validateResult.ReviewedReview.ShouldNotBeNull();
+//         validateResult.ReviewedReview.Id.ShouldBe(movieResult.Id);
+//         validateResult.ReviewedReview.Title.ShouldBe(movieResult.Title);
 //     }
 // }

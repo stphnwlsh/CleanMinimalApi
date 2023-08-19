@@ -1,4 +1,4 @@
-namespace CleanMinimalApi.Application.Tests.Unit.Movies.Queries.GetMovieById;
+namespace CleanMinimalApi.Presentation.Tests.Unit.Validators;
 
 using CleanMinimalApi.Presentation.Validators;
 using FluentValidation.TestHelper;

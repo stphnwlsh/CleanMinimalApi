@@ -93,6 +93,28 @@ public class AuthorEndpointTests : IDisposable
         }
     }
 
+    // [Theory]
+    // [InlineData(null)]
+    // [InlineData("-")]
+    // [InlineData("test")]
+    // public async Task GetAuthorById_ShouldReturn_BadRequest(object value)
+    // {
+    //     // Arrange
+    //     using var client = this.application.CreateClient();
+    //     using var authorResponse = await client.GetAsync("/api/authors");
+    //     var authorResult = (await authorResponse.Content.ReadAsStringAsync())
+    //         .Deserialize<List<Entities.Author>>()[0];
+
+    //     // Act
+    //     using var response = await client.GetAsync($"/api/authors/{value}");
+    //     var result = (await response.Content.ReadAsStringAsync()).Deserialize<ErrorModel>();
+
+    //     // Assert
+    //     response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+    //     result.ShouldBe("TEST STRING");
+    // }
+
     public void Dispose()
     {
         this.Dispose(true);
@@ -110,5 +132,15 @@ public class AuthorEndpointTests : IDisposable
             }
         }
     }
+
+
 }
 
+
+public class ErrorModel
+{
+    public string Type { get; set; }
+    public string Title { get; set; }
+    public int Status { get; set; }
+    public Dictionary<string, List<string>> Errors { get; set; }
+}
