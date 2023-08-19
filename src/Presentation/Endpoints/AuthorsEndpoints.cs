@@ -1,6 +1,5 @@
 namespace CleanMinimalApi.Presentation.Endpoints;
 
-using System.Diagnostics.CodeAnalysis;
 using CleanMinimalApi.Application.Common.Exceptions;
 using CleanMinimalApi.Presentation.Filters;
 using MediatR;
@@ -11,7 +10,6 @@ using Queries = Application.Authors.Queries;
 
 public static class AuthorsEndpoints
 {
-    [ExcludeFromCodeCoverage]
     public static WebApplication MapAuthorEndpoints(this WebApplication app)
     {
         var root = app.MapGroup("/api/authors")
