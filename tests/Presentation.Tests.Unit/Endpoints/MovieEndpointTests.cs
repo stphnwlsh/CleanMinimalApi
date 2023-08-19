@@ -54,7 +54,7 @@ public class MovieEndpointTests
 
         _ = mediator
             .Send(Arg.Any<Queries.GetMovies.GetMoviesQuery>())
-            .Throws(new ApplicationException("Expected Exception"));
+            .Throws(new ArgumentException("Expected Exception"));
 
         // Act
         var response = await MoviesEndpoints.GetMovies(mediator);
@@ -126,7 +126,7 @@ public class MovieEndpointTests
 
         _ = mediator
             .Send(Arg.Any<Queries.GetMovieById.GetMovieByIdQuery>())
-            .Throws(new ApplicationException("Expected Exception"));
+            .Throws(new ArgumentException("Expected Exception"));
 
         // Act
         var response = await MoviesEndpoints.GetMovieById(Guid.Empty, mediator);

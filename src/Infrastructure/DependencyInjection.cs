@@ -1,6 +1,5 @@
 namespace CleanMinimalApi.Infrastructure;
 
-using System.Diagnostics.CodeAnalysis;
 using Application.Authors;
 using Application.Movies;
 using Application.Reviews;
@@ -9,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleDateTimeProvider;
 
-[ExcludeFromCodeCoverage]
 public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)

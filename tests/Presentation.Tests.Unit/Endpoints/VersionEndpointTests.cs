@@ -50,7 +50,7 @@ public class VersionEndpointTests
 
         _ = mediator
             .Send(Arg.Any<Queries.GetVersion.GetVersionQuery>())
-            .Throws(new ApplicationException("Expected Exception"));
+            .Throws(new ArgumentException("Expected Exception"));
 
         // Act
         var response = await VersionEndpoints.GetVersion(mediator);

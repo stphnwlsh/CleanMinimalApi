@@ -57,7 +57,7 @@ public class AuthorEndpointTests
 
         _ = mediator
             .Send(Arg.Any<Queries.GetAuthors.GetAuthorsQuery>())
-            .Throws(new ApplicationException("Expected Exception"));
+            .Throws(new ArgumentException("Expected Exception"));
 
         // Act
         var response = await AuthorsEndpoints.GetAuthors(mediator);
@@ -133,7 +133,7 @@ public class AuthorEndpointTests
 
         _ = mediator
             .Send(Arg.Any<Queries.GetAuthorById.GetAuthorByIdQuery>())
-            .Throws(new ApplicationException("Expected Exception"));
+            .Throws(new ArgumentException("Expected Exception"));
 
         // Act
         var response = await AuthorsEndpoints.GetAuthorById(Guid.Empty, mediator);

@@ -1,11 +1,8 @@
 namespace CleanMinimalApi.Presentation.Endpoints;
 
-using System.Diagnostics.CodeAnalysis;
-using System.Net.Mime;
 using CleanMinimalApi.Application.Common.Exceptions;
 using CleanMinimalApi.Presentation.Filters;
 using CleanMinimalApi.Presentation.Requests;
-using Errors;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -17,7 +14,6 @@ using Queries = Application.Reviews.Queries;
 
 public static class ReviewsEndpoints
 {
-    [ExcludeFromCodeCoverage]
     public static WebApplication MapReviewEndpoints(this WebApplication app)
     {
         var root = app.MapGroup("/api/reviews")
@@ -60,8 +56,9 @@ public static class ReviewsEndpoints
             .AddEndpointFilter<ValidationFilter<Guid>>()
             .AddEndpointFilter<ValidationFilter<UpdateReviewRequest>>()
             .Produces(StatusCodes.Status204NoContent)
-            .Produces<ApiError>(StatusCodes.Status400BadRequest, MediaTypeNames.Application.Json)
-            .Produces<ApiError>(StatusCodes.Status500InternalServerError, MediaTypeNames.Application.Json)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .ProducesValidationProblem()
             .WithSummary("Update a Review")
             .WithDescription("\n    PUT /Reviews/00000000-0000-0000-0000-000000000000\n     {         \"authorId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",         \"movieId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",         \"stars\": 5       }");
 
@@ -99,7 +96,6 @@ public static class ReviewsEndpoints
         }
     }
 
-    [ExcludeFromCodeCoverage]
     public static async Task<IResult> CreateReview(
         [FromBody] CreateReviewRequest request,
         IMediator mediator,
@@ -126,7 +122,6 @@ public static class ReviewsEndpoints
         }
     }
 
-    [ExcludeFromCodeCoverage]
     public static async Task<IResult> UpdateReview(
         [FromRoute] Guid id,
         [FromBody] UpdateReviewRequest bodyRequest,
@@ -154,7 +149,6 @@ public static class ReviewsEndpoints
         }
     }
 
-    [ExcludeFromCodeCoverage]
     public static async Task<IResult> DeleteReview([FromRoute] Guid id, IMediator mediator)
     {
         try
