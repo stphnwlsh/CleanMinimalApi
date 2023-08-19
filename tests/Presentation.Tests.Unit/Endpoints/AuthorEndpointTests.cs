@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using Presentation.Endpoints;
 using Shouldly;
 using Xunit;
@@ -46,6 +47,31 @@ public class AuthorEndpointTests
         _ = value[0].LastName.ShouldBeOfType<string>();
         value[0].LastName.ShouldBe("Ipsum");
     }
+
+    [Fact]
+    public async Task GetAuthors_ShouldReturn_Problem()
+    {
+        // Arrange
+        var mediator = Substitute.For<IMediator>();
+
+        _ = mediator
+            .Send(Arg.Any<Queries.GetAuthors.GetAuthorsQuery>())
+            .Throws(new ApplicationException("Expected Exception"));
+
+        // Act
+        var response = await AuthorsEndpoints.GetAuthors(mediator);
+
+        // Assert
+        var result = response.ShouldBeOfType<ProblemHttpResult>();
+
+        result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
+
+        result.ProblemDetails.Title.ShouldBe("An error occurred while processing your request.");
+        result.ProblemDetails.Instance.ShouldBe("Expected Exception");
+        result.ProblemDetails.Status.ShouldBe(StatusCodes.Status500InternalServerError);
+        result.ProblemDetails.Detail.ShouldNotBeNullOrEmpty();
+    }
+
 
     [Fact]
     public async Task GetAuthorById_ShouldReturn_Ok()

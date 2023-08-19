@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Shouldly;
 using Xunit;
 
-public class LoggingFilterTests
+public class ValidationFilterTests
 {
     private readonly IValidator<Guid> validator = new GenericIdentityValidator();
 
@@ -22,10 +22,10 @@ public class LoggingFilterTests
         var context = CreateFilterContext(value);
 
         // Act
-        var result = await filter.InvokeAsync(context, NextDelegate);
+        var response = await filter.InvokeAsync(context, NextDelegate);
 
         // Assert
-        result.ShouldBeSameAs(NextResult);
+        response.ShouldBeSameAs(NextResult);
     }
 
     [Fact]
@@ -37,15 +37,13 @@ public class LoggingFilterTests
         var context = CreateFilterContext(value);
 
         // Act
-        var result = await filter.InvokeAsync(context, NextDelegate);
+        var response = await filter.InvokeAsync(context, NextDelegate);
 
         // Assert
-        _ = result.ShouldBeOfType<BadRequest<string>>();
+        var result = response.ShouldBeOfType<BadRequest<string>>();
 
-        var expectedResult = result as BadRequest<string>;
-
-        expectedResult.StatusCode.ShouldBe(400);
-        expectedResult.Value.ShouldBe("Unable to find parameters or body for validation");
+        result.StatusCode.ShouldBe(400);
+        result.Value.ShouldBe("Unable to find parameters or body for validation");
     }
 
     [Fact]
@@ -57,17 +55,14 @@ public class LoggingFilterTests
         var context = CreateFilterContext(value);
 
         // Act
-        var result = await filter.InvokeAsync(context, NextDelegate);
+        var response = await filter.InvokeAsync(context, NextDelegate);
 
         // Assert
+        var result = response.ShouldBeOfType<ProblemHttpResult>();
 
-        _ = result.ShouldBeOfType<ProblemHttpResult>();
-
-        var expectedResult = result as ProblemHttpResult;
-
-        expectedResult.StatusCode.ShouldBe(400);
-        _ = expectedResult.ProblemDetails.ShouldNotBeNull();
-        expectedResult.ProblemDetails.Title.ShouldBe("One or more validation errors occurred.");
+        result.StatusCode.ShouldBe(400);
+        _ = result.ProblemDetails.ShouldNotBeNull();
+        result.ProblemDetails.Title.ShouldBe("One or more validation errors occurred.");
     }
 
     #region Helper Methods
