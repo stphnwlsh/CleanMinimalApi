@@ -73,7 +73,6 @@ public class AuthorEndpointTests
         result.ProblemDetails.Detail.ShouldNotBeNullOrEmpty();
     }
 
-
     [Fact]
     public async Task GetAuthorById_ShouldReturn_Ok()
     {

@@ -70,7 +70,6 @@ public class MovieEndpointTests
         result.ProblemDetails.Detail.ShouldNotBeNullOrEmpty();
     }
 
-
     [Fact]
     public async Task GetMovieById_ShouldReturn_Ok()
     {
@@ -98,6 +97,7 @@ public class MovieEndpointTests
         _ = value.Title.ShouldBeOfType<string>();
         value.Title.ShouldBe("Lorem Ipsum");
     }
+
     [Fact]
     public async Task GetMovieById_ShouldReturn_NotFound()
     {
