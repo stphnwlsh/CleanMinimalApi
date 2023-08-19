@@ -1,6 +1,5 @@
 namespace CleanMinimalApi.Presentation.Endpoints;
 
-using System.Diagnostics.CodeAnalysis;
 using CleanMinimalApi.Application.Common.Exceptions;
 using CleanMinimalApi.Presentation.Filters;
 using MediatR;
@@ -9,7 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Entities = Application.Movies.Entities;
 using Queries = Application.Movies.Queries;
 
-[ExcludeFromCodeCoverage]
 public static class MoviesEndpoints
 {
     public static WebApplication MapMovieEndpoints(this WebApplication app)

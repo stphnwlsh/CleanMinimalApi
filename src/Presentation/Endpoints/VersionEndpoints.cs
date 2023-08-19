@@ -1,13 +1,11 @@
 namespace CleanMinimalApi.Presentation.Endpoints;
 
-using System.Diagnostics.CodeAnalysis;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Entities = Application.Versions.Entities;
 using Queries = Application.Versions.Queries;
 
-[ExcludeFromCodeCoverage]
 public static class VersionEndpoints
 {
     public static WebApplication MapVersionEndpoints(this WebApplication app)

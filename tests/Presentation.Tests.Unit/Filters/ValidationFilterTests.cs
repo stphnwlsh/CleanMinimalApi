@@ -2,25 +2,24 @@ namespace CleanMinimalApi.Presentation.Tests.Unit.Filters;
 
 using System.Threading.Tasks;
 using CleanMinimalApi.Presentation.Filters;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.AspNetCore.Routing.Patterns;
-using Microsoft.Extensions.Logging;
-using Xunit;
+using CleanMinimalApi.Presentation.Validators;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Shouldly;
+using Xunit;
 
 public class LoggingFilterTests
 {
-    private readonly IValidator<Guid> validator;
+    private readonly IValidator<Guid> validator = new GenericIdentityValidator();
 
     [Fact]
-    public async Task InvokeAsync_ValidModel_ReturnsNext()
+    public async Task InvokeAsync_ValidValue_ReturnsNext()
     {
         // Arrange
-        var model = new Guid();
+        var value = Guid.NewGuid();
         var filter = new ValidationFilter<Guid>(this.validator);
-        var context = CreateFilterContext(model);
+        var context = CreateFilterContext(value);
 
         // Act
         var result = await filter.InvokeAsync(context, NextDelegate);
@@ -29,12 +28,54 @@ public class LoggingFilterTests
         result.ShouldBeSameAs(NextResult);
     }
 
-    // Helper methods
+    [Fact]
+    public async Task InvokeAsync_ValidValue_BadRequest()
+    {
+        // Arrange
+        var value = "Guid.NewGuid()";
+        var filter = new ValidationFilter<Guid>(this.validator);
+        var context = CreateFilterContext(value);
 
-    private static EndpointFilterInvocationContext CreateFilterContext(Guid argument)
+        // Act
+        var result = await filter.InvokeAsync(context, NextDelegate);
+
+        // Assert
+        _ = result.ShouldBeOfType<BadRequest<string>>();
+
+        var expectedResult = result as BadRequest<string>;
+
+        expectedResult.StatusCode.ShouldBe(400);
+        expectedResult.Value.ShouldBe("Unable to find parameters or body for validation");
+    }
+
+    [Fact]
+    public async Task InvokeAsync_ValidValue_ValidationProblem()
+    {
+        // Arrange
+        var value = Guid.Empty;
+        var filter = new ValidationFilter<Guid>(this.validator);
+        var context = CreateFilterContext(value);
+
+        // Act
+        var result = await filter.InvokeAsync(context, NextDelegate);
+
+        // Assert
+
+        _ = result.ShouldBeOfType<ProblemHttpResult>();
+
+        var expectedResult = result as ProblemHttpResult;
+
+        expectedResult.StatusCode.ShouldBe(400);
+        _ = expectedResult.ProblemDetails.ShouldNotBeNull();
+        expectedResult.ProblemDetails.Title.ShouldBe("One or more validation errors occurred.");
+    }
+
+    #region Helper Methods
+
+    private static EndpointFilterInvocationContext CreateFilterContext(object argument)
     {
         var httpContext = new DefaultHttpContext();
-        var filterContext = new DefaultEndpointFilterInvocationContext(httpContext, new List<object> { Guid.NewGuid() });
+        var filterContext = new DefaultEndpointFilterInvocationContext(httpContext, argument);
 
         return filterContext;
     }
@@ -45,114 +86,6 @@ public class LoggingFilterTests
     }
 
     private static readonly object NextResult = new();
+
+    #endregion Helper Methods
 }
-
-public class LoggingFilter : IEndpointFilter
-{
-    private readonly ILogger<LoggingFilter> logger;
-
-    public LoggingFilter(ILogger<LoggingFilter> logger)
-    {
-        this.logger = logger;
-    }
-
-    public async ValueTask<object> InvokeAsync(
-        EndpointFilterInvocationContext context,
-        EndpointFilterDelegate next)
-    {
-        this.logger.LogInformation("LoggingFilter invoked.");
-        return await next(context);
-    }
-}
-
-//     public class ValidationFilterTests
-//     {
-//         private readonly IValidator<Guid> validator;
-
-//         public ValidationFilterTests()
-//         {
-//             this.validator = new GenericIdentityValidator(); //Substitute.For<IValidator<Guid>>();
-//         }
-
-//         [Fact]
-//         public async Task InvokeAsync_ValidModel_ReturnsNext()
-//         {
-//             // Arrange
-//             var model = new Guid();
-//             var filter = new ValidationFilter<Guid>(this.validator);
-//             var context = CreateFilterContext(model);
-//             var mockNextDelegate = new Func<EndpointFilterDelegate, Task<object>>(_ => Task.FromResult(new object()));
-
-//             // Act
-//             var result = await filter.InvokeAsync(context, EndpointFilterDelegate);
-
-//             // Assert
-//             result.ShouldBe("");
-//         }
-
-//         public delegate Task<object> EndpointFilterDelegate(EndpointFilterInvocationContext context);
-
-//         // [Fact]
-//         // public async Task InvokeAsync_InvalidModel_ReturnsValidationProblem()
-//         // {
-//         //     // Arrange
-//         //     var model = new MyModel();
-//         //     var validationFailures = new List<FluentValidation.Results.ValidationFailure>
-//         //     {
-//         //         new FluentValidation.Results.ValidationFailure("PropertyName", "Error Message")
-//         //     };
-
-//         //     _ = this.validator.ValidateAsync(Arg.Any<Guid>())
-//         //         .Returns(new FluentValidation.Results.ValidationResult(validationFailures));
-
-//         //     var filter = new ValidationFilter<Guid>(this.validator);
-//         //     var context = CreateFilterContext(model);
-//         //     var delegated = delegate Task<object> EndpointFilterDelegate(EndpointFilterInvocationContext context)
-
-//         //     // Act
-//         //     var result = await filter.InvokeAsync(context, null);
-
-//         //     // Assert
-//         //     _ = result.ShouldBeOfType<Microsoft.AspNetCore.Mvc.ValidationProblemDetails>();
-//         //     var problemDetails = (Microsoft.AspNetCore.Mvc.ValidationProblemDetails)result;
-//         //     problemDetails.Errors.Count.ShouldBe(1);
-//         // }
-
-
-//         //public delegate Task<object> EndpointFilterDelegate(EndpointFilterInvocationContext context);
-
-//         [Fact]
-//         public async Task InvokeAsync_ModelNotFound_ReturnsBadRequest()
-//         {
-//             // Arrange
-//             var filter = new ValidationFilter<MyModel>(this.validator);
-//             var context = CreateFilterContext(null);
-
-//             // Act
-//             var result = await filter.InvokeAsync(context, null);
-
-//             // Assert
-//             _ = result.ShouldBeOfType<Microsoft.AspNetCore.Mvc.BadRequestObjectResult>();
-//         }
-
-//         // Helper methods
-//         private static DefaultEndpointFilterInvocationContext CreateFilterContext(object argument)
-//         {
-//             var httpContext = new DefaultHttpContext();
-//             var routeData = new RouteData();
-//             var endpoint = new RouteEndpoint(null, RoutePatternFactory.Parse(""), 0, null, null);
-//             var filterContext = new DefaultEndpointFilterInvocationContext(httpContext, routeData, endpoint, new List<object> { argument });
-
-//             return filterContext;
-//         }
-
-//         private delegate Task<object> NextDelegate(EndpointFilterInvocationContext context);
-//         {
-//             return Task.FromResult(NextResult);
-//         }
-
-//         private static readonly object NextResult = new();
-//     }
-
-//     public class MyModel { /* Define your model properties here */ }
-// }

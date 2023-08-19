@@ -15,9 +15,9 @@ using Commands = Application.Reviews.Commands;
 using Entities = Application.Reviews.Entities;
 using Queries = Application.Reviews.Queries;
 
-[ExcludeFromCodeCoverage]
 public static class ReviewsEndpoints
 {
+    [ExcludeFromCodeCoverage]
     public static WebApplication MapReviewEndpoints(this WebApplication app)
     {
         var root = app.MapGroup("/api/reviews")
@@ -99,6 +99,7 @@ public static class ReviewsEndpoints
         }
     }
 
+    [ExcludeFromCodeCoverage]
     public static async Task<IResult> CreateReview(
         [FromBody] CreateReviewRequest request,
         IMediator mediator,
@@ -125,6 +126,7 @@ public static class ReviewsEndpoints
         }
     }
 
+    [ExcludeFromCodeCoverage]
     public static async Task<IResult> UpdateReview(
         [FromRoute] Guid id,
         [FromBody] UpdateReviewRequest bodyRequest,
@@ -152,6 +154,7 @@ public static class ReviewsEndpoints
         }
     }
 
+    [ExcludeFromCodeCoverage]
     public static async Task<IResult> DeleteReview([FromRoute] Guid id, IMediator mediator)
     {
         try
