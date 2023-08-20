@@ -23,6 +23,7 @@ public class CreateHandlerTests
             MovieId = Guid.Empty,
             Stars = 5
         };
+
         var authorsRepository = Substitute.For<IAuthorsRepository>();
         var moviesRepository = Substitute.For<IMoviesRepository>();
         var reviewsRepository = Substitute.For<IReviewsRepository>();
@@ -52,11 +53,13 @@ public class CreateHandlerTests
             MovieId = Guid.Empty,
             Stars = 5
         };
+
         var authorsRepository = Substitute.For<IAuthorsRepository>();
         var moviesRepository = Substitute.For<IMoviesRepository>();
         var reviewsRepository = Substitute.For<IReviewsRepository>();
 
         _ = authorsRepository.AuthorExists(default, default).ReturnsForAnyArgs(false);
+        _ = moviesRepository.MovieExists(default, default).ReturnsForAnyArgs(true);
 
         var handler = new CreateReviewHandler(authorsRepository, moviesRepository, reviewsRepository);
         var token = new CancellationTokenSource().Token;

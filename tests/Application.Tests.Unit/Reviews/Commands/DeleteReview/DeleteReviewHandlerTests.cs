@@ -32,7 +32,7 @@ public class DeleteReviewHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldThrowException_AuthorDoesNotExist()
+    public async Task Handle_ShouldThrowException_ReviewDoesNotExist()
     {
         // Arrange
         var command = new DeleteReviewCommand { Id = Guid.Empty };

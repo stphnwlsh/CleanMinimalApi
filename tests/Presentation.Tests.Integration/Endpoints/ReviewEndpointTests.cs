@@ -7,20 +7,25 @@ using System.Text;
 using System.Threading.Tasks;
 using Application.Authors.Entities;
 using Application.Movies.Entities;
-using Application.Reviews.Entities;
 using Extensions;
 using Shouldly;
 using Xunit;
+using Entities = Application.Reviews.Entities;
 
-public class ReviewEndpointTests
+public class ReviewEndpointTests : IDisposable
 {
-    private static readonly MinimalApiApplication Application = new();
+    private MinimalApiApplication application;
+
+    public ReviewEndpointTests()
+    {
+        this.application = new();
+    }
 
     [Fact]
     public async Task CreateReview_ShouldReturn_Created()
     {
         // Arrange
-        using var client = Application.CreateClient();
+        using var client = this.application.CreateClient();
 
         using var authorResponse = await client.GetAsync("/api/authors");
         var authorResult = (await authorResponse.Content.ReadAsStringAsync()).Deserialize<List<Author>>()[0];
@@ -31,7 +36,7 @@ public class ReviewEndpointTests
 
         // Act
         using var response = await client.PostAsync("/api/reviews", content);
-        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Review>();
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Entities.Review>();
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
@@ -53,12 +58,13 @@ public class ReviewEndpointTests
     }
 
     [Fact]
-    public async Task DeleteReview_ShouldDelete_Review()
+    public async Task DeleteReview_ShouldReturn_NoContent()
     {
         // Arrange
-        using var client = Application.CreateClient();
+        using var client = this.application.CreateClient();
         using var reviewResponse = await client.GetAsync("/api/reviews");
-        var reviewResult = (await reviewResponse.Content.ReadAsStringAsync()).Deserialize<List<Review>>()[0];
+        var reviewResult = (await reviewResponse.Content.ReadAsStringAsync())
+            .Deserialize<List<Entities.Review>>()[0];
 
         // Act
         using var response = await client.DeleteAsync($"/api/reviews/{reviewResult.Id}");
@@ -73,11 +79,12 @@ public class ReviewEndpointTests
     public async Task GetReviews_ShouldReturn_Ok()
     {
         // Arrange
-        using var client = Application.CreateClient();
+        using var client = this.application.CreateClient();
 
         // Act
         using var response = await client.GetAsync("/api/reviews");
-        var result = (await response.Content.ReadAsStringAsync()).Deserialize<List<Review>>();
+        var result = (await response.Content.ReadAsStringAsync())
+            .Deserialize<List<Entities.Review>>();
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -112,13 +119,14 @@ public class ReviewEndpointTests
     public async Task GetReviewById_ShouldReturn_Ok()
     {
         // Arrange
-        using var client = Application.CreateClient();
+        using var client = this.application.CreateClient();
         using var reviewResponse = await client.GetAsync("/api/reviews");
-        var reviewResult = (await reviewResponse.Content.ReadAsStringAsync()).Deserialize<List<Review>>()[0];
+        var reviewResult = (await reviewResponse.Content.ReadAsStringAsync())
+            .Deserialize<List<Entities.Review>>()[0];
 
         // Act
         using var response = await client.GetAsync($"/api/reviews/{reviewResult.Id}");
-        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Review>();
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Entities.Review>();
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -147,13 +155,20 @@ public class ReviewEndpointTests
     public async Task UpdateReview_ShouldReturn_NoContent()
     {
         // Arrange
-        using var client = Application.CreateClient();
+        using var client = this.application.CreateClient();
+
         using var authorResponse = await client.GetAsync("/api/authors");
-        var authorResult = (await authorResponse.Content.ReadAsStringAsync()).Deserialize<List<Author>>()[0];
+        var authorResult = (await authorResponse.Content.ReadAsStringAsync())
+            .Deserialize<List<Author>>()[0];
+
         using var movieResponse = await client.GetAsync("/api/movies");
-        var movieResult = (await movieResponse.Content.ReadAsStringAsync()).Deserialize<List<Movie>>()[0];
+        var movieResult = (await movieResponse.Content.ReadAsStringAsync())
+            .Deserialize<List<Movie>>()[0];
+
         using var reviewResponse = await client.GetAsync("/api/reviews");
-        var reviewResult = (await reviewResponse.Content.ReadAsStringAsync()).Deserialize<List<Review>>()[0];
+        var reviewResult = (await reviewResponse.Content.ReadAsStringAsync())
+            .Deserialize<List<Entities.Review>>()[0];
+
         var json = (new { Stars = 5, AuthorId = authorResult.Id, MovieId = movieResult.Id }).Serialize();
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
@@ -164,7 +179,7 @@ public class ReviewEndpointTests
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         using var validateResponse = await client.GetAsync($"/api/reviews/{reviewResult.Id}");
-        var validateResult = (await validateResponse.Content.ReadAsStringAsync()).Deserialize<Review>();
+        var validateResult = (await validateResponse.Content.ReadAsStringAsync()).Deserialize<Entities.Review>();
 
         _ = validateResult.ShouldNotBeNull();
 
@@ -179,5 +194,23 @@ public class ReviewEndpointTests
         _ = validateResult.ReviewedMovie.ShouldNotBeNull();
         validateResult.ReviewedMovie.Id.ShouldBe(movieResult.Id);
         validateResult.ReviewedMovie.Title.ShouldBe(movieResult.Title);
+    }
+
+    public void Dispose()
+    {
+        this.Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            if (this.application != null)
+            {
+                this.application.Dispose();
+                this.application = null;
+            }
+        }
     }
 }

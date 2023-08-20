@@ -2,6 +2,7 @@ namespace CleanMinimalApi.Application.Tests.Unit.Version.Queries.GetVersion;
 
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Versions.Entities;
 using Application.Versions.Queries.GetVersion;
 using Shouldly;
 using Xunit;
@@ -22,6 +23,7 @@ public class GetVersionHandlerTests
 
         // Assert
         _ = result.ShouldNotBeNull();
+        _ = result.ShouldBeOfType<Version>();
 
         _ = result.FileVersion.ShouldBeOfType<string>();
         result.FileVersion.ShouldNotBeNullOrWhiteSpace();

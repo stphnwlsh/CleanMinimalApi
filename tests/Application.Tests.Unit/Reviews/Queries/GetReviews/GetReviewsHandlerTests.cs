@@ -34,8 +34,12 @@ public class GetReviewsHandlerTests
         // Assert
         _ = await context.Received(1).GetReviews(token);
 
+        _ = result.ShouldNotBeNull();
+        _ = result.ShouldBeOfType<List<Review>>();
+
         result.ShouldNotBeEmpty();
         result.Count.ShouldBe(1);
+
         result[0].Id.ShouldBe(Guid.Empty);
         result[0].Stars.ShouldBe(5);
     }

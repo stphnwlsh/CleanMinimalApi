@@ -76,6 +76,6 @@ This sample would not have been possible without gaining inspiration from the fo
 
 ## Connect and Support
 
-If you like this, or want to checkout my other work, please connect with me on [LinkedIn](https://www.linkedin.com/in/stphnwlsh), [Twitter](https://twitter.com/stphnwlsh) or [GitHub](https://github.com/stphnwlsh), and consider supporting me at [Buy Me a Coffee].
+If you like this, or want to checkout my other work, please connect with me on [LinkedIn](https://www.linkedin.com/in/stphnwlsh), [Twitter](https://twitter.com/stphnwlsh) or [GitHub](https://github.com/stphnwlsh), and consider supporting me by sponsoring the project.
 
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/guidelines/download-assets-sm-1.svg)](https://www.buymeacoffee.com/stphnwlsh)
+[!["GitHub Sponsor Me"](https://github.blog/wp-content/uploads/2019/05/mona-heart-featured.png)](https://github.com/sponsors/stphnwlsh)

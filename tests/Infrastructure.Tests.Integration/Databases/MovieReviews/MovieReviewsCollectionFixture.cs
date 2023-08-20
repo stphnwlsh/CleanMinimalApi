@@ -19,8 +19,6 @@ public class MovieReviewsCollectionFixture : ICollectionFixture<MovieReviewsData
 
 public class MovieReviewsDataFixture : IDisposable
 {
-    private bool disposedValue;
-
     internal MovieReviewsDbContext Context { get; set; }
     internal IDateTimeProvider DateTimeProvider { get; set; }
     internal IMapper Mapper { get; set; }
@@ -28,7 +26,9 @@ public class MovieReviewsDataFixture : IDisposable
 
     public MovieReviewsDataFixture()
     {
-        var options = new DbContextOptionsBuilder<MovieReviewsDbContext>().UseInMemoryDatabase($"TestMovies-{Guid.NewGuid()}").Options;
+        var options = new DbContextOptionsBuilder<MovieReviewsDbContext>()
+            .UseInMemoryDatabase($"TestMovies-{Guid.NewGuid()}")
+            .Options;
 
         this.Context = new MovieReviewsDbContext(options);
 
@@ -68,14 +68,13 @@ public class MovieReviewsDataFixture : IDisposable
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!this.disposedValue)
+        if (disposing)
         {
-            if (disposing)
+            if (this.Context != null)
             {
-                this.Context?.Dispose();
+                this.Context.Dispose();
+                this.Context = null;
             }
-
-            this.disposedValue = true;
         }
     }
 }
