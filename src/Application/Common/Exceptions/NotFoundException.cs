@@ -1,24 +1,10 @@
 namespace CleanMinimalApi.Application.Common.Exceptions;
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Serialization;
 using Enums;
 
-[Serializable]
-public class NotFoundException : Exception
+public class NotFoundException(string message) : Exception(message)
 {
-    public NotFoundException(string message)
-        : base(message)
-    {
-    }
-
-    [ExcludeFromCodeCoverage]
-    protected NotFoundException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
-
     /// <summary>Throws a <see cref="NotFoundException"/> if <paramref name="argument"/> is null.</summary>
     /// <param name="argument">The reference type argument to validate as non-null.</param>
     /// <param name="entityType">The entity type of the <paramref name="argument"/> parameter.</param>

@@ -7,18 +7,11 @@ using Common.Exceptions;
 using Entities;
 using MediatR;
 
-public class GetReviewByIdHandler : IRequestHandler<GetReviewByIdQuery, Review>
+public class GetReviewByIdHandler(IReviewsRepository repository) : IRequestHandler<GetReviewByIdQuery, Review>
 {
-    private readonly IReviewsRepository repository;
-
-    public GetReviewByIdHandler(IReviewsRepository repository)
-    {
-        this.repository = repository;
-    }
-
     public async Task<Review> Handle(GetReviewByIdQuery request, CancellationToken cancellationToken)
     {
-        var result = await this.repository.GetReviewById(request.Id, cancellationToken);
+        var result = await repository.GetReviewById(request.Id, cancellationToken);
 
         NotFoundException.ThrowIfNull(result, EntityType.Review);
 

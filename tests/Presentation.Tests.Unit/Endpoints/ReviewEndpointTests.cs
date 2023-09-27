@@ -26,8 +26,8 @@ public class ReviewEndpointTests
 
         _ = mediator
             .Send(Arg.Any<Queries.GetReviews.GetReviewsQuery>())
-            .ReturnsForAnyArgs(new List<Entities.Review>
-            {
+            .ReturnsForAnyArgs(
+            [
                 new Entities.Review
                 {
                     Id = Guid.Empty,
@@ -44,7 +44,7 @@ public class ReviewEndpointTests
                         Title = "Lorem Ipsum"
                     }
                 }
-            });
+            ]);
 
         // Act
         var response = await ReviewsEndpoints.GetReviews(mediator);

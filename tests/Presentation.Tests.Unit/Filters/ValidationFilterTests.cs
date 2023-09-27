@@ -67,7 +67,7 @@ public class ValidationFilterTests
 
     #region Helper Methods
 
-    private static EndpointFilterInvocationContext CreateFilterContext(object argument)
+    private static DefaultEndpointFilterInvocationContext CreateFilterContext(object argument)
     {
         var httpContext = new DefaultHttpContext();
         var filterContext = new DefaultEndpointFilterInvocationContext(httpContext, argument);

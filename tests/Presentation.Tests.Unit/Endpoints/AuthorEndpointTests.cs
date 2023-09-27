@@ -23,15 +23,15 @@ public class AuthorEndpointTests
 
         _ = mediator
             .Send(Arg.Any<Queries.GetAuthors.GetAuthorsQuery>())
-            .ReturnsForAnyArgs(new List<Entities.Author>
-            {
+            .ReturnsForAnyArgs(
+            [
                 new Entities.Author
                 {
                     Id = Guid.Empty,
                     FirstName = "Lorem",
                     LastName = "Ipsum"
                 }
-            });
+            ]);
 
         // Act
         var response = await AuthorsEndpoints.GetAuthors(mediator);
