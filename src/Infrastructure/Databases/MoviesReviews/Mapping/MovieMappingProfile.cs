@@ -10,5 +10,7 @@ internal class MovieMappingProfile : Profile
     {
         _ = this.CreateMap<Infrastructure.Movie, Application.Movie>()
             .ReverseMap();
+
+        _ = this.CreateMap<Infrastructure.Movie, Application.ReviewMovie>();
     }
 }
