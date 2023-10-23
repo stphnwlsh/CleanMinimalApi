@@ -32,13 +32,13 @@ public class ReviewEndpointTests
                 {
                     Id = Guid.Empty,
                     Stars = 5,
-                    ReviewAuthor = new Author
+                    ReviewAuthor = new ReviewAuthor
                     {
                         Id = Guid.Empty,
                         FirstName = "Lorem",
                         LastName = "Ipsum"
                     },
-                    ReviewedMovie = new Movie
+                    ReviewedMovie = new ReviewMovie
                     {
                         Id = Guid.Empty,
                         Title = "Lorem Ipsum"
@@ -110,13 +110,13 @@ public class ReviewEndpointTests
             {
                 Id = Guid.Empty,
                 Stars = 5,
-                ReviewAuthor = new Author
+                ReviewAuthor = new ReviewAuthor
                 {
                     Id = Guid.Empty,
                     FirstName = "Lorem",
                     LastName = "Ipsum"
                 },
-                ReviewedMovie = new Movie
+                ReviewedMovie = new ReviewMovie
                 {
                     Id = Guid.Empty,
                     Title = "Lorem Ipsum"
@@ -214,13 +214,13 @@ public class ReviewEndpointTests
             {
                 Id = Guid.Empty,
                 Stars = 5,
-                ReviewAuthor = new Author
+                ReviewAuthor = new ReviewAuthor
                 {
                     Id = Guid.Empty,
                     FirstName = "Lorem",
                     LastName = "Ipsum"
                 },
-                ReviewedMovie = new Movie
+                ReviewedMovie = new ReviewMovie
                 {
                     Id = Guid.Empty,
                     Title = "Lorem Ipsum"

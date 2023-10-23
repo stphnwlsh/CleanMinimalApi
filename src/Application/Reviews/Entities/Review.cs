@@ -8,7 +8,7 @@ public record Review : Entity
 {
     public int Stars { get; init; }
 
-    public Movie ReviewedMovie { get; init; }
+    public ReviewMovie ReviewedMovie { get; init; }
 
-    public Author ReviewAuthor { get; init; }
+    public ReviewAuthor ReviewAuthor { get; init; }
 }

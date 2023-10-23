@@ -10,5 +10,7 @@ internal class AuthorMappingProfile : Profile
     {
         _ = this.CreateMap<Infrastructure.Author, Application.Author>()
             .ReverseMap();
+
+        _ = this.CreateMap<Infrastructure.Author, Application.ReviewAuthor>();
     }
 }

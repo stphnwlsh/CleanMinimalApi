@@ -1,4 +1,3 @@
-using CleanMinimalApi.Presentation.Endpoints;
 using CleanMinimalApi.Presentation.Extensions;
 using Serilog;
 
@@ -9,11 +8,6 @@ var builder = WebApplication
 var app = builder
     .Build()
     .ConfigureApplication();
-
-_ = app.MapVersionEndpoints();
-_ = app.MapAuthorEndpoints();
-_ = app.MapMovieEndpoints();
-_ = app.MapReviewEndpoints();
 
 try
 {
