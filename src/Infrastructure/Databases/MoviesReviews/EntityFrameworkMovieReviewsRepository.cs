@@ -1,5 +1,6 @@
 namespace CleanMinimalApi.Infrastructure.Databases.MoviesReviews;
 
+using System;
 using Application.Authors;
 using Application.Common.Enums;
 using Application.Common.Exceptions;
@@ -9,7 +10,6 @@ using AutoMapper;
 using Extensions;
 using Microsoft.EntityFrameworkCore;
 using Models;
-using SimpleDateTimeProvider;
 using ApplicationAuthor = Application.Authors.Entities.Author;
 using ApplicationMovie = Application.Movies.Entities.Movie;
 using ApplicationReview = Application.Reviews.Entities.Review;
@@ -17,13 +17,13 @@ using ApplicationReview = Application.Reviews.Entities.Review;
 internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMoviesRepository, IReviewsRepository
 {
     private readonly MovieReviewsDbContext context;
-    private readonly IDateTimeProvider dateTimeProvider;
+    private readonly TimeProvider timeProvider;
     private readonly IMapper mapper;
 
-    public EntityFrameworkMovieReviewsRepository(MovieReviewsDbContext context, IDateTimeProvider dateTimeProvider, IMapper mapper)
+    public EntityFrameworkMovieReviewsRepository(MovieReviewsDbContext context, TimeProvider timeProvider, IMapper mapper)
     {
         this.context = context;
-        this.dateTimeProvider = dateTimeProvider;
+        this.timeProvider = timeProvider;
         this.mapper = mapper;
 
         if (this.context != null)
@@ -90,8 +90,8 @@ internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMovi
             ReviewAuthorId = authorId,
             ReviewedMovieId = movieId,
             Stars = stars,
-            DateCreated = this.dateTimeProvider.UtcNow,
-            DateModified = this.dateTimeProvider.UtcNow
+            DateCreated = this.TimeProvider.GetUtcNow(),
+            DateModified = this.TimeProvider.GetUtcNow()
         };
 
         var id = this.context.Add(review).Entity.Id;
@@ -148,7 +148,7 @@ internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMovi
             review.Stars = stars;
             review.ReviewAuthorId = authorId;
             review.ReviewedMovieId = movieId;
-            review.DateModified = this.dateTimeProvider.UtcNow;
+            review.DateModified = this.TimeProvider.GetUtcNow();
 
             _ = this.context.Update(review);
             _ = await this.context.SaveChangesAsync(cancellationToken);
