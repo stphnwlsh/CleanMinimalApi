@@ -2,6 +2,7 @@ namespace CleanMinimalApi.Presentation.Extensions;
 
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using CleanMinimalApi.Presentation.Endpoints;
 using Microsoft.AspNetCore.Builder;
 using Serilog;
 
@@ -10,17 +11,23 @@ public static class WebApplicationExtensions
 {
     public static WebApplication ConfigureApplication(this WebApplication app)
     {
-        #region Exceptions
-
-        //_ = app.UseGlobalExceptionHandler();
-
-        #endregion Exceptions
-
         #region Logging
 
         _ = app.UseSerilogRequestLogging();
 
         #endregion Logging
+
+        #region Security
+
+        _ = app.UseHsts();
+
+        #endregion Security
+
+        #region API Configuration
+
+        _ = app.UseHttpsRedirection();
+
+        #endregion API Configuration
 
         #region Swagger
 
@@ -34,17 +41,14 @@ public static class WebApplicationExtensions
 
         #endregion Swagger
 
-        #region Security
+        #region MinimalApi
 
-        _ = app.UseHsts();
+        _ = app.MapVersionEndpoints();
+        _ = app.MapAuthorEndpoints();
+        _ = app.MapMovieEndpoints();
+        _ = app.MapReviewEndpoints();
 
-        #endregion Security
-
-        #region API Configuration
-
-        _ = app.UseHttpsRedirection();
-
-        #endregion API Configuration
+        #endregion MinimalApi
 
         return app;
     }

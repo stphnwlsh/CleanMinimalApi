@@ -86,7 +86,6 @@ public static class WebApplicationBuilderExtensions
 
         #region Validation
 
-        //_ = builder.Services.AddSingleton(typeof(IEndpointFilter), typeof(ValidationFilter<>));
         _ = builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
         #endregion Validation
