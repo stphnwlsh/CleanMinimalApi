@@ -9,23 +9,34 @@ using Entities;
 using MediatR;
 using Movies;
 
-public class CreateReviewHandler(
-    IAuthorsRepository authorsRepository,
-    IMoviesRepository moviesRepository,
-    IReviewsRepository reviewsRepository) : IRequestHandler<CreateReviewCommand, Review>
+public class CreateReviewHandler : IRequestHandler<CreateReviewCommand, Review>
 {
+    private readonly IAuthorsRepository authorsRepository;
+    private readonly IMoviesRepository moviesRepository;
+    private readonly IReviewsRepository reviewsRepository;
+
+    public CreateReviewHandler(
+        IAuthorsRepository authorsRepository,
+        IMoviesRepository moviesRepository,
+        IReviewsRepository reviewsRepository)
+    {
+        this.authorsRepository = authorsRepository;
+        this.moviesRepository = moviesRepository;
+        this.reviewsRepository = reviewsRepository;
+    }
+
     public async Task<Review> Handle(CreateReviewCommand request, CancellationToken cancellationToken)
     {
-        if (!await authorsRepository.AuthorExists(request.AuthorId, cancellationToken))
+        if (!await this.authorsRepository.AuthorExists(request.AuthorId, cancellationToken))
         {
             NotFoundException.Throw(EntityType.Author);
         }
 
-        if (!await moviesRepository.MovieExists(request.MovieId, cancellationToken))
+        if (!await this.moviesRepository.MovieExists(request.MovieId, cancellationToken))
         {
             NotFoundException.Throw(EntityType.Movie);
         }
 
-        return await reviewsRepository.CreateReview(request.AuthorId, request.MovieId, request.Stars, cancellationToken);
+        return await this.reviewsRepository.CreateReview(request.AuthorId, request.MovieId, request.Stars, cancellationToken);
     }
 }

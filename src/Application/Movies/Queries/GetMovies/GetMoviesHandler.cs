@@ -5,10 +5,17 @@ using System.Threading.Tasks;
 using Entities;
 using MediatR;
 
-public class GetMoviesHandler(IMoviesRepository repository) : IRequestHandler<GetMoviesQuery, List<Movie>>
+public class GetMoviesHandler : IRequestHandler<GetMoviesQuery, List<Movie>>
 {
+    private readonly IMoviesRepository repository;
+
+    public GetMoviesHandler(IMoviesRepository repository)
+    {
+        this.repository = repository;
+    }
+
     public async Task<List<Movie>> Handle(GetMoviesQuery request, CancellationToken cancellationToken)
     {
-        return await repository.GetMovies(cancellationToken);
+        return await this.repository.GetMovies(cancellationToken);
     }
 }

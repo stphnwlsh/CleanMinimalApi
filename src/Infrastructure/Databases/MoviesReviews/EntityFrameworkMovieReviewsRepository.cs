@@ -10,6 +10,7 @@ using AutoMapper;
 using Extensions;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using SimpleDateTimeProvider;
 using ApplicationAuthor = Application.Authors.Entities.Author;
 using ApplicationMovie = Application.Movies.Entities.Movie;
 using ApplicationReview = Application.Reviews.Entities.Review;
@@ -17,13 +18,13 @@ using ApplicationReview = Application.Reviews.Entities.Review;
 internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMoviesRepository, IReviewsRepository
 {
     private readonly MovieReviewsDbContext context;
-    private readonly TimeProvider timeProvider;
+    private readonly IDateTimeProvider dateTimeProvider;
     private readonly IMapper mapper;
 
-    public EntityFrameworkMovieReviewsRepository(MovieReviewsDbContext context, TimeProvider timeProvider, IMapper mapper)
+    public EntityFrameworkMovieReviewsRepository(MovieReviewsDbContext context, IDateTimeProvider dateTimeProvider, IMapper mapper)
     {
         this.context = context;
-        this.timeProvider = timeProvider;
+        this.dateTimeProvider = dateTimeProvider;
         this.mapper = mapper;
 
         if (this.context != null)
@@ -90,8 +91,8 @@ internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMovi
             ReviewAuthorId = authorId,
             ReviewedMovieId = movieId,
             Stars = stars,
-            DateCreated = this.TimeProvider.GetUtcNow(),
-            DateModified = this.TimeProvider.GetUtcNow()
+            DateCreated = this.dateTimeProvider.UtcNow,
+            DateModified = this.dateTimeProvider.UtcNow
         };
 
         var id = this.context.Add(review).Entity.Id;
@@ -148,7 +149,7 @@ internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMovi
             review.Stars = stars;
             review.ReviewAuthorId = authorId;
             review.ReviewedMovieId = movieId;
-            review.DateModified = this.TimeProvider.GetUtcNow();
+            review.DateModified = this.dateTimeProvider.UtcNow;
 
             _ = this.context.Update(review);
             _ = await this.context.SaveChangesAsync(cancellationToken);

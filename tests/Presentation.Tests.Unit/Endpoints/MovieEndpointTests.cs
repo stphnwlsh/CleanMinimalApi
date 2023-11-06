@@ -23,14 +23,13 @@ public class MovieEndpointTests
 
         _ = mediator
             .Send(Arg.Any<Queries.GetMovies.GetMoviesQuery>())
-            .ReturnsForAnyArgs(
-            [
-                new Entities.Movie
-                {
+            .ReturnsForAnyArgs(new List<Entities.Movie>
+            {
+                new() {
                     Id = Guid.Empty,
                     Title = "Lorem Ipsum"
                 }
-            ]);
+            });
 
         // Act
         var response = await MoviesEndpoints.GetMovies(mediator);

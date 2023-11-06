@@ -8,28 +8,39 @@ using Common.Enums;
 using Common.Exceptions;
 using MediatR;
 
-public class UpdateReviewHandler(
-    IAuthorsRepository authorsRepository,
-    IMoviesRepository moviesRepository,
-    IReviewsRepository reviewsRepository) : IRequestHandler<UpdateReviewCommand, bool>
+public class UpdateReviewHandler : IRequestHandler<UpdateReviewCommand, bool>
 {
+    private readonly IAuthorsRepository authorsRepository;
+    private readonly IMoviesRepository moviesRepository;
+    private readonly IReviewsRepository reviewsRepository;
+
+    public UpdateReviewHandler(
+        IAuthorsRepository authorsRepository,
+        IMoviesRepository moviesRepository,
+        IReviewsRepository reviewsRepository)
+    {
+        this.authorsRepository = authorsRepository;
+        this.moviesRepository = moviesRepository;
+        this.reviewsRepository = reviewsRepository;
+    }
+
     public async Task<bool> Handle(UpdateReviewCommand request, CancellationToken cancellationToken)
     {
-        if (!await reviewsRepository.ReviewExists(request.Id, cancellationToken))
+        if (!await this.reviewsRepository.ReviewExists(request.Id, cancellationToken))
         {
             NotFoundException.Throw(EntityType.Review);
         }
 
-        if (!await authorsRepository.AuthorExists(request.AuthorId, cancellationToken))
+        if (!await this.authorsRepository.AuthorExists(request.AuthorId, cancellationToken))
         {
             NotFoundException.Throw(EntityType.Author);
         }
 
-        if (!await moviesRepository.MovieExists(request.MovieId, cancellationToken))
+        if (!await this.moviesRepository.MovieExists(request.MovieId, cancellationToken))
         {
             NotFoundException.Throw(EntityType.Movie);
         }
 
-        return await reviewsRepository.UpdateReview(request.Id, request.AuthorId, request.MovieId, request.Stars, cancellationToken);
+        return await this.reviewsRepository.UpdateReview(request.Id, request.AuthorId, request.MovieId, request.Stars, cancellationToken);
     }
 }
