@@ -22,7 +22,8 @@ public class GetReviewsHandlerTests
         var token = new CancellationTokenSource().Token;
 
         _ = context.GetReviews(token).Returns([
-            new Review{
+            new Review
+            {
                 Id = Guid.Empty,
                 Stars = 5
             }

@@ -1,4 +1,5 @@
 namespace CleanMinimalApi.Application.Tests.Unit.Common.Exceptions;
+
 using Application.Authors.Entities;
 using CleanMinimalApi.Application.Common.Enums;
 using CleanMinimalApi.Application.Common.Exceptions;
