@@ -7,18 +7,11 @@ using Common.Exceptions;
 using Entities;
 using MediatR;
 
-public class GetAuthorByIdHandler : IRequestHandler<GetAuthorByIdQuery, Author>
+public class GetAuthorByIdHandler(IAuthorsRepository repository) : IRequestHandler<GetAuthorByIdQuery, Author>
 {
-    private readonly IAuthorsRepository repository;
-
-    public GetAuthorByIdHandler(IAuthorsRepository repository)
-    {
-        this.repository = repository;
-    }
-
     public async Task<Author> Handle(GetAuthorByIdQuery request, CancellationToken cancellationToken)
     {
-        var result = await this.repository.GetAuthorById(request.Id, cancellationToken);
+        var result = await repository.GetAuthorById(request.Id, cancellationToken);
 
         NotFoundException.ThrowIfNull(result, EntityType.Author);
 

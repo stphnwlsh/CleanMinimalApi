@@ -3,11 +3,8 @@ namespace CleanMinimalApi.Application.Common.Exceptions;
 using System;
 using Enums;
 
-public class NotFoundException : Exception
+public class NotFoundException(string message) : Exception(message)
 {
-    public NotFoundException(string message) : base(message)
-    {
-    }
 
     /// <summary>Throws a <see cref="NotFoundException"/> if <paramref name="argument"/> is null.</summary>
     /// <param name="argument">The reference type argument to validate as non-null.</param>

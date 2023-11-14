@@ -6,14 +6,8 @@ using Shouldly;
 using Xunit;
 
 [Collection("MovieReviews")]
-public class EntityFrameworkMovieReviewsRepositoryTests
+public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture fixture)
 {
-    private readonly MovieReviewsDataFixture fixture;
-
-    public EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture fixture)
-    {
-        this.fixture = fixture;
-    }
 
     #region Authors
 
@@ -21,7 +15,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests
     public async void GetAuthors_ShouldReturn_Authors()
     {
         // Arrange
-        var repository = this.fixture.Repository;
+        var repository = fixture.Repository;
         var token = new CancellationTokenSource().Token;
 
         // Act
@@ -37,9 +31,9 @@ public class EntityFrameworkMovieReviewsRepositoryTests
     public async void GetAuthorById_ShouldReturn_Author()
     {
         // Arrange
-        var repository = this.fixture.Repository;
+        var repository = fixture.Repository;
         var token = new CancellationTokenSource().Token;
-        var author = this.fixture.Context.Authors.FirstOrDefault(a => a.FirstName == "One");
+        var author = fixture.Context.Authors.FirstOrDefault(a => a.FirstName == "One");
 
         // Act
         var result = await repository.GetAuthorById(author.Id, token);
@@ -57,7 +51,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests
     public async void GetAuthorById_ShouldReturn_Null()
     {
         // Arrange
-        var repository = this.fixture.Repository;
+        var repository = fixture.Repository;
         var token = new CancellationTokenSource().Token;
 
         // Act
@@ -71,9 +65,9 @@ public class EntityFrameworkMovieReviewsRepositoryTests
     public async void AuthorExists_ShouldReturn_True()
     {
         // Arrange
-        var repository = this.fixture.Repository;
+        var repository = fixture.Repository;
         var token = new CancellationTokenSource().Token;
-        var author = this.fixture.Context.Authors.FirstOrDefault(a => a.FirstName == "One");
+        var author = fixture.Context.Authors.FirstOrDefault(a => a.FirstName == "One");
 
         // Act
         var result = await repository.AuthorExists(author.Id, token);
@@ -86,7 +80,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests
     public async void AuthorExists_ShouldReturn_False()
     {
         // Arrange
-        var repository = this.fixture.Repository;
+        var repository = fixture.Repository;
         var token = new CancellationTokenSource().Token;
 
         // Act
@@ -104,7 +98,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests
     public async void GetMovies_ShouldReturn_Movies()
     {
         // Arrange
-        var repository = this.fixture.Repository;
+        var repository = fixture.Repository;
         var token = new CancellationTokenSource().Token;
 
         // Act
@@ -120,9 +114,9 @@ public class EntityFrameworkMovieReviewsRepositoryTests
     public async void GetMovieById_ShouldReturn_Movie()
     {
         // Arrange
-        var repository = this.fixture.Repository;
+        var repository = fixture.Repository;
         var token = new CancellationTokenSource().Token;
-        var movie = this.fixture.Context.Movies.FirstOrDefault(m => m.Title == "One");
+        var movie = fixture.Context.Movies.FirstOrDefault(m => m.Title == "One");
 
         // Act
         var result = await repository.GetMovieById(movie.Id, token);
@@ -139,7 +133,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests
     public async void GetMovieById_ShouldReturn_Null()
     {
         // Arrange
-        var repository = this.fixture.Repository;
+        var repository = fixture.Repository;
         var token = new CancellationTokenSource().Token;
 
         // Act
@@ -153,9 +147,9 @@ public class EntityFrameworkMovieReviewsRepositoryTests
     public async void MovieExists_ShouldReturn_True()
     {
         // Arrange
-        var repository = this.fixture.Repository;
+        var repository = fixture.Repository;
         var token = new CancellationTokenSource().Token;
-        var movie = this.fixture.Context.Movies.FirstOrDefault(m => m.Title == "One");
+        var movie = fixture.Context.Movies.FirstOrDefault(m => m.Title == "One");
 
         // Act
         var result = await repository.MovieExists(movie.Id, token);
@@ -168,7 +162,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests
     public async void MovieExists_ShouldReturn_False()
     {
         // Arrange
-        var repository = this.fixture.Repository;
+        var repository = fixture.Repository;
         var token = new CancellationTokenSource().Token;
 
         // Act
@@ -188,14 +182,14 @@ public class EntityFrameworkMovieReviewsRepositoryTests
         // Arrange
         var review = new CreateReviewCommand
         {
-            AuthorId = this.fixture.Context.Authors.FirstOrDefault(a => a.FirstName == "One").Id,
-            MovieId = this.fixture.Context.Movies.FirstOrDefault(m => m.Title == "One").Id,
+            AuthorId = fixture.Context.Authors.FirstOrDefault(a => a.FirstName == "One").Id,
+            MovieId = fixture.Context.Movies.FirstOrDefault(m => m.Title == "One").Id,
             Stars = 5
         };
         var token = new CancellationTokenSource().Token;
 
         // Act
-        var result = await this.fixture.Repository.CreateReview(review.AuthorId, review.MovieId, review.Stars, token);
+        var result = await fixture.Repository.CreateReview(review.AuthorId, review.MovieId, review.Stars, token);
 
         // Assert
         _ = result.ShouldNotBeNull();
@@ -203,30 +197,30 @@ public class EntityFrameworkMovieReviewsRepositoryTests
         result.ReviewAuthor.Id.ShouldBe(review.AuthorId);
         result.ReviewedMovie.Id.ShouldBe(review.MovieId);
         result.Stars.ShouldBe(review.Stars);
-        result.DateCreated.ShouldBe(this.fixture.DateTimeProvider.UtcNow);
-        result.DateModified.ShouldBe(this.fixture.DateTimeProvider.UtcNow);
+        result.DateCreated.ShouldBe(fixture.DateTimeProvider.UtcNow);
+        result.DateModified.ShouldBe(fixture.DateTimeProvider.UtcNow);
 
         // Cleanup
-        _ = await this.fixture.Repository.DeleteReview(result.Id, token);
+        _ = await fixture.Repository.DeleteReview(result.Id, token);
     }
 
     [Fact]
     public async void DeleteReview_ShouldReturn_True()
     {
         // Arrange
-        var id = this.fixture.Context.Reviews.FirstOrDefault(r => r.Stars == 1).Id;
+        var id = fixture.Context.Reviews.FirstOrDefault(r => r.Stars == 1).Id;
         var token = new CancellationTokenSource().Token;
 
         // Act
-        var result = await this.fixture.Repository.DeleteReview(id, token);
+        var result = await fixture.Repository.DeleteReview(id, token);
 
         // Assert
         result.ShouldBeTrue();
 
         // Cleanup
-        var authorId = this.fixture.Context.Authors.FirstOrDefault(a => a.FirstName == "Three").Id;
-        var movieId = this.fixture.Context.Movies.FirstOrDefault(m => m.Title == "Three").Id;
-        _ = await this.fixture.Repository.CreateReview(authorId, movieId, 1, token);
+        var authorId = fixture.Context.Authors.FirstOrDefault(a => a.FirstName == "Three").Id;
+        var movieId = fixture.Context.Movies.FirstOrDefault(m => m.Title == "Three").Id;
+        _ = await fixture.Repository.CreateReview(authorId, movieId, 1, token);
     }
 
     [Fact]
@@ -236,7 +230,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests
         var token = new CancellationTokenSource().Token;
 
         // Act
-        var result = await this.fixture.Repository.DeleteReview(Guid.Empty, token);
+        var result = await fixture.Repository.DeleteReview(Guid.Empty, token);
 
         // Assert
         result.ShouldBeFalse();
@@ -246,7 +240,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests
     public async void GetReviews_ShouldReturn_Reviews()
     {
         // Arrange
-        var repository = this.fixture.Repository;
+        var repository = fixture.Repository;
         var token = new CancellationTokenSource().Token;
 
         // Act
@@ -262,9 +256,9 @@ public class EntityFrameworkMovieReviewsRepositoryTests
     public async void GetReviewById_ShouldReturn_Review()
     {
         // Arrange
-        var repository = this.fixture.Repository;
+        var repository = fixture.Repository;
         var token = new CancellationTokenSource().Token;
-        var review = this.fixture.Context.Reviews.FirstOrDefault(m => m.Stars == 5);
+        var review = fixture.Context.Reviews.FirstOrDefault(m => m.Stars == 5);
 
         // Act
         var result = await repository.GetReviewById(review.Id, token);
@@ -286,7 +280,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests
     public async void GetReviewById_ShouldReturn_Null()
     {
         // Arrange
-        var repository = this.fixture.Repository;
+        var repository = fixture.Repository;
         var token = new CancellationTokenSource().Token;
 
         // Act
@@ -300,9 +294,9 @@ public class EntityFrameworkMovieReviewsRepositoryTests
     public async void ReviewExists_ShouldReturn_True()
     {
         // Arrange
-        var repository = this.fixture.Repository;
+        var repository = fixture.Repository;
         var token = new CancellationTokenSource().Token;
-        var review = this.fixture.Context.Reviews.FirstOrDefault(m => m.Stars == 5);
+        var review = fixture.Context.Reviews.FirstOrDefault(m => m.Stars == 5);
 
         // Act
         var result = await repository.ReviewExists(review.Id, token);
@@ -315,7 +309,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests
     public async void ReviewExists_ShouldReturn_False()
     {
         // Arrange
-        var repository = this.fixture.Repository;
+        var repository = fixture.Repository;
         var token = new CancellationTokenSource().Token;
 
         // Act
@@ -331,26 +325,26 @@ public class EntityFrameworkMovieReviewsRepositoryTests
         // Arrange
         var review = new UpdateReviewCommand
         {
-            Id = this.fixture.Context.Reviews.FirstOrDefault(a => a.Stars == 2).Id,
-            AuthorId = this.fixture.Context.Authors.FirstOrDefault(a => a.FirstName == "Two").Id,
-            MovieId = this.fixture.Context.Movies.FirstOrDefault(m => m.Title == "Two").Id,
+            Id = fixture.Context.Reviews.FirstOrDefault(a => a.Stars == 2).Id,
+            AuthorId = fixture.Context.Authors.FirstOrDefault(a => a.FirstName == "Two").Id,
+            MovieId = fixture.Context.Movies.FirstOrDefault(m => m.Title == "Two").Id,
             Stars = 4
         };
         var token = new CancellationTokenSource().Token;
 
         // Act
-        var result = await this.fixture.Repository.UpdateReview(review.Id, review.AuthorId, review.MovieId, review.Stars, token);
+        var result = await fixture.Repository.UpdateReview(review.Id, review.AuthorId, review.MovieId, review.Stars, token);
 
         // Assert
         result.ShouldBeTrue();
 
-        var updatedReview = this.fixture.Context.Reviews.FirstOrDefault(a => a.Id == review.Id);
+        var updatedReview = fixture.Context.Reviews.FirstOrDefault(a => a.Id == review.Id);
 
         updatedReview.Id.ShouldBe(review.Id);
         updatedReview.ReviewAuthorId.ShouldBe(review.AuthorId);
         updatedReview.ReviewedMovieId.ShouldBe(review.MovieId);
         updatedReview.Stars.ShouldBe(review.Stars);
-        updatedReview.DateModified.ShouldBe(this.fixture.DateTimeProvider.UtcNow);
+        updatedReview.DateModified.ShouldBe(fixture.DateTimeProvider.UtcNow);
     }
 
     [Fact]
@@ -360,14 +354,14 @@ public class EntityFrameworkMovieReviewsRepositoryTests
         var review = new UpdateReviewCommand
         {
             Id = Guid.Empty,
-            AuthorId = this.fixture.Context.Authors.FirstOrDefault(a => a.FirstName == "One").Id,
-            MovieId = this.fixture.Context.Movies.FirstOrDefault(m => m.Title == "One").Id,
+            AuthorId = fixture.Context.Authors.FirstOrDefault(a => a.FirstName == "One").Id,
+            MovieId = fixture.Context.Movies.FirstOrDefault(m => m.Title == "One").Id,
             Stars = 5
         };
         var token = new CancellationTokenSource().Token;
 
         // Act
-        var result = await this.fixture.Repository.UpdateReview(review.Id, review.AuthorId, review.MovieId, review.Stars, token);
+        var result = await fixture.Repository.UpdateReview(review.Id, review.AuthorId, review.MovieId, review.Stars, token);
 
         // Assert
         result.ShouldBeFalse();

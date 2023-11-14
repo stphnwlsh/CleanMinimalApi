@@ -4,14 +4,9 @@ using AutoMapper;
 using Xunit;
 
 [Collection("MovieReviews")]
-public class MappingConfigurationTests
+public class MappingConfigurationTests(MovieReviewsDataFixture fixture)
 {
-    private readonly IMapper mapper;
-
-    public MappingConfigurationTests(MovieReviewsDataFixture fixture)
-    {
-        this.mapper = fixture.Mapper;
-    }
+    private readonly IMapper mapper = fixture.Mapper;
 
     [Fact]
     public void ShouldHaveValidMappingConfiguration()

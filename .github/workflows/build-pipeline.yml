@@ -2,9 +2,9 @@ name: Build Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -19,26 +19,26 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        language: [ 'csharp' ]
+        language: ["csharp"]
 
     steps:
-    - name: Checkout
-      id: checkout
-      uses: actions/checkout@v2
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
 
-    - name: Initialize
-      id: initialize
-      uses: github/codeql-action/init@v2
-      with:
-        languages: ${{ matrix.language }}
+      - name: Initialize
+        id: initialize
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
 
-    - name: Build
-      id: build
-      uses: github/codeql-action/autobuild@v2
+      - name: Build
+        id: build
+        uses: github/codeql-action/autobuild@v2
 
-    - name: Analysis
-      id: analysis
-      uses: github/codeql-action/analyze@v2
+      - name: Analysis
+        id: analysis
+        uses: github/codeql-action/analyze@v2
 
   pipeline:
     name: Build, Test and Publish
@@ -47,96 +47,96 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        language: [ 'csharp' ]
+        language: ["csharp"]
 
     steps:
-    - name: Checkout
-      id: checkout
-      uses: actions/checkout@v2
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
 
-    - name: Initialize
-      id: initialize
-      run: |
-        NAME=$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')
-        VERSION_PREFIX=$(date +'%Y.%m.%d').${GITHUB_RUN_NUMBER}
-        BRANCH_CURRENT=${GITHUB_REF#refs/*/}
-        BRANCH_CURRENT=${BRANCH_CURRENT//[^a-zA-Z0-9]/-}
+      - name: Initialize
+        id: initialize
+        run: |
+          NAME=$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')
+          VERSION_PREFIX=$(date +'%Y.%m.%d').${GITHUB_RUN_NUMBER}
+          BRANCH_CURRENT=${GITHUB_REF#refs/*/}
+          BRANCH_CURRENT=${BRANCH_CURRENT//[^a-zA-Z0-9]/-}
 
-        if [[ ${GITHUB_EVENT_NAME} == 'pull_request' ]]; then
-          BRANCH_BASE=${GITHUB_BASE_REF#refs/*/}
-          BRANCH_BASE=${BRANCH_BASE/[^a-zA-Z0-9]//-}
-          BRANCH_COMPARE=${GITHUB_HEAD_REF#refs/*/}
-          BRANCH_COMPARE=${BRANCH_COMPARE//[^a-zA-Z0-9]/-}
-          VERSION_SUFFIX="merge-${BRANCH_BASE}-${BRANCH_COMPARE}"
-        elif [[ ${GITHUB_EVENT_NAME} == ${{ github.event.repository.default_branch }} ]]; then
-          VERSION_SUFFIX="${BRANCH_CURRENT}"
-        fi
+          if [[ ${GITHUB_EVENT_NAME} == 'pull_request' ]]; then
+            BRANCH_BASE=${GITHUB_BASE_REF#refs/*/}
+            BRANCH_BASE=${BRANCH_BASE/[^a-zA-Z0-9]//-}
+            BRANCH_COMPARE=${GITHUB_HEAD_REF#refs/*/}
+            BRANCH_COMPARE=${BRANCH_COMPARE//[^a-zA-Z0-9]/-}
+            VERSION_SUFFIX="merge-${BRANCH_BASE}-${BRANCH_COMPARE}"
+          elif [[ ${GITHUB_EVENT_NAME} == ${{ github.event.repository.default_branch }} ]]; then
+            VERSION_SUFFIX="${BRANCH_CURRENT}"
+          fi
 
-        if [[ $VERSION_SUFFIX == '' ]]; then
-          DOCKER_TAG=$VERSION_PREFIX
-        else
-          DOCKER_TAG=$VERSION_PREFIX-$VERSION_SUFFIX
-        fi
+          if [[ $VERSION_SUFFIX == '' ]]; then
+            DOCKER_TAG=$VERSION_PREFIX
+          else
+            DOCKER_TAG=$VERSION_PREFIX-$VERSION_SUFFIX
+          fi
 
-        echo "::set-output name=name::$(eval printf "%s" "$NAME")"
-        echo "::set-output name=version_prefix::$(eval printf "%s" "$VERSION_PREFIX")"
-        echo "::set-output name=version_suffix::$(eval printf "%s" "$VERSION_SUFFIX")"
-        echo "::set-output name=docker_tag::$(eval printf "%s" "$DOCKER_TAG")"
-        echo "::set-output name=branch::$(eval printf "%s" "$BRANCH_CURRENT")"
-      shell: bash
+          echo "::set-output name=name::$(eval printf "%s" "$NAME")"
+          echo "::set-output name=version_prefix::$(eval printf "%s" "$VERSION_PREFIX")"
+          echo "::set-output name=version_suffix::$(eval printf "%s" "$VERSION_SUFFIX")"
+          echo "::set-output name=docker_tag::$(eval printf "%s" "$DOCKER_TAG")"
+          echo "::set-output name=branch::$(eval printf "%s" "$BRANCH_CURRENT")"
+        shell: bash
 
-    - name: Build
-      id: build
-      run: docker build .
-        --target coverage
-        --output type=local,dest=out
-        --tag $NAME:$DOCKER_TAG
-        --tag $NAME:latest
-        --build-arg VERSION_PREFIX=$VERSION_PREFIX
-        --build-arg VERSION_SUFFIX=$VERSION_SUFFIX
-      env:
-        DOCKER_BUILDKIT: 1
-        NAME: ${{ steps.initialize.outputs.name }}
-        VERSION_PREFIX: ${{ steps.initialize.outputs.version_prefix }}
-        VERSION_SUFFIX: ${{ steps.initialize.outputs.version_suffix }}
-        DOCKER_TAG: ${{ steps.initialize.outputs.docker_tag }}
+      - name: Build
+        id: build
+        run: docker build .
+          --target coverage
+          --output type=local,dest=out
+          --tag $NAME:$DOCKER_TAG
+          --tag $NAME:latest
+          --build-arg VERSION_PREFIX=$VERSION_PREFIX
+          --build-arg VERSION_SUFFIX=$VERSION_SUFFIX
+        env:
+          DOCKER_BUILDKIT: 1
+          NAME: ${{ steps.initialize.outputs.name }}
+          VERSION_PREFIX: ${{ steps.initialize.outputs.version_prefix }}
+          VERSION_SUFFIX: ${{ steps.initialize.outputs.version_suffix }}
+          DOCKER_TAG: ${{ steps.initialize.outputs.docker_tag }}
 
-    - name: Analysis
-      id: analysis
-      uses: codecov/codecov-action@v1
-      with:
-        files: ./out/coverage.opencover.xml
-        token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Analysis
+        id: analysis
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./out/coverage.opencover.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
 
-    - name: Publish
-      id: publish
-      run: docker build .
-        --target run
-        --tag $NAME:$DOCKER_TAG
-        --tag $NAME:latest
-        --build-arg VERSION_PREFIX=$VERSION_PREFIX
-        --build-arg VERSION_SUFFIX=$VERSION_SUFFIX
-      env:
-        DOCKER_BUILDKIT: 1
-        NAME: ${{ steps.initialize.outputs.name }}
-        VERSION_PREFIX: ${{ steps.initialize.outputs.version_prefix }}
-        VERSION_SUFFIX: ${{ steps.initialize.outputs.version_suffix }}
-        DOCKER_TAG: ${{ steps.initialize.outputs.docker_tag }}
+      - name: Publish
+        id: publish
+        run: docker build .
+          --target run
+          --tag $NAME:$DOCKER_TAG
+          --tag $NAME:latest
+          --build-arg VERSION_PREFIX=$VERSION_PREFIX
+          --build-arg VERSION_SUFFIX=$VERSION_SUFFIX
+        env:
+          DOCKER_BUILDKIT: 1
+          NAME: ${{ steps.initialize.outputs.name }}
+          VERSION_PREFIX: ${{ steps.initialize.outputs.version_prefix }}
+          VERSION_SUFFIX: ${{ steps.initialize.outputs.version_suffix }}
+          DOCKER_TAG: ${{ steps.initialize.outputs.docker_tag }}
 
-    - name: Docker Login
-      id: login
-      if: ${{ github.ref == 'refs/heads/main' }}
-      uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
-      with:
-        username: ${{ secrets.DOCKER_LOGIN }}
-        password: ${{ secrets.DOCKER_TOKEN }}
+      - name: Docker Login
+        id: login
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_LOGIN }}
+          password: ${{ secrets.DOCKER_TOKEN }}
 
-    - name: Docker Push
-      id: push
-      if: ${{ github.ref == 'refs/heads/main' }}
-      run: docker push $NAME --all-tags
-      env:
-        NAME: ${{ steps.initialize.outputs.name }}
+      - name: Docker Push
+        id: push
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: docker push $NAME --all-tags
+        env:
+          NAME: ${{ steps.initialize.outputs.name }}
 
   template:
     name: Nuget Template
@@ -146,67 +146,67 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        language: [ 'csharp' ]
+        language: ["csharp"]
 
     steps:
-    - name: Checkout
-      id: checkout
-      uses: actions/checkout@v2
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
 
-    - name: Initialize
-      id: initialize
-      run: |
-        NAME=$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')
-        VERSION_PREFIX=$(date +'%Y.%m.%d').${GITHUB_RUN_NUMBER}
-        BRANCH_CURRENT=${GITHUB_REF#refs/*/}
-        BRANCH_CURRENT=${BRANCH_CURRENT//[^a-zA-Z0-9]/-}
+      - name: Initialize
+        id: initialize
+        run: |
+          NAME=$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')
+          VERSION_PREFIX=$(date +'%Y.%m.%d').${GITHUB_RUN_NUMBER}
+          BRANCH_CURRENT=${GITHUB_REF#refs/*/}
+          BRANCH_CURRENT=${BRANCH_CURRENT//[^a-zA-Z0-9]/-}
 
-        if [[ ${GITHUB_EVENT_NAME} == 'pull_request' ]]; then
-          BRANCH_BASE=${GITHUB_BASE_REF#refs/*/}
-          BRANCH_BASE=${BRANCH_BASE/[^a-zA-Z0-9]//-}
-          BRANCH_COMPARE=${GITHUB_HEAD_REF#refs/*/}
-          BRANCH_COMPARE=${BRANCH_COMPARE//[^a-zA-Z0-9]/-}
-          VERSION_SUFFIX="merge-${BRANCH_BASE}-${BRANCH_COMPARE}"
-        elif [[ ${GITHUB_EVENT_NAME} == ${{ github.event.repository.default_branch }} ]]; then
-          VERSION_SUFFIX="${BRANCH_CURRENT}"
-        fi
+          if [[ ${GITHUB_EVENT_NAME} == 'pull_request' ]]; then
+            BRANCH_BASE=${GITHUB_BASE_REF#refs/*/}
+            BRANCH_BASE=${BRANCH_BASE/[^a-zA-Z0-9]//-}
+            BRANCH_COMPARE=${GITHUB_HEAD_REF#refs/*/}
+            BRANCH_COMPARE=${BRANCH_COMPARE//[^a-zA-Z0-9]/-}
+            VERSION_SUFFIX="merge-${BRANCH_BASE}-${BRANCH_COMPARE}"
+          elif [[ ${GITHUB_EVENT_NAME} == ${{ github.event.repository.default_branch }} ]]; then
+            VERSION_SUFFIX="${BRANCH_CURRENT}"
+          fi
 
-        if [[ $VERSION_SUFFIX == '' ]]; then
-          DOCKER_TAG=$VERSION_PREFIX
-        else
-          DOCKER_TAG=$VERSION_PREFIX-$VERSION_SUFFIX
-        fi
+          if [[ $VERSION_SUFFIX == '' ]]; then
+            DOCKER_TAG=$VERSION_PREFIX
+          else
+            DOCKER_TAG=$VERSION_PREFIX-$VERSION_SUFFIX
+          fi
 
-        echo "::set-output name=name::$(eval printf "%s" "$NAME")"
-        echo "::set-output name=version_prefix::$(eval printf "%s" "$VERSION_PREFIX")"
-        echo "::set-output name=version_suffix::$(eval printf "%s" "$VERSION_SUFFIX")"
-        echo "::set-output name=docker_tag::$(eval printf "%s" "$DOCKER_TAG")"
-        echo "::set-output name=branch::$(eval printf "%s" "$BRANCH_CURRENT")"
-      shell: bash
+          echo "::set-output name=name::$(eval printf "%s" "$NAME")"
+          echo "::set-output name=version_prefix::$(eval printf "%s" "$VERSION_PREFIX")"
+          echo "::set-output name=version_suffix::$(eval printf "%s" "$VERSION_SUFFIX")"
+          echo "::set-output name=docker_tag::$(eval printf "%s" "$DOCKER_TAG")"
+          echo "::set-output name=branch::$(eval printf "%s" "$BRANCH_CURRENT")"
+        shell: bash
 
-    - name: Setup
-      id: setup
-      uses: NuGet/setup-nuget@v1.0.5
-      with:
-        nuget-api-key: ${{ secrets.NUGET_API_KEY }}
+      - name: Setup
+        id: setup
+        uses: nuget/setup-nuget@v1
+        with:
+          nuget-api-key: ${{ secrets.NUGET_API_KEY }}
 
-    - name: Pack
-      id: pack
-      run: |
-        if ([string]::IsNullOrEmpty(${Env:SUFFIX}))
-        {
-            nuget pack template.nuspec -NoDefaultExcludes -Version ${Env:VERSION}
-        }
-        else
-        {
-            nuget pack template.nuspec -NoDefaultExcludes -Version ${Env:VERSION} -Suffix ${Env:SUFFIX}
-        }
-      env:
-        VERSION: ${{ steps.initialize.outputs.version_prefix }}
-        SUFFIX: ${{ steps.initialize.outputs.version_suffix }}
-      shell: pwsh
+      - name: Pack
+        id: pack
+        run: |
+          if ([string]::IsNullOrEmpty(${Env:SUFFIX}))
+          {
+              nuget pack template.nuspec -NoDefaultExcludes -Version ${Env:VERSION}
+          }
+          else
+          {
+              nuget pack template.nuspec -NoDefaultExcludes -Version ${Env:VERSION} -Suffix ${Env:SUFFIX}
+          }
+        env:
+          VERSION: ${{ steps.initialize.outputs.version_prefix }}
+          SUFFIX: ${{ steps.initialize.outputs.version_suffix }}
+        shell: pwsh
 
-    - name: Publish
-      id: publish
-      if: ${{ github.ref == 'refs/heads/main' }}
-      run: nuget push *.nupkg -src https://api.nuget.org/v3/index.json
+      - name: Publish
+        id: publish
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: nuget push *.nupkg -src https://api.nuget.org/v3/index.json

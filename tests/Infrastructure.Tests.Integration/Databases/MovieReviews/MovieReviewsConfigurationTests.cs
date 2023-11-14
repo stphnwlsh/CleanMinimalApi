@@ -6,20 +6,13 @@ using Shouldly;
 using Xunit;
 
 [Collection("MovieReviews")]
-public class MovieReviewsConfigurationTests
+public class MovieReviewsConfigurationTests(MovieReviewsDataFixture fixture)
 {
-    private readonly MovieReviewsDataFixture fixture;
-
-    public MovieReviewsConfigurationTests(MovieReviewsDataFixture fixture)
-    {
-        this.fixture = fixture;
-    }
-
     [Fact]
     public async void Database_ShouldBe_Configured()
     {
         // Arrange
-        var context = this.fixture.Context;
+        var context = fixture.Context;
         var token = new CancellationTokenSource().Token;
 
         // Act
