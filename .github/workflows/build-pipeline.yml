@@ -78,11 +78,11 @@ jobs:
             DOCKER_TAG=$VERSION_PREFIX-$VERSION_SUFFIX
           fi
 
-          echo "::set-output name=name::$(eval printf "%s" "$NAME")"
-          echo "::set-output name=version_prefix::$(eval printf "%s" "$VERSION_PREFIX")"
-          echo "::set-output name=version_suffix::$(eval printf "%s" "$VERSION_SUFFIX")"
-          echo "::set-output name=docker_tag::$(eval printf "%s" "$DOCKER_TAG")"
-          echo "::set-output name=branch::$(eval printf "%s" "$BRANCH_CURRENT")"
+          echo "name=$(eval printf "%s" "$NAME")" >> $GITHUB_OUTPUT
+          echo "version_prefix=$(eval printf "%s" "$VERSION_PREFIX")" >> $GITHUB_OUTPUT
+          echo "version_suffix=$(eval printf "%s" "$VERSION_SUFFIX")" >> $GITHUB_OUTPUT
+          echo "docker_tag=$(eval printf "%s" "$DOCKER_TAG")" >> $GITHUB_OUTPUT
+          echo "branch=$(eval printf "%s" "$BRANCH_CURRENT")" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Build
@@ -177,11 +177,11 @@ jobs:
             DOCKER_TAG=$VERSION_PREFIX-$VERSION_SUFFIX
           fi
 
-          echo "::set-output name=name::$(eval printf "%s" "$NAME")"
-          echo "::set-output name=version_prefix::$(eval printf "%s" "$VERSION_PREFIX")"
-          echo "::set-output name=version_suffix::$(eval printf "%s" "$VERSION_SUFFIX")"
-          echo "::set-output name=docker_tag::$(eval printf "%s" "$DOCKER_TAG")"
-          echo "::set-output name=branch::$(eval printf "%s" "$BRANCH_CURRENT")"
+          echo "name=$(eval printf "%s" "$NAME")" >> $GITHUB_OUTPUT
+          echo "version_prefix=$(eval printf "%s" "$VERSION_PREFIX")" >> $GITHUB_OUTPUT
+          echo "version_suffix=$(eval printf "%s" "$VERSION_SUFFIX")" >> $GITHUB_OUTPUT
+          echo "docker_tag=$(eval printf "%s" "$DOCKER_TAG")" >> $GITHUB_OUTPUT
+          echo "branch=$(eval printf "%s" "$BRANCH_CURRENT")" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Setup

@@ -25,7 +25,8 @@ public class MovieEndpointTests
             .Send(Arg.Any<Queries.GetMovies.GetMoviesQuery>())
             .ReturnsForAnyArgs(
             [
-                new() {
+                new()
+                {
                     Id = Guid.Empty,
                     Title = "Lorem Ipsum"
                 }

@@ -197,8 +197,8 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
         result.ReviewAuthor.Id.ShouldBe(review.AuthorId);
         result.ReviewedMovie.Id.ShouldBe(review.MovieId);
         result.Stars.ShouldBe(review.Stars);
-        result.DateCreated.ShouldBe(fixture.DateTimeProvider.UtcNow);
-        result.DateModified.ShouldBe(fixture.DateTimeProvider.UtcNow);
+        result.DateCreated.ShouldBe(fixture.TimeProvider.GetUtcNow().UtcDateTime);
+        result.DateModified.ShouldBe(fixture.TimeProvider.GetUtcNow().UtcDateTime);
 
         // Cleanup
         _ = await fixture.Repository.DeleteReview(result.Id, token);
@@ -344,7 +344,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
         updatedReview.ReviewAuthorId.ShouldBe(review.AuthorId);
         updatedReview.ReviewedMovieId.ShouldBe(review.MovieId);
         updatedReview.Stars.ShouldBe(review.Stars);
-        updatedReview.DateModified.ShouldBe(fixture.DateTimeProvider.UtcNow);
+        updatedReview.DateModified.ShouldBe(fixture.TimeProvider.GetUtcNow().UtcDateTime);
     }
 
     [Fact]
