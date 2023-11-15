@@ -21,14 +21,14 @@ public class GetMoviesHandlerTests
         var handler = new GetMoviesHandler(context);
         var token = new CancellationTokenSource().Token;
 
-        _ = context.GetMovies(token).Returns(new List<Movie>
-        {
+        _ = context.GetMovies(token).Returns(
+        [
             new Movie
             {
                 Id = Guid.Empty,
                 Title = "Title"
             }
-        });
+        ]);
 
         // Act
         var result = await handler.Handle(query, token);

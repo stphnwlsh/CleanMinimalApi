@@ -2,7 +2,7 @@ name: Automated Dependency Updates
 
 on:
   schedule:
-    - cron:  '0 0 1 * *'
+    - cron: "0 0 1 * *"
   workflow_dispatch:
 
 jobs:
@@ -13,37 +13,37 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        language: [ 'csharp' ]
+        language: ["csharp"]
 
     steps:
-    - name: Checkout
-      id: checkout
-      uses: actions/checkout@v2
-      with:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
           token: ${{ secrets.AUTOMATED_DEPENDENCY_UPDATES_TOKEN }}
 
-    - name: Setup
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 6.0.x
+      - name: Setup
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
 
-    - name: Update
-      id: update
-      uses: stphnwlsh/dotnet-outdated-action@v2
-      with:
-        excludes: visualstudio
+      - name: Update
+        id: update
+        uses: stphnwlsh/dotnet-outdated-action@v2
+        with:
+          excludes: visualstudio
 
-    - name: Test
-      id: test
-      if: ${{ steps.update.outputs.updated == 'true' }}
-      run: dotnet test -c Release -v minimal
+      - name: Test
+        id: test
+        if: ${{ steps.update.outputs.updated == 'true' }}
+        run: dotnet test -c Release -v minimal
 
-    - name: Push
-      id: push
-      if: ${{ steps.update.outputs.updated == 'true' }}
-      uses: stefanzweifel/git-auto-commit-action@v4
-      with:
-        commit_author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
-        commit_user_name: github-actions[bot]
-        commit_user_email: 41898282+github-actions[bot]@users.noreply.github.com
-        commit_message: Automated Dependency Updates
+      - name: Push
+        id: push
+        if: ${{ steps.update.outputs.updated == 'true' }}
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          commit_user_name: github-actions[bot]
+          commit_user_email: 41898282+github-actions[bot]@users.noreply.github.com
+          commit_message: Automated Dependency Updates
