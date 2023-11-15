@@ -25,7 +25,8 @@ public class AuthorEndpointTests
             .Send(Arg.Any<Queries.GetAuthors.GetAuthorsQuery>())
             .ReturnsForAnyArgs(
             [
-                new() {
+                new()
+                {
                     Id = Guid.Empty,
                     FirstName = "Lorem",
                     LastName = "Ipsum"

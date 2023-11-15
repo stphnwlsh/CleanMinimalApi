@@ -28,7 +28,8 @@ public class ReviewEndpointTests
             .Send(Arg.Any<Queries.GetReviews.GetReviewsQuery>())
             .ReturnsForAnyArgs(
             [
-                new() {
+                new()
+                {
                     Id = Guid.Empty,
                     Stars = 5,
                     ReviewAuthor = new ReviewAuthor
