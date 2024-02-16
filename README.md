@@ -17,7 +17,7 @@ This solution in built on the [.NET 8 SDK](https://dotnet.microsoft.com/download
 This is a template and you can install it using the [dotnet new cli](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-new).  To install the lastest version of the template run the following command.
 
 ``` bash
-dotnet new --install CleanMinimalApi.Template
+dotnet new install CleanMinimalApi.Template
 ```
 
 To create a new solution using this template run the following command
