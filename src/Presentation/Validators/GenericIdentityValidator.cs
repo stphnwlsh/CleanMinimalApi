@@ -6,6 +6,9 @@ public class GenericIdentityValidator : AbstractValidator<Guid>
 {
     public GenericIdentityValidator()
     {
-        _ = this.RuleFor(r => r).NotEqual(Guid.Empty).WithMessage("A valid Id was not supplied.");
+        _ = this.RuleFor(r => r)
+            .NotNull()
+            .NotEqual(Guid.Empty)
+            .WithMessage("The Id supplied in the request is not valid.");
     }
 }

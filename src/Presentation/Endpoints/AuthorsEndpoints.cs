@@ -5,6 +5,7 @@ using CleanMinimalApi.Presentation.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Entities = Application.Authors.Entities;
 using Queries = Application.Authors.Queries;
 
@@ -13,7 +14,9 @@ public static class AuthorsEndpoints
     public static WebApplication MapAuthorEndpoints(this WebApplication app)
     {
         var root = app.MapGroup("/api/authors")
+            .AddEndpointFilterFactory(ValidationFilter.ValidationFilterFactory)
             .WithTags("authors")
+            .WithDescription("Lookup and Find Authors")
             .WithOpenApi();
 
         _ = root.MapGet("/", GetAuthors)
@@ -23,7 +26,6 @@ public static class AuthorsEndpoints
             .WithDescription("\n    GET /Authors");
 
         _ = root.MapGet("/{id}", GetAuthorById)
-            .AddEndpointFilter<ValidationFilter<Guid>>()
             .Produces<Entities.Author>()
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status404NotFound)
@@ -34,7 +36,7 @@ public static class AuthorsEndpoints
         return app;
     }
 
-    public static async Task<IResult> GetAuthors(IMediator mediator)
+    public static async Task<IResult> GetAuthors([FromServices] IMediator mediator)
     {
         try
         {
@@ -46,7 +48,7 @@ public static class AuthorsEndpoints
         }
     }
 
-    public static async Task<IResult> GetAuthorById(Guid id, IMediator mediator)
+    public static async Task<IResult> GetAuthorById([Validate][FromRoute] Guid id, [FromServices] IMediator mediator)
     {
         try
         {

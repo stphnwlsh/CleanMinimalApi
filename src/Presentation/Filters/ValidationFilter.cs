@@ -1,28 +1,65 @@
 namespace CleanMinimalApi.Presentation.Filters;
 
+using System.Reflection;
 using FluentValidation;
 
-public class ValidationFilter<T>(IValidator<T> validator) : IEndpointFilter
+public static class ValidationFilter
 {
-    public async ValueTask<object> InvokeAsync(
-        EndpointFilterInvocationContext context,
-        EndpointFilterDelegate next)
+    public static EndpointFilterDelegate ValidationFilterFactory(EndpointFilterFactoryContext context, EndpointFilterDelegate next)
     {
-        var x = context.Arguments.FirstOrDefault();
-        var y = x.GetType();
+        var validationDescriptors = GetValidators(context.MethodInfo, context.ApplicationServices);
 
-        if (context.Arguments.FirstOrDefault(x => x?.GetType() == typeof(T)) is not T argument)
+        if (validationDescriptors.Any())
         {
-            return Results.BadRequest("Unable to find parameters or body for validation");
+            return invocationContext => Validate(validationDescriptors, invocationContext, next);
         }
 
-        var validationResult = await validator.ValidateAsync(argument!);
+        // pass-thru
+        return invocationContext => next(invocationContext);
+    }
 
-        if (!validationResult.IsValid)
+    private static async ValueTask<object> Validate(IEnumerable<ValidationDescriptor> validationDescriptors, EndpointFilterInvocationContext invocationContext, EndpointFilterDelegate next)
+    {
+        foreach (var descriptor in validationDescriptors)
         {
-            return Results.ValidationProblem(validationResult.ToDictionary());
+            var argument = invocationContext.Arguments[descriptor.ArgumentIndex];
+
+            if (argument is not null)
+            {
+                var validationResult = await descriptor.Validator.ValidateAsync(
+                    new ValidationContext<object>(argument)
+                );
+
+                if (!validationResult.IsValid)
+                {
+                    return Results.ValidationProblem(validationResult.ToDictionary());
+                }
+            }
         }
 
-        return await next(context);
+        return await next.Invoke(invocationContext);
+    }
+
+    private static IEnumerable<ValidationDescriptor> GetValidators(MethodInfo methodInfo, IServiceProvider serviceProvider)
+    {
+        var parameters = methodInfo.GetParameters();
+
+        for (var i = 0; i < parameters.Length; i++)
+        {
+            var parameter = parameters[i];
+
+            if (parameter.GetCustomAttribute<ValidateAttribute>() is not null)
+            {
+                var validatorType = typeof(IValidator<>).MakeGenericType(parameter.ParameterType);
+
+                // Note that FluentValidation validators needs to be registered as singleton
+                var validator = serviceProvider.GetService(validatorType) as IValidator;
+
+                if (validator is not null)
+                {
+                    yield return new ValidationDescriptor { ArgumentIndex = i, ArgumentType = parameter.ParameterType, Validator = validator };
+                }
+            }
+        }
     }
 }

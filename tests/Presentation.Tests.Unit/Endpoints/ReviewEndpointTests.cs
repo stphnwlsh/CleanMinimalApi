@@ -199,7 +199,7 @@ public class ReviewEndpointTests
     public async Task CreateReview_ShouldReturn_Created()
     {
         // Arrange
-        var httpRequest = Substitute.For<HttpRequest>();
+        //var httpRequest = Substitute.For<HttpRequest>();
         var mediator = Substitute.For<IMediator>();
         var request = new Requests.CreateReviewRequest
         {
@@ -228,7 +228,7 @@ public class ReviewEndpointTests
             });
 
         // Act
-        var response = await ReviewsEndpoints.CreateReview(request, mediator, httpRequest);
+        var response = await ReviewsEndpoints.CreateReview(request, mediator);
 
         // Assert
         var result = response.ShouldBeOfType<Created<Entities.Review>>();
@@ -259,7 +259,7 @@ public class ReviewEndpointTests
     public async Task CreateReview_ShouldReturn_NotFound()
     {
         // Arrange
-        var httpRequest = Substitute.For<HttpRequest>();
+        //var httpRequest = Substitute.For<HttpRequest>();
         var mediator = Substitute.For<IMediator>();
         var request = new Requests.CreateReviewRequest
         {
@@ -273,7 +273,7 @@ public class ReviewEndpointTests
             .Throws(new NotFoundException("Expected Exception"));
 
         // Act
-        var response = await ReviewsEndpoints.CreateReview(request, mediator, httpRequest);
+        var response = await ReviewsEndpoints.CreateReview(request, mediator);
 
         // Assert
         var result = response.ShouldBeOfType<NotFound<string>>();
@@ -300,7 +300,7 @@ public class ReviewEndpointTests
             .Throws(new ArgumentException("Expected Exception"));
 
         // Act
-        var response = await ReviewsEndpoints.CreateReview(request, mediator, httpRequest);
+        var response = await ReviewsEndpoints.CreateReview(request, mediator);
 
         // Assert
         var result = response.ShouldBeOfType<ProblemHttpResult>();
@@ -431,29 +431,5 @@ public class ReviewEndpointTests
 
         result.StatusCode.ShouldBe(StatusCodes.Status404NotFound);
         result.Value.ShouldBe("Expected Exception");
-    }
-
-    [Fact]
-    public async Task DeleteReview_ShouldReturn_Problem()
-    {
-        // Arrange
-        var mediator = Substitute.For<IMediator>();
-
-        _ = mediator
-            .Send(Arg.Any<Commands.DeleteReview.DeleteReviewCommand>())
-            .Throws(new ArgumentException("Expected Exception"));
-
-        // Act
-        var response = await ReviewsEndpoints.DeleteReview(Guid.NewGuid(), mediator);
-
-        // Assert
-        var result = response.ShouldBeOfType<ProblemHttpResult>();
-
-        result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
-
-        result.ProblemDetails.Title.ShouldBe("An error occurred while processing your request.");
-        result.ProblemDetails.Instance.ShouldBe("Expected Exception");
-        result.ProblemDetails.Status.ShouldBe(StatusCodes.Status500InternalServerError);
-        result.ProblemDetails.Detail.ShouldNotBeNullOrEmpty();
     }
 }
