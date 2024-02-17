@@ -42,22 +42,16 @@ public static class ValidationFilter
 
     private static IEnumerable<ValidationDescriptor> GetValidators(MethodInfo methodInfo, IServiceProvider serviceProvider)
     {
-        var parameters = methodInfo.GetParameters();
-
-        for (var i = 0; i < parameters.Length; i++)
+        foreach (var item in methodInfo.GetParameters().Select((parameter, index) => new { parameter, index }))
         {
-            var parameter = parameters[i];
-
-            if (parameter.GetCustomAttribute<ValidateAttribute>() is not null)
+            if (item.parameter.GetCustomAttribute<ValidateAttribute>() is not null)
             {
-                var validatorType = typeof(IValidator<>).MakeGenericType(parameter.ParameterType);
-
-                // Note that FluentValidation validators needs to be registered as singleton
+                var validatorType = typeof(IValidator<>).MakeGenericType(item.parameter.ParameterType);
                 var validator = serviceProvider.GetService(validatorType) as IValidator;
 
                 if (validator is not null)
                 {
-                    yield return new ValidationDescriptor { ArgumentIndex = i, ArgumentType = parameter.ParameterType, Validator = validator };
+                    yield return new ValidationDescriptor { ArgumentIndex = item.index, ArgumentType = item.parameter.ParameterType, Validator = validator };
                 }
             }
         }
