@@ -8,9 +8,15 @@ internal class AuthorMappingProfile : Profile
 {
     public AuthorMappingProfile()
     {
-        _ = this.CreateMap<Infrastructure.Author, Application.Author>()
+        _ = this.CreateMap<Application.Author, Infrastructure.Author>()
+            .ForMember(d => d.DateCreated, o => o.Ignore())
+            .ForMember(d => d.DateModified, o => o.Ignore())
             .ReverseMap();
 
-        _ = this.CreateMap<Infrastructure.Author, Application.ReviewAuthor>();
+        _ = this.CreateMap<Application.ReviewAuthor, Infrastructure.Author>()
+            .ForMember(d => d.Reviews, o => o.Ignore())
+            .ForMember(d => d.DateCreated, o => o.Ignore())
+            .ForMember(d => d.DateModified, o => o.Ignore())
+            .ReverseMap();
     }
 }

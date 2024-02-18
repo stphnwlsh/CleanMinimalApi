@@ -37,13 +37,12 @@ public class MovieReviewsDataFixture : IDisposable
 
         this.Mapper = new MapperConfiguration(cfg =>
             cfg
-                .AddProfiles(new List<Profile>()
-                {
+                .AddProfiles(
+                [
                     new AuthorMappingProfile(),
-                    new EntitiyMappingProfile(),
                     new MovieMappingProfile(),
                     new ReviewMappingProfile()
-                }))
+                ]))
                 .CreateMapper();
 
         this.Repository = new EntityFrameworkMovieReviewsRepository(this.Context, this.TimeProvider, this.Mapper);

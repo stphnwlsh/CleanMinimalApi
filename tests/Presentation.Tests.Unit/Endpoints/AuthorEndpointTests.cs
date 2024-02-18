@@ -2,6 +2,7 @@ namespace CleanMinimalApi.Presentation.Tests.Unit.Endpoints;
 
 using System.Threading.Tasks;
 using CleanMinimalApi.Application.Common.Exceptions;
+using CleanMinimalApi.Application.Reviews.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -25,12 +26,7 @@ public class AuthorEndpointTests
             .Send(Arg.Any<Queries.GetAuthors.GetAuthorsQuery>())
             .ReturnsForAnyArgs(
             [
-                new()
-                {
-                    Id = Guid.Empty,
-                    FirstName = "Lorem",
-                    LastName = "Ipsum"
-                }
+                new Entities.Author(Guid.Empty, "Lorem", "Ipsum")
             ]);
 
         // Act
@@ -49,6 +45,8 @@ public class AuthorEndpointTests
         value[0].FirstName.ShouldBe("Lorem");
         _ = value[0].LastName.ShouldBeOfType<string>();
         value[0].LastName.ShouldBe("Ipsum");
+        _ = value[0].Reviews.ShouldBeAssignableTo<ICollection<Review>>();
+        value[0].Reviews.ShouldBeNull();
     }
 
     [Fact]
@@ -81,12 +79,9 @@ public class AuthorEndpointTests
         // Arrange
         var mediator = Substitute.For<IMediator>();
 
-        _ = mediator.Send(Arg.Any<Queries.GetAuthorById.GetAuthorByIdQuery>()).ReturnsForAnyArgs(new Entities.Author
-        {
-            Id = Guid.Empty,
-            FirstName = "Lorem",
-            LastName = "Ipsum"
-        });
+        _ = mediator
+            .Send(Arg.Any<Queries.GetAuthorById.GetAuthorByIdQuery>())
+            .ReturnsForAnyArgs(new Entities.Author(Guid.Empty, "Lorem", "Ipsum"));
 
         // Act
         var response = await AuthorsEndpoints.GetAuthorById(Guid.Empty, mediator);
@@ -104,6 +99,8 @@ public class AuthorEndpointTests
         value.FirstName.ShouldBe("Lorem");
         _ = value.LastName.ShouldBeOfType<string>();
         value.LastName.ShouldBe("Ipsum");
+        _ = value.Reviews.ShouldBeAssignableTo<ICollection<Review>>();
+        value.Reviews.ShouldBeNull();
     }
 
     [Fact]

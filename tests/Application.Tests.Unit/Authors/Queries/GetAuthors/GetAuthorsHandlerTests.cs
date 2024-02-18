@@ -21,14 +21,7 @@ public class GetAuthorsHandlerTests
         var handler = new GetAuthorsHandler(context);
         var token = new CancellationTokenSource().Token;
 
-        _ = context.GetAuthors(token).Returns([
-            new Author
-            {
-                Id = Guid.Empty,
-                FirstName = "FirstName",
-                LastName = "LastName"
-            }
-        ]);
+        _ = context.GetAuthors(token).Returns([new Author(Guid.Empty, "FirstName", "LastName")]);
 
         // Act
         var result = await handler.Handle(query, token);

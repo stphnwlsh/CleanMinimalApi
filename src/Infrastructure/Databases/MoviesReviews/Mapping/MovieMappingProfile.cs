@@ -8,9 +8,15 @@ internal class MovieMappingProfile : Profile
 {
     public MovieMappingProfile()
     {
-        _ = this.CreateMap<Infrastructure.Movie, Application.Movie>()
+        _ = this.CreateMap<Application.Movie, Infrastructure.Movie>()
+            .ForMember(d => d.DateCreated, o => o.Ignore())
+            .ForMember(d => d.DateModified, o => o.Ignore())
             .ReverseMap();
 
-        _ = this.CreateMap<Infrastructure.Movie, Application.ReviewMovie>();
+        _ = this.CreateMap<Application.ReviewedMovie, Infrastructure.Movie>()
+            .ForMember(d => d.Reviews, o => o.Ignore())
+            .ForMember(d => d.DateCreated, o => o.Ignore())
+            .ForMember(d => d.DateModified, o => o.Ignore())
+            .ReverseMap();
     }
 }

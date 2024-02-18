@@ -28,22 +28,12 @@ public class ReviewEndpointTests
             .Send(Arg.Any<Queries.GetReviews.GetReviewsQuery>())
             .ReturnsForAnyArgs(
             [
-                new()
-                {
-                    Id = Guid.Empty,
-                    Stars = 5,
-                    ReviewAuthor = new ReviewAuthor
-                    {
-                        Id = Guid.Empty,
-                        FirstName = "Lorem",
-                        LastName = "Ipsum"
-                    },
-                    ReviewedMovie = new ReviewMovie
-                    {
-                        Id = Guid.Empty,
-                        Title = "Lorem Ipsum"
-                    }
-                }
+                new Entities.Review(
+                    Guid.Empty,
+                    5,
+                    new ReviewedMovie(Guid.Empty, "Lorem Ipsum"),
+                    new ReviewAuthor(Guid.Empty, "Lorem", "Ipsum")
+                )
             ]);
 
         // Act
@@ -106,22 +96,12 @@ public class ReviewEndpointTests
 
         _ = mediator
             .Send(Arg.Any<Queries.GetReviewById.GetReviewByIdQuery>())
-            .ReturnsForAnyArgs(new Entities.Review
-            {
-                Id = Guid.Empty,
-                Stars = 5,
-                ReviewAuthor = new ReviewAuthor
-                {
-                    Id = Guid.Empty,
-                    FirstName = "Lorem",
-                    LastName = "Ipsum"
-                },
-                ReviewedMovie = new ReviewMovie
-                {
-                    Id = Guid.Empty,
-                    Title = "Lorem Ipsum"
-                }
-            });
+            .ReturnsForAnyArgs(new Entities.Review(
+                Guid.Empty,
+                5,
+                new ReviewedMovie(Guid.Empty, "Lorem Ipsum"),
+                new ReviewAuthor(Guid.Empty, "Lorem", "Ipsum")
+            ));
 
         // Act
         var response = await ReviewsEndpoints.GetReviewById(Guid.Empty, mediator);
@@ -210,22 +190,12 @@ public class ReviewEndpointTests
 
         _ = mediator
             .Send(Arg.Any<Commands.CreateReview.CreateReviewCommand>())
-            .ReturnsForAnyArgs(new Entities.Review
-            {
-                Id = Guid.Empty,
-                Stars = 5,
-                ReviewAuthor = new ReviewAuthor
-                {
-                    Id = Guid.Empty,
-                    FirstName = "Lorem",
-                    LastName = "Ipsum"
-                },
-                ReviewedMovie = new ReviewMovie
-                {
-                    Id = Guid.Empty,
-                    Title = "Lorem Ipsum"
-                }
-            });
+            .ReturnsForAnyArgs(new Entities.Review(
+                Guid.Empty,
+                5,
+                new ReviewedMovie(Guid.Empty, "Lorem Ipsum"),
+                new ReviewAuthor(Guid.Empty, "Lorem", "Ipsum")
+            ));
 
         // Act
         var response = await ReviewsEndpoints.CreateReview(request, mediator);

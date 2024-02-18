@@ -30,6 +30,7 @@ public class UpdateReviewHandler(
             NotFoundException.Throw(EntityType.Movie);
         }
 
-        return await reviewsRepository.UpdateReview(request.Id, request.AuthorId, request.MovieId, request.Stars, cancellationToken);
+        return await reviewsRepository
+            .UpdateReview(request.Id, request.AuthorId, request.MovieId, request.Stars, cancellationToken);
     }
 }
