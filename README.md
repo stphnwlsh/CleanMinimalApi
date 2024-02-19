@@ -75,6 +75,7 @@ This sample would not have been possible without gaining inspiration from the fo
 - [Damian Edwards - Minimal API Playground](https://github.com/DamianEdwards/MinimalApiPlayground)
 - [Scott Hanselman - Minimal APIs in .NET 6 but where are the Unit Tests?](https://www.hanselman.com/blog/minimal-apis-in-net-6-but-where-are-the-unit-tests)
 - [Andrew Lock - Reducing log verbosity with Serilog RequestLogging](https://andrewlock.net/using-serilog-aspnetcore-in-asp-net-core-3-reducing-log-verbosity/)
+- [Ben Foster - Minimal API validation with ASP.NET 7.0 Endpoint Filters](https://benfoster.io/blog/minimal-api-validation-endpoint-filters/)
 
 ## Connect and Support
 
