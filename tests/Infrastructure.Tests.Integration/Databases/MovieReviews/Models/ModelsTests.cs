@@ -14,6 +14,7 @@ public class ModelsTests()
         var author = new Author();
 
         // Assert
+        author.ShouldBeAssignableTo<Entity>();
         author.Id.ShouldBe(Guid.Empty);
         author.FirstName.ShouldBeNull();
         author.LastName.ShouldBeNull();
@@ -29,6 +30,7 @@ public class ModelsTests()
         var movie = new Movie();
 
         // Assert
+        movie.ShouldBeAssignableTo<Entity>();
         movie.Id.ShouldBe(Guid.Empty);
         movie.Title.ShouldBeNull();
         movie.Reviews.ShouldBeNull();
@@ -43,6 +45,7 @@ public class ModelsTests()
         var review = new Review();
 
         // Assert
+        review.ShouldBeAssignableTo<Entity>();
         review.Id.ShouldBe(Guid.Empty);
         review.Stars.ShouldBe(default);
         review.ReviewAuthor.ShouldBeNull();
