@@ -25,7 +25,7 @@ public class AuthorEndpointTests : IDisposable
         using var client = this.application.CreateClient();
 
         // Act
-        using var response = await client.GetAsync("/api/authors");
+        using var response = await client.GetAsync("/api/author");
         var result = (await response.Content.ReadAsStringAsync())
             .Deserialize<List<Entities.Author>>();
 
@@ -63,12 +63,12 @@ public class AuthorEndpointTests : IDisposable
     {
         // Arrange
         using var client = this.application.CreateClient();
-        using var authorResponse = await client.GetAsync("/api/authors");
+        using var authorResponse = await client.GetAsync("/api/author");
         var authorResult = (await authorResponse.Content.ReadAsStringAsync())
             .Deserialize<List<Entities.Author>>()[0];
 
         // Act
-        using var response = await client.GetAsync($"/api/authors/{authorResult.Id}");
+        using var response = await client.GetAsync($"/api/author/{authorResult.Id}");
         var result = (await response.Content.ReadAsStringAsync()).Deserialize<Entities.Author>();
 
         // Assert
@@ -104,7 +104,7 @@ public class AuthorEndpointTests : IDisposable
         using var client = this.application.CreateClient();
 
         // Act
-        using var response = await client.GetAsync($"/api/authors/{input}");
+        using var response = await client.GetAsync($"/api/author/{input}");
         var result = (await response.Content.ReadAsStringAsync()).Deserialize<ValidationProblemDetails>();
 
         // Assert

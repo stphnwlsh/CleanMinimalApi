@@ -13,9 +13,9 @@ public static class MoviesEndpoints
 {
     public static WebApplication MapMovieEndpoints(this WebApplication app)
     {
-        var root = app.MapGroup("/api/movies")
+        var root = app.MapGroup("/api/movie")
             .AddEndpointFilterFactory(ValidationFilter.ValidationFilterFactory)
-            .WithTags("movies")
+            .WithTags("movie")
             .WithDescription("Lookup and Find Movies")
             .WithOpenApi();
 
@@ -23,15 +23,15 @@ public static class MoviesEndpoints
             .Produces<List<Entities.Movie>>()
             .ProducesProblem(StatusCodes.Status500InternalServerError)
             .WithSummary("Lookup all Movies")
-            .WithDescription("\n    GET /movies");
+            .WithDescription("\n    GET /movie");
 
         _ = root.MapGet("/{id}", GetMovieById)
             .Produces<Entities.Movie>()
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError)
-            .WithSummary("Lookup a Movies by its Id")
-            .WithDescription("\n    GET /movies/00000000-0000-0000-0000-000000000000");
+            .WithSummary("Lookup a Movie by its Id")
+            .WithDescription("\n    GET /movie/00000000-0000-0000-0000-000000000000");
 
         return app;
     }

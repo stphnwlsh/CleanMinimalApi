@@ -15,9 +15,9 @@ public static class ReviewsEndpoints
 {
     public static WebApplication MapReviewEndpoints(this WebApplication app)
     {
-        var root = app.MapGroup("/api/reviews")
+        var root = app.MapGroup("/api/review")
             .AddEndpointFilterFactory(ValidationFilter.ValidationFilterFactory)
-            .WithTags("reviews")
+            .WithTags("review")
             .WithDescription("Lookup, Find and Manipulate Reviews")
             .WithOpenApi();
 
@@ -25,7 +25,7 @@ public static class ReviewsEndpoints
             .Produces<List<Entities.Review>>()
             .ProducesProblem(StatusCodes.Status500InternalServerError)
             .WithSummary("Lookup all Reviews")
-            .WithDescription("\n    GET /Reviews");
+            .WithDescription("\n    GET /review");
 
         _ = root.MapGet("/{id}", GetReviewById)
             .Produces<Entities.Review>()
@@ -34,14 +34,14 @@ public static class ReviewsEndpoints
             .ProducesProblem(StatusCodes.Status500InternalServerError)
             .ProducesValidationProblem()
             .WithSummary("Lookup a Review by its Ids")
-            .WithDescription("\n    GET /Reviews/00000000-0000-0000-0000-000000000000");
+            .WithDescription("\n    GET /review/00000000-0000-0000-0000-000000000000");
 
         _ = root.MapPost("/", CreateReview)
             .Produces<Entities.Review>(StatusCodes.Status201Created)
             .ProducesProblem(StatusCodes.Status500InternalServerError)
             .ProducesValidationProblem()
             .WithSummary("Create a Review")
-            .WithDescription("\n    POST /Reviews\n     {         \"authorId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",         \"movieId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",         \"stars\": 5       }");
+            .WithDescription("\n    POST /review\n     {         \"authorId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",         \"movieId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",         \"stars\": 5       }");
 
         _ = root.MapDelete("/{id}", DeleteReview)
             .Produces(StatusCodes.Status204NoContent)
@@ -50,7 +50,7 @@ public static class ReviewsEndpoints
             .ProducesProblem(StatusCodes.Status500InternalServerError)
             .ProducesValidationProblem()
             .WithSummary("Delete a Review by its Id")
-            .WithDescription("\n    DELETE /Reviews/00000000-0000-0000-0000-000000000000");
+            .WithDescription("\n    DELETE /review/00000000-0000-0000-0000-000000000000");
 
         _ = root.MapPut("/{id}", UpdateReview)
             .Produces(StatusCodes.Status204NoContent)
@@ -59,7 +59,7 @@ public static class ReviewsEndpoints
             .ProducesProblem(StatusCodes.Status500InternalServerError)
             .ProducesValidationProblem()
             .WithSummary("Update a Review")
-            .WithDescription("\n    PUT /Reviews/00000000-0000-0000-0000-000000000000\n     {         \"authorId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",         \"movieId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",         \"stars\": 5       }");
+            .WithDescription("\n    PUT /review/00000000-0000-0000-0000-000000000000\n     {         \"authorId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",         \"movieId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",         \"stars\": 5       }");
 
         return app;
     }
@@ -106,7 +106,7 @@ public static class ReviewsEndpoints
                 Stars = request.Stars
             });
 
-            return Results.Created($"/api/reviews/{response.Id}", response);
+            return Results.Created($"/api/review/{response.Id}", response);
         }
         catch (NotFoundException ex)
         {

@@ -13,9 +13,9 @@ public static class AuthorsEndpoints
 {
     public static WebApplication MapAuthorEndpoints(this WebApplication app)
     {
-        var root = app.MapGroup("/api/authors")
+        var root = app.MapGroup("/api/author")
             .AddEndpointFilterFactory(ValidationFilter.ValidationFilterFactory)
-            .WithTags("authors")
+            .WithTags("author")
             .WithDescription("Lookup and Find Authors")
             .WithOpenApi();
 
@@ -23,7 +23,7 @@ public static class AuthorsEndpoints
             .Produces<List<Entities.Author>>()
             .ProducesProblem(StatusCodes.Status500InternalServerError)
             .WithSummary("Lookup all Authors")
-            .WithDescription("\n    GET /Authors");
+            .WithDescription("\n    GET /author");
 
         _ = root.MapGet("/{id}", GetAuthorById)
             .Produces<Entities.Author>()
@@ -31,7 +31,7 @@ public static class AuthorsEndpoints
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError)
             .WithSummary("Lookup an Author by their Id")
-            .WithDescription("\n    GET /Authors/00000000-0000-0000-0000-000000000000");
+            .WithDescription("\n    GET /author/00000000-0000-0000-0000-000000000000");
 
         return app;
     }
