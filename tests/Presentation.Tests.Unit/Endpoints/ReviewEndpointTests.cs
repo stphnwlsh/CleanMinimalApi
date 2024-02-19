@@ -402,4 +402,28 @@ public class ReviewEndpointTests
         result.StatusCode.ShouldBe(StatusCodes.Status404NotFound);
         result.Value.ShouldBe("Expected Exception");
     }
+
+    [Fact]
+    public async Task DeleteReview_ShouldReturn_Problem()
+    {
+        // Arrange
+        var mediator = Substitute.For<IMediator>();
+
+        _ = mediator
+            .Send(Arg.Any<Commands.DeleteReview.DeleteReviewCommand>())
+            .Throws(new ArgumentException("Expected Exception"));
+
+        // Act
+        var response = await ReviewsEndpoints.DeleteReview(Guid.Empty, mediator);
+
+        // Assert
+        var result = response.ShouldBeOfType<ProblemHttpResult>();
+
+        result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
+
+        result.ProblemDetails.Title.ShouldBe("An error occurred while processing your request.");
+        result.ProblemDetails.Instance.ShouldBe("Expected Exception");
+        result.ProblemDetails.Status.ShouldBe(StatusCodes.Status500InternalServerError);
+        result.ProblemDetails.Detail.ShouldNotBeNullOrEmpty();
+    }
 }
