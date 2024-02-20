@@ -5,6 +5,7 @@ using CleanMinimalApi.Presentation.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Entities = Application.Movies.Entities;
 using Queries = Application.Movies.Queries;
 
@@ -12,29 +13,30 @@ public static class MoviesEndpoints
 {
     public static WebApplication MapMovieEndpoints(this WebApplication app)
     {
-        var root = app.MapGroup("/api/movies")
-            .WithTags("movies")
+        var root = app.MapGroup("/api/movie")
+            .AddEndpointFilterFactory(ValidationFilter.ValidationFilterFactory)
+            .WithTags("movie")
+            .WithDescription("Lookup and Find Movies")
             .WithOpenApi();
 
         _ = root.MapGet("/", GetMovies)
             .Produces<List<Entities.Movie>>()
             .ProducesProblem(StatusCodes.Status500InternalServerError)
             .WithSummary("Lookup all Movies")
-            .WithDescription("\n    GET /movies");
+            .WithDescription("\n    GET /movie");
 
-        _ = root.MapGet("/{id:guid}", GetMovieById)
-            .AddEndpointFilter<ValidationFilter<Guid>>()
+        _ = root.MapGet("/{id}", GetMovieById)
             .Produces<Entities.Movie>()
+            .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError)
-            .ProducesValidationProblem()
-            .WithSummary("Lookup a Movies by its Ids")
-            .WithDescription("\n    GET /movies/00000000-0000-0000-0000-000000000000");
+            .WithSummary("Lookup a Movie by its Id")
+            .WithDescription("\n    GET /movie/00000000-0000-0000-0000-000000000000");
 
         return app;
     }
 
-    public static async Task<IResult> GetMovies(IMediator mediator)
+    public static async Task<IResult> GetMovies([FromServices] IMediator mediator)
     {
         try
         {
@@ -46,7 +48,7 @@ public static class MoviesEndpoints
         }
     }
 
-    public static async Task<IResult> GetMovieById(Guid id, IMediator mediator)
+    public static async Task<IResult> GetMovieById([Validate][FromRoute] Guid id, [FromServices] IMediator mediator)
     {
         try
         {

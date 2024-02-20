@@ -13,10 +13,7 @@ public class NotFoundExceptionTests
     {
         // Arrange
         var entityType = EntityType.Author;
-        var argument = new Author
-        {
-            Id = Guid.NewGuid()
-        };
+        var argument = new Author(Guid.NewGuid(), "FirstName", "LastName");
 
         // Act
         var result = Should.NotThrow(() =>

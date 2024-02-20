@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Extensions;
+using Microsoft.AspNetCore.Mvc;
 using Shouldly;
 using Xunit;
 using Entities = Application.Authors.Entities;
@@ -24,7 +25,7 @@ public class AuthorEndpointTests : IDisposable
         using var client = this.application.CreateClient();
 
         // Act
-        using var response = await client.GetAsync("/api/authors");
+        using var response = await client.GetAsync("/api/author");
         var result = (await response.Content.ReadAsStringAsync())
             .Deserialize<List<Entities.Author>>();
 
@@ -62,12 +63,12 @@ public class AuthorEndpointTests : IDisposable
     {
         // Arrange
         using var client = this.application.CreateClient();
-        using var authorResponse = await client.GetAsync("/api/authors");
+        using var authorResponse = await client.GetAsync("/api/author");
         var authorResult = (await authorResponse.Content.ReadAsStringAsync())
             .Deserialize<List<Entities.Author>>()[0];
 
         // Act
-        using var response = await client.GetAsync($"/api/authors/{authorResult.Id}");
+        using var response = await client.GetAsync($"/api/author/{authorResult.Id}");
         var result = (await response.Content.ReadAsStringAsync()).Deserialize<Entities.Author>();
 
         // Assert
@@ -93,6 +94,30 @@ public class AuthorEndpointTests : IDisposable
         }
     }
 
+    [Theory]
+    [InlineData("00000000-0000-0000-0000-000000000000")]
+    [InlineData("1")]
+    [InlineData("fake")]
+    public async Task GetAuthorById_ShouldReturn_ValidationProblem(string input)
+    {
+        // Arrange
+        using var client = this.application.CreateClient();
+
+        // Act
+        using var response = await client.GetAsync($"/api/author/{input}");
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<ValidationProblemDetails>();
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+        _ = result.ShouldNotBeNull();
+
+        result.Errors.ShouldNotBeEmpty();
+
+        result.Errors.ShouldContainKey("");
+        result.Errors[""].ShouldBe(["The Id supplied in the request is not valid."]);
+    }
+
     public void Dispose()
     {
         this.Dispose(true);
@@ -110,15 +135,4 @@ public class AuthorEndpointTests : IDisposable
             }
         }
     }
-
-
-}
-
-
-public class ErrorModel
-{
-    public string Type { get; set; }
-    public string Title { get; set; }
-    public int Status { get; set; }
-    public Dictionary<string, List<string>> Errors { get; set; }
 }

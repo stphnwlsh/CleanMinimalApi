@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Application.Authors.Entities;
 using Application.Movies.Entities;
 using Extensions;
+using Microsoft.AspNetCore.Mvc;
 using Shouldly;
 using Xunit;
 using Entities = Application.Reviews.Entities;
@@ -27,15 +28,15 @@ public class ReviewEndpointTests : IDisposable
         // Arrange
         using var client = this.application.CreateClient();
 
-        using var authorResponse = await client.GetAsync("/api/authors");
+        using var authorResponse = await client.GetAsync("/api/author");
         var authorResult = (await authorResponse.Content.ReadAsStringAsync()).Deserialize<List<Author>>()[0];
-        using var movieResponse = await client.GetAsync("/api/movies");
+        using var movieResponse = await client.GetAsync("/api/movie");
         var movieResult = (await movieResponse.Content.ReadAsStringAsync()).Deserialize<List<Movie>>()[0];
         var json = (new { Stars = 5, AuthorId = authorResult.Id, MovieId = movieResult.Id }).Serialize();
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
         // Act
-        using var response = await client.PostAsync("/api/reviews", content);
+        using var response = await client.PostAsync("/api/review", content);
         var result = (await response.Content.ReadAsStringAsync()).Deserialize<Entities.Review>();
 
         // Assert
@@ -62,17 +63,17 @@ public class ReviewEndpointTests : IDisposable
     {
         // Arrange
         using var client = this.application.CreateClient();
-        using var reviewResponse = await client.GetAsync("/api/reviews");
+        using var reviewResponse = await client.GetAsync("/api/review");
         var reviewResult = (await reviewResponse.Content.ReadAsStringAsync())
             .Deserialize<List<Entities.Review>>()[0];
 
         // Act
-        using var response = await client.DeleteAsync($"/api/reviews/{reviewResult.Id}");
+        using var response = await client.DeleteAsync($"/api/review/{reviewResult.Id}");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
-        (await client.GetAsync($"/api/reviews/{reviewResult.Id}")).StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        (await client.GetAsync($"/api/review/{reviewResult.Id}")).StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     [Fact]
@@ -82,7 +83,7 @@ public class ReviewEndpointTests : IDisposable
         using var client = this.application.CreateClient();
 
         // Act
-        using var response = await client.GetAsync("/api/reviews");
+        using var response = await client.GetAsync("/api/review");
         var result = (await response.Content.ReadAsStringAsync())
             .Deserialize<List<Entities.Review>>();
 
@@ -120,12 +121,12 @@ public class ReviewEndpointTests : IDisposable
     {
         // Arrange
         using var client = this.application.CreateClient();
-        using var reviewResponse = await client.GetAsync("/api/reviews");
+        using var reviewResponse = await client.GetAsync("/api/review");
         var reviewResult = (await reviewResponse.Content.ReadAsStringAsync())
             .Deserialize<List<Entities.Review>>()[0];
 
         // Act
-        using var response = await client.GetAsync($"/api/reviews/{reviewResult.Id}");
+        using var response = await client.GetAsync($"/api/review/{reviewResult.Id}");
         var result = (await response.Content.ReadAsStringAsync()).Deserialize<Entities.Review>();
 
         // Assert
@@ -151,21 +152,45 @@ public class ReviewEndpointTests : IDisposable
         _ = result.ReviewedMovie.Title.ShouldBeOfType<string>();
     }
 
+    [Theory]
+    [InlineData("00000000-0000-0000-0000-000000000000")]
+    [InlineData("1")]
+    [InlineData("fake")]
+    public async Task GetReviewId_ShouldReturn_ValidationProblem(string input)
+    {
+        // Arrange
+        using var client = this.application.CreateClient();
+
+        // Act
+        using var response = await client.GetAsync($"/api/review/{input}");
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<ValidationProblemDetails>();
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+        _ = result.ShouldNotBeNull();
+
+        result.Errors.ShouldNotBeEmpty();
+
+        result.Errors.ShouldContainKey("");
+        result.Errors[""].ShouldBe(["The Id supplied in the request is not valid."]);
+    }
+
     [Fact]
     public async Task UpdateReview_ShouldReturn_NoContent()
     {
         // Arrange
         using var client = this.application.CreateClient();
 
-        using var authorResponse = await client.GetAsync("/api/authors");
+        using var authorResponse = await client.GetAsync("/api/author");
         var authorResult = (await authorResponse.Content.ReadAsStringAsync())
             .Deserialize<List<Author>>()[0];
 
-        using var movieResponse = await client.GetAsync("/api/movies");
+        using var movieResponse = await client.GetAsync("/api/movie");
         var movieResult = (await movieResponse.Content.ReadAsStringAsync())
             .Deserialize<List<Movie>>()[0];
 
-        using var reviewResponse = await client.GetAsync("/api/reviews");
+        using var reviewResponse = await client.GetAsync("/api/review");
         var reviewResult = (await reviewResponse.Content.ReadAsStringAsync())
             .Deserialize<List<Entities.Review>>()[0];
 
@@ -173,12 +198,12 @@ public class ReviewEndpointTests : IDisposable
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
         // Act
-        using var response = await client.PutAsync($"/api/reviews/{reviewResult.Id}", content);
+        using var response = await client.PutAsync($"/api/review/{reviewResult.Id}", content);
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
-        using var validateResponse = await client.GetAsync($"/api/reviews/{reviewResult.Id}");
+        using var validateResponse = await client.GetAsync($"/api/review/{reviewResult.Id}");
         var validateResult = (await validateResponse.Content.ReadAsStringAsync()).Deserialize<Entities.Review>();
 
         _ = validateResult.ShouldNotBeNull();

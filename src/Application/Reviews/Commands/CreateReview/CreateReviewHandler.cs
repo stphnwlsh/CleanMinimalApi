@@ -26,6 +26,7 @@ public class CreateReviewHandler(
             NotFoundException.Throw(EntityType.Movie);
         }
 
-        return await reviewsRepository.CreateReview(request.AuthorId, request.MovieId, request.Stars, cancellationToken);
+        return await reviewsRepository
+            .CreateReview(request.AuthorId, request.MovieId, request.Stars, cancellationToken);
     }
 }

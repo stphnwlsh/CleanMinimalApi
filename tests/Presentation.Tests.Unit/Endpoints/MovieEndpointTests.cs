@@ -2,6 +2,7 @@ namespace CleanMinimalApi.Presentation.Tests.Unit.Endpoints;
 
 using System.Threading.Tasks;
 using CleanMinimalApi.Application.Common.Exceptions;
+using CleanMinimalApi.Application.Reviews.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -25,11 +26,7 @@ public class MovieEndpointTests
             .Send(Arg.Any<Queries.GetMovies.GetMoviesQuery>())
             .ReturnsForAnyArgs(
             [
-                new()
-                {
-                    Id = Guid.Empty,
-                    Title = "Lorem Ipsum"
-                }
+                new Entities.Movie(Guid.Empty, "Lorem Ipsum")
             ]);
 
         // Act
@@ -46,6 +43,8 @@ public class MovieEndpointTests
         value[0].Id.ShouldBe(Guid.Empty);
         _ = value[0].Title.ShouldBeOfType<string>();
         value[0].Title.ShouldBe("Lorem Ipsum");
+        _ = value[0].Reviews.ShouldBeAssignableTo<ICollection<Review>>();
+        value[0].Reviews.ShouldBeNull();
     }
 
     [Fact]
@@ -80,11 +79,7 @@ public class MovieEndpointTests
 
         _ = mediator
             .Send(Arg.Any<Queries.GetMovieById.GetMovieByIdQuery>())
-            .ReturnsForAnyArgs(new Entities.Movie
-            {
-                Id = Guid.Empty,
-                Title = "Lorem Ipsum",
-            });
+            .ReturnsForAnyArgs(new Entities.Movie(Guid.Empty, "Lorem Ipsum"));
 
         // Act
         var response = await MoviesEndpoints.GetMovieById(Guid.Empty, mediator);
@@ -100,6 +95,8 @@ public class MovieEndpointTests
         value.Id.ShouldBe(Guid.Empty);
         _ = value.Title.ShouldBeOfType<string>();
         value.Title.ShouldBe("Lorem Ipsum");
+        _ = value.Reviews.ShouldBeAssignableTo<ICollection<Review>>();
+        value.Reviews.ShouldBeNull();
     }
 
     [Fact]

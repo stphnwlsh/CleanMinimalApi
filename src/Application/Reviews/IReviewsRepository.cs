@@ -5,7 +5,11 @@ using Entities;
 
 public interface IReviewsRepository
 {
-    Task<Review> CreateReview(Guid authorId, Guid movieId, int stars, CancellationToken cancellationToken);
+    Task<Review> CreateReview(
+        Guid authorId,
+        Guid movieId,
+        int stars,
+        CancellationToken cancellationToken);
 
     Task<bool> DeleteReview(Guid id, CancellationToken cancellationToken);
 
@@ -15,5 +19,10 @@ public interface IReviewsRepository
 
     Task<bool> ReviewExists(Guid id, CancellationToken cancellationToken);
 
-    Task<bool> UpdateReview(Guid id, Guid authorId, Guid movieId, int stars, CancellationToken cancellationToken);
+    Task<bool> UpdateReview(
+        Guid id,
+        Guid authorId,
+        Guid movieId,
+        int stars,
+        CancellationToken cancellationToken);
 }

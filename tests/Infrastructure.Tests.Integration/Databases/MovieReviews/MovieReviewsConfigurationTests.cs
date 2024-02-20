@@ -16,9 +16,16 @@ public class MovieReviewsConfigurationTests(MovieReviewsDataFixture fixture)
         var token = new CancellationTokenSource().Token;
 
         // Act
-        var author = await context.Authors.Include(a => a.Reviews).FirstOrDefaultAsync(a => a.FirstName == "One", token);
-        var movie = await context.Movies.Include(m => m.Reviews).FirstOrDefaultAsync(m => m.Title == "One", token);
-        var review = await context.Reviews.Include(r => r.ReviewAuthor).Include(r => r.ReviewedMovie).FirstOrDefaultAsync(m => m.Stars == 5, token);
+        var author = await context.Authors
+            .Include(a => a.Reviews)
+            .FirstOrDefaultAsync(a => a.FirstName == "One", token);
+        var movie = await context.Movies
+            .Include(m => m.Reviews)
+            .FirstOrDefaultAsync(m => m.Title == "One", token);
+        var review = await context.Reviews
+            .Include(r => r.ReviewAuthor)
+            .Include(r => r.ReviewedMovie)
+            .FirstOrDefaultAsync(m => m.Stars == 5, token);
 
         // Assert
         context.Database.IsInMemory().ShouldBeTrue();

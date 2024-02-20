@@ -21,13 +21,7 @@ public class GetReviewsHandlerTests
         var handler = new GetReviewsHandler(context);
         var token = new CancellationTokenSource().Token;
 
-        _ = context.GetReviews(token).Returns([
-            new Review
-            {
-                Id = Guid.Empty,
-                Stars = 5
-            }
-        ]);
+        _ = context.GetReviews(token).Returns([new Review(Guid.Empty, 5)]);
 
         // Act
         var result = await handler.Handle(query, token);

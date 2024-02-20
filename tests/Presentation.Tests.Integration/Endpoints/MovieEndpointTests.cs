@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Extensions;
+using Microsoft.AspNetCore.Mvc;
 using Shouldly;
 using Xunit;
 using Entities = Application.Movies.Entities;
@@ -24,7 +25,7 @@ public class MovieEndpointTests : IDisposable
         using var client = this.application.CreateClient();
 
         // Act
-        using var response = await client.GetAsync("/api/movies");
+        using var response = await client.GetAsync("/api/movie");
         var result = (await response.Content.ReadAsStringAsync())
             .Deserialize<List<Entities.Movie>>();
 
@@ -63,12 +64,12 @@ public class MovieEndpointTests : IDisposable
     {
         // Arrange
         using var client = this.application.CreateClient();
-        using var movieResponse = await client.GetAsync("/api/movies");
+        using var movieResponse = await client.GetAsync("/api/movie");
         var movieResult = (await movieResponse.Content.ReadAsStringAsync())
             .Deserialize<List<Entities.Movie>>()[0];
 
         // Act
-        using var response = await client.GetAsync($"/api/movies/{movieResult.Id}");
+        using var response = await client.GetAsync($"/api/movie/{movieResult.Id}");
         var result = (await response.Content.ReadAsStringAsync()).Deserialize<Entities.Movie>();
 
         // Assert
@@ -93,6 +94,30 @@ public class MovieEndpointTests : IDisposable
             _ = review.ReviewAuthor.LastName.ShouldBeOfType<string>();
             review.ReviewAuthor.LastName.ShouldNotBeNullOrWhiteSpace();
         }
+    }
+
+    [Theory]
+    [InlineData("00000000-0000-0000-0000-000000000000")]
+    [InlineData("1")]
+    [InlineData("fake")]
+    public async Task GetMovieId_ShouldReturn_ValidationProblem(string input)
+    {
+        // Arrange
+        using var client = this.application.CreateClient();
+
+        // Act
+        using var response = await client.GetAsync($"/api/movie/{input}");
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<ValidationProblemDetails>();
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+        _ = result.ShouldNotBeNull();
+
+        result.Errors.ShouldNotBeEmpty();
+
+        result.Errors.ShouldContainKey("");
+        result.Errors[""].ShouldBe(["The Id supplied in the request is not valid."]);
     }
 
     public void Dispose()
