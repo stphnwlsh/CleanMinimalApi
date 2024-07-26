@@ -9,7 +9,7 @@ using Xunit;
 public class MovieReviewsConfigurationTests(MovieReviewsDataFixture fixture)
 {
     [Fact]
-    public async void Database_ShouldBe_Configured()
+    public async Task Database_ShouldBe_Configured()
     {
         // Arrange
         var context = fixture.Context;

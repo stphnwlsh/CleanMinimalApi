@@ -12,7 +12,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     #region Authors
 
     [Fact]
-    public async void GetAuthors_ShouldReturn_Authors()
+    public async Task GetAuthors_ShouldReturn_Authors()
     {
         // Arrange
         var repository = fixture.Repository;
@@ -28,7 +28,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
 
 
     [Fact]
-    public async void GetAuthorById_ShouldReturn_Author()
+    public async Task GetAuthorById_ShouldReturn_Author()
     {
         // Arrange
         var repository = fixture.Repository;
@@ -48,7 +48,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     }
 
     [Fact]
-    public async void GetAuthorById_ShouldReturn_Null()
+    public async Task GetAuthorById_ShouldReturn_Null()
     {
         // Arrange
         var repository = fixture.Repository;
@@ -62,7 +62,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     }
 
     [Fact]
-    public async void AuthorExists_ShouldReturn_True()
+    public async Task AuthorExists_ShouldReturn_True()
     {
         // Arrange
         var repository = fixture.Repository;
@@ -77,7 +77,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     }
 
     [Fact]
-    public async void AuthorExists_ShouldReturn_False()
+    public async Task AuthorExists_ShouldReturn_False()
     {
         // Arrange
         var repository = fixture.Repository;
@@ -95,7 +95,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     #region Movies
 
     [Fact]
-    public async void GetMovies_ShouldReturn_Movies()
+    public async Task GetMovies_ShouldReturn_Movies()
     {
         // Arrange
         var repository = fixture.Repository;
@@ -111,7 +111,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
 
 
     [Fact]
-    public async void GetMovieById_ShouldReturn_Movie()
+    public async Task GetMovieById_ShouldReturn_Movie()
     {
         // Arrange
         var repository = fixture.Repository;
@@ -130,7 +130,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     }
 
     [Fact]
-    public async void GetMovieById_ShouldReturn_Null()
+    public async Task GetMovieById_ShouldReturn_Null()
     {
         // Arrange
         var repository = fixture.Repository;
@@ -144,7 +144,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     }
 
     [Fact]
-    public async void MovieExists_ShouldReturn_True()
+    public async Task MovieExists_ShouldReturn_True()
     {
         // Arrange
         var repository = fixture.Repository;
@@ -159,7 +159,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     }
 
     [Fact]
-    public async void MovieExists_ShouldReturn_False()
+    public async Task MovieExists_ShouldReturn_False()
     {
         // Arrange
         var repository = fixture.Repository;
@@ -177,7 +177,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     #region Reviews
 
     [Fact]
-    public async void CreateReview_ShouldReturn_NewReviews()
+    public async Task CreateReview_ShouldReturn_NewReviews()
     {
         // Arrange
         var review = new CreateReviewCommand
@@ -203,7 +203,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     }
 
     [Fact]
-    public async void DeleteReview_ShouldReturn_True()
+    public async Task DeleteReview_ShouldReturn_True()
     {
         // Arrange
         var id = fixture.Context.Reviews.FirstOrDefault(r => r.Stars == 1).Id;
@@ -222,7 +222,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     }
 
     [Fact]
-    public async void DeleteReview_ShouldReturn_False()
+    public async Task DeleteReview_ShouldReturn_False()
     {
         // Arrange
         var token = new CancellationTokenSource().Token;
@@ -235,7 +235,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     }
 
     [Fact]
-    public async void GetReviews_ShouldReturn_Reviews()
+    public async Task GetReviews_ShouldReturn_Reviews()
     {
         // Arrange
         var repository = fixture.Repository;
@@ -251,7 +251,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
 
 
     [Fact]
-    public async void GetReviewById_ShouldReturn_Review()
+    public async Task GetReviewById_ShouldReturn_Review()
     {
         // Arrange
         var repository = fixture.Repository;
@@ -275,7 +275,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     }
 
     [Fact]
-    public async void GetReviewById_ShouldReturn_Null()
+    public async Task GetReviewById_ShouldReturn_Null()
     {
         // Arrange
         var repository = fixture.Repository;
@@ -289,7 +289,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     }
 
     [Fact]
-    public async void ReviewExists_ShouldReturn_True()
+    public async Task ReviewExists_ShouldReturn_True()
     {
         // Arrange
         var repository = fixture.Repository;
@@ -304,7 +304,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     }
 
     [Fact]
-    public async void ReviewExists_ShouldReturn_False()
+    public async Task ReviewExists_ShouldReturn_False()
     {
         // Arrange
         var repository = fixture.Repository;
@@ -318,7 +318,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     }
 
     [Fact]
-    public async void UpdateReview_ShouldReturn_True()
+    public async Task UpdateReview_ShouldReturn_True()
     {
         // Arrange
         var review = new UpdateReviewCommand
@@ -346,7 +346,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     }
 
     [Fact]
-    public async void UpdateReview_ShouldReturn_False()
+    public async Task UpdateReview_ShouldReturn_False()
     {
         // Arrange
         var review = new UpdateReviewCommand
