@@ -22,15 +22,15 @@
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'CleanMinimalApi' " />
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.11" />
-    <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.20" />
+    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
     <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
     <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
-    <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="9.0.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
-    <PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.1.0" />
+    <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.5" />
   </ItemGroup>
 
   <ItemGroup>
