@@ -16,8 +16,7 @@ public static class MoviesEndpoints
         var root = app.MapGroup("/api/movie")
             .AddEndpointFilterFactory(ValidationFilter.ValidationFilterFactory)
             .WithTags("movie")
-            .WithDescription("Lookup and Find Movies")
-            .WithOpenApi();
+            .WithDescription("Lookup and Find Movies");
 
         _ = root.MapGet("/", GetMovies)
             .Produces<List<Entities.Movie>>()

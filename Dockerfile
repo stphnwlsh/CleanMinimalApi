@@ -1,16 +1,16 @@
 # Docker image ARGS
 ARG BASE_IMAGE_REPO=mcr.microsoft.com
 ARG BASE_IMAGE_BUILD=dotnet/nightly/sdk
-ARG BASE_IMAGE_BUILD_TAG=9.0-preview-alpine
+ARG BASE_IMAGE_BUILD_TAG=10.0-preview-alpine
 ARG BASE_IMAGE_RUNTIME=dotnet/nightly/aspnet
-ARG BASE_IMAGE_RUNTIME_TAG=9.0-preview-alpine
+ARG BASE_IMAGE_RUNTIME_TAG=10.0-preview-alpine
 
 
 # Setup Build Image
 FROM ${BASE_IMAGE_REPO}/${BASE_IMAGE_BUILD}:${BASE_IMAGE_BUILD_TAG} AS build
 
 # Build, Test and Publish ARGS
-ARG VERSION_PREFIX=1.0.0.0
+ARG VERSION_PREFIX=1.3.0.0
 ARG VERSION_SUFFIX
 ARG ENVIRONMENT=docker
 

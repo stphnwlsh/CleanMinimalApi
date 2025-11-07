@@ -56,12 +56,12 @@ public static class WebApplicationBuilderExtensions
         _ = builder.Services.AddEndpointsApiExplorer();
         _ = builder.Services.AddSwaggerGen(options =>
         {
-            options.SwaggerDoc("v1",
+            options.SwaggerDoc("v1.3",
                 new OpenApiInfo
                 {
-                    Version = "v1",
+                    Version = "v1.3",
                     Title = $"CleanMinimalApi API - {ti.ToTitleCase(builder.Environment.EnvironmentName)}",
-                    Description = "An example to share an implementation of Minimal API in .NET 6.",
+                    Description = "An example to share an implementation of Minimal API in .NET 10.",
                     Contact = new OpenApiContact
                     {
                         Name = "CleanMinimalApi API",
