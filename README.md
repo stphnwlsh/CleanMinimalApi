@@ -6,11 +6,11 @@
 [![GitHub Sponsors](https://img.shields.io/static/v1?label=GitHub%20Sponsors&message=$1&logo=githubsponsors&logoColor=white&color=ea4aaa&style=for-the-badge)](https://github.com/sponsors/stphnwlsh/sponsorships?sponsor=stphnwlsh&tier_id=333950)
 [![Buy Me A Coffee](https://img.shields.io/static/v1?label=Buy%20Me%20A%20Coffee&message=$1&logo=buymeacoffee&logoColor=white&color=ffdd00&style=for-the-badge)](https://www.buymeacoffee.com/stphnwlsh)
 
-This is a template API using a streamlined version of [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) alongside .NET's [Minimal APIs](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis?view=aspnetcore-7.0).
+This is a template API using a streamlined version of [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) alongside .NET's [Minimal APIs](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis?view=aspnetcore-10.0).
 
 ## Prerequisites
 
-This solution in built on the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0), you need to install that before it will work for you.  If you want to build the Dockerfile you will need to install [Docker](https://www.docker.com/products/docker-desktop) as well.
+This solution in built on the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0), you need to install that before it will work for you.  If you want to build the Dockerfile you will need to install [Docker](https://www.docker.com/products/docker-desktop) as well.
 
 ## Installation
 

@@ -206,4 +206,4 @@ jobs:
       - name: Publish
         id: publish
         if: ${{ github.ref == 'refs/heads/main' }}
-        run: dotnet nuget push template/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
+        run: dotnet nuget push template/**/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
