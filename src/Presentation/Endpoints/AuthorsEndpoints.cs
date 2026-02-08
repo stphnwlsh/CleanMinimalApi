@@ -16,8 +16,7 @@ public static class AuthorsEndpoints
         var root = app.MapGroup("/api/author")
             .AddEndpointFilterFactory(ValidationFilter.ValidationFilterFactory)
             .WithTags("author")
-            .WithDescription("Lookup and Find Authors")
-            .WithOpenApi();
+            .WithDescription("Lookup and Find Authors");
 
         _ = root.MapGet("/", GetAuthors)
             .Produces<List<Entities.Author>>()

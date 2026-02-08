@@ -1,7 +1,6 @@
 namespace CleanMinimalApi.Presentation.Extensions;
 
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using CleanMinimalApi.Presentation.Endpoints;
 using Microsoft.AspNetCore.Builder;
 using Serilog;
@@ -31,13 +30,8 @@ public static class WebApplicationExtensions
 
         #region Swagger
 
-        var ti = CultureInfo.CurrentCulture.TextInfo;
-
-        _ = app.UseSwagger();
-        _ = app.UseSwaggerUI(c =>
-            c.SwaggerEndpoint(
-                "/swagger/v1/swagger.json",
-                $"CleanMinimalApi - {ti.ToTitleCase(app.Environment.EnvironmentName)} - V1"));
+        _ = app.MapOpenApi();
+        _ = app.UseSwaggerUI(options => options.SwaggerEndpoint("/openapi/v1.json", "CleanMinimalApi API v1"));
 
         #endregion Swagger
 

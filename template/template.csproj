@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <PackageType>Template</PackageType>
+    <PackageId>CleanMinimalApi.Template</PackageId>
+    <Title>Clean Minimal API Template</Title>
+    <Authors>Stephen Walsh</Authors>
+    <Description>A template for an API using a streamlined version of Clean Architecture and .NET Minimal APIs.</Description>
+    <PackageTags>dotnet;api;csharp;template;clean;clean-architecture;minimal-api;minimal</PackageTags>
+    <PackageProjectUrl>https://github.com/stphnwlsh/CleanMinimalApi</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/stphnwlsh/CleanMinimalApi</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseFile>docs/LICENSE.md</PackageLicenseFile>
+    <PackageReadmeFile>docs/NUGET.md</PackageReadmeFile>
+    <PackageIcon>images/icon.png</PackageIcon>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <ContentTargetFolders>content</ContentTargetFolders>
+    <NoWarn>$(NoWarn);NU5128;NU5118</NoWarn>
+    <NoDefaultExcludes>true</NoDefaultExcludes>
+    <IsTestProject>false</IsTestProject>
+    <IsPublishable>false</IsPublishable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="../**/*" Exclude="../**/bin/**;../**/obj/**;../**/*.user;../**/*.lock.json;../**/.DS_Store;../**/.git/**;../**/.github/**;../**/.vs/**;../LICENSE.md;../**/*.gitattributes;../NUGET.md;../README.md;../**/*.gitignore;../**/nuget.config;../template/**;../**/.dockerignore;../**/.editorconfig;../icon.png;" />
+    <None Include="../icon.png" Pack="true" PackagePath="images/" />
+    <None Include="../LICENSE.md" Pack="true" PackagePath="docs/" />
+    <None Include="../NUGET.md" Pack="true" PackagePath="docs/" />
+  </ItemGroup>
+
+</Project>
