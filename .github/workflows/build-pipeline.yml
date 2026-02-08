@@ -186,27 +186,24 @@ jobs:
 
       - name: Setup
         id: setup
-        uses: nuget/setup-nuget@v1
+        uses: actions/setup-dotnet@v4
         with:
-          nuget-api-key: ${{ secrets.NUGET_API_KEY }}
+          dotnet-version: '10.0.x'
 
       - name: Pack
         id: pack
         run: |
-          if ([string]::IsNullOrEmpty(${Env:SUFFIX}))
-          {
-              nuget pack template.nuspec -NoDefaultExcludes -Version ${Env:VERSION}
-          }
+          if [ -z "$SUFFIX" ]; then
+            dotnet pack template.nuspec -p:PackageVersion=$VERSION --no-build
           else
-          {
-              nuget pack template.nuspec -NoDefaultExcludes -Version ${Env:VERSION} -Suffix ${Env:SUFFIX}
-          }
+            dotnet pack template.nuspec -p:PackageVersion=$VERSION-$SUFFIX --no-build
+          fi
         env:
           VERSION: ${{ steps.initialize.outputs.version_prefix }}
           SUFFIX: ${{ steps.initialize.outputs.version_suffix }}
-        shell: pwsh
+        shell: bash
 
       - name: Publish
         id: publish
         if: ${{ github.ref == 'refs/heads/main' }}
-        run: nuget push *.nupkg -src https://api.nuget.org/v3/index.json
+        run: dotnet nuget push *.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
