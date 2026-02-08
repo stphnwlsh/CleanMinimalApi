@@ -18,8 +18,7 @@ public static class ReviewsEndpoints
         var root = app.MapGroup("/api/review")
             .AddEndpointFilterFactory(ValidationFilter.ValidationFilterFactory)
             .WithTags("review")
-            .WithDescription("Lookup, Find and Manipulate Reviews")
-            .WithOpenApi();
+            .WithDescription("Lookup, Find and Manipulate Reviews");
 
         _ = root.MapGet("/", GetReviews)
             .Produces<List<Entities.Review>>()
