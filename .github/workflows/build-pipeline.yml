@@ -184,7 +184,7 @@ jobs:
           echo "branch=$(eval printf "%s" "$BRANCH_CURRENT")" >> $GITHUB_OUTPUT
         shell: bash
 
-      - name: Setup
+      - name: Setup .NET
         id: setup
         uses: actions/setup-dotnet@v4
         with:
@@ -194,9 +194,9 @@ jobs:
         id: pack
         run: |
           if [ -z "$SUFFIX" ]; then
-            dotnet pack template.nuspec -p:PackageVersion=$VERSION --no-build
+            dotnet pack template/template.csproj -p:PackageVersion=$VERSION --configuration Release
           else
-            dotnet pack template.nuspec -p:PackageVersion=$VERSION-$SUFFIX --no-build
+            dotnet pack template/template.csproj -p:PackageVersion=$VERSION-$SUFFIX --configuration Release
           fi
         env:
           VERSION: ${{ steps.initialize.outputs.version_prefix }}
@@ -206,4 +206,4 @@ jobs:
       - name: Publish
         id: publish
         if: ${{ github.ref == 'refs/heads/main' }}
-        run: dotnet nuget push *.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
+        run: dotnet nuget push template/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
