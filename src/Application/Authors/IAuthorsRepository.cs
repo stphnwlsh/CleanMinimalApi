@@ -5,9 +5,9 @@ using Entities;
 
 public interface IAuthorsRepository
 {
-    Task<List<Author>> GetAuthors(CancellationToken cancellationToken);
+    public Task<List<Author>> GetAuthors(CancellationToken cancellationToken);
 
-    Task<Author> GetAuthorById(Guid id, CancellationToken cancellationToken);
+    public Task<Author> GetAuthorById(Guid id, CancellationToken cancellationToken);
 
-    Task<bool> AuthorExists(Guid id, CancellationToken cancellationToken);
+    public Task<bool> AuthorExists(Guid id, CancellationToken cancellationToken);
 }

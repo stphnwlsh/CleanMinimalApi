@@ -5,6 +5,7 @@ using CleanMinimalApi.Presentation.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Entities = Application.Authors.Entities;
 using Queries = Application.Authors.Queries;
@@ -35,34 +36,34 @@ public static class AuthorsEndpoints
         return app;
     }
 
-    public static async Task<IResult> GetAuthors([FromServices] IMediator mediator)
+    public static async Task<Results<Ok<List<Entities.Author>>, ProblemHttpResult>> GetAuthors([FromServices] IMediator mediator)
     {
         try
         {
-            return Results.Ok(await mediator.Send(new Queries.GetAuthors.GetAuthorsQuery()));
+            return TypedResults.Ok(await mediator.Send(new Queries.GetAuthors.GetAuthorsQuery()));
         }
         catch (Exception ex)
         {
-            return Results.Problem(ex.StackTrace, ex.Message, StatusCodes.Status500InternalServerError);
+            return TypedResults.Problem(ex.StackTrace, ex.Message, StatusCodes.Status500InternalServerError);
         }
     }
 
-    public static async Task<IResult> GetAuthorById([Validate][FromRoute] Guid id, [FromServices] IMediator mediator)
+    public static async Task<Results<Ok<Entities.Author>, NotFound<string>, ProblemHttpResult>> GetAuthorById([Validate][FromRoute] Guid id, [FromServices] IMediator mediator)
     {
         try
         {
-            return Results.Ok(await mediator.Send(new Queries.GetAuthorById.GetAuthorByIdQuery
+            return TypedResults.Ok(await mediator.Send(new Queries.GetAuthorById.GetAuthorByIdQuery
             {
                 Id = id
             }));
         }
         catch (NotFoundException ex)
         {
-            return Results.NotFound(ex.Message);
+            return TypedResults.NotFound(ex.Message);
         }
         catch (Exception ex)
         {
-            return Results.Problem(ex.StackTrace, ex.Message, StatusCodes.Status500InternalServerError);
+            return TypedResults.Problem(ex.StackTrace, ex.Message, StatusCodes.Status500InternalServerError);
         }
     }
 }

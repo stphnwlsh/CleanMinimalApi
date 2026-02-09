@@ -40,7 +40,7 @@ public class ReviewEndpointTests
         var response = await ReviewsEndpoints.GetReviews(mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<Ok<List<Entities.Review>>>();
+        var result = response.Result.ShouldBeOfType<Ok<List<Entities.Review>>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status200OK);
 
@@ -78,7 +78,7 @@ public class ReviewEndpointTests
         var response = await ReviewsEndpoints.GetReviews(mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<ProblemHttpResult>();
+        var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
 
@@ -107,7 +107,7 @@ public class ReviewEndpointTests
         var response = await ReviewsEndpoints.GetReviewById(Guid.Empty, mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<Ok<Entities.Review>>();
+        var result = response.Result.ShouldBeOfType<Ok<Entities.Review>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status200OK);
 
@@ -145,7 +145,7 @@ public class ReviewEndpointTests
         var response = await ReviewsEndpoints.GetReviewById(Guid.Empty, mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<NotFound<string>>();
+        var result = response.Result.ShouldBeOfType<NotFound<string>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status404NotFound);
         result.Value.ShouldBe("Expected Exception");
@@ -165,7 +165,7 @@ public class ReviewEndpointTests
         var response = await ReviewsEndpoints.GetReviewById(Guid.Empty, mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<ProblemHttpResult>();
+        var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
 
@@ -201,7 +201,7 @@ public class ReviewEndpointTests
         var response = await ReviewsEndpoints.CreateReview(request, mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<Created<Entities.Review>>();
+        var result = response.Result.ShouldBeOfType<Created<Entities.Review>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status201Created);
 
@@ -246,7 +246,7 @@ public class ReviewEndpointTests
         var response = await ReviewsEndpoints.CreateReview(request, mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<NotFound<string>>();
+        var result = response.Result.ShouldBeOfType<NotFound<string>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status404NotFound);
         result.Value.ShouldBe("Expected Exception");
@@ -273,7 +273,7 @@ public class ReviewEndpointTests
         var response = await ReviewsEndpoints.CreateReview(request, mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<ProblemHttpResult>();
+        var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
 
@@ -303,7 +303,7 @@ public class ReviewEndpointTests
         var response = await ReviewsEndpoints.UpdateReview(Guid.NewGuid(), request, mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<NoContent>();
+        var result = response.Result.ShouldBeOfType<NoContent>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status204NoContent);
     }
@@ -328,7 +328,7 @@ public class ReviewEndpointTests
         var response = await ReviewsEndpoints.UpdateReview(Guid.NewGuid(), request, mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<NotFound<string>>();
+        var result = response.Result.ShouldBeOfType<NotFound<string>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status404NotFound);
         result.Value.ShouldBe("Expected Exception");
@@ -354,7 +354,7 @@ public class ReviewEndpointTests
         var response = await ReviewsEndpoints.UpdateReview(Guid.NewGuid(), request, mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<ProblemHttpResult>();
+        var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
 
@@ -378,7 +378,7 @@ public class ReviewEndpointTests
         var response = await ReviewsEndpoints.DeleteReview(Guid.NewGuid(), mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<NoContent>();
+        var result = response.Result.ShouldBeOfType<NoContent>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status204NoContent);
     }
@@ -397,7 +397,7 @@ public class ReviewEndpointTests
         var response = await ReviewsEndpoints.DeleteReview(Guid.NewGuid(), mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<NotFound<string>>();
+        var result = response.Result.ShouldBeOfType<NotFound<string>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status404NotFound);
         result.Value.ShouldBe("Expected Exception");
@@ -417,7 +417,7 @@ public class ReviewEndpointTests
         var response = await ReviewsEndpoints.DeleteReview(Guid.Empty, mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<ProblemHttpResult>();
+        var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
 

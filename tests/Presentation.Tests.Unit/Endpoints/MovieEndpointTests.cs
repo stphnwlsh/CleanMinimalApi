@@ -33,7 +33,7 @@ public class MovieEndpointTests
         var response = await MoviesEndpoints.GetMovies(mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<Ok<List<Entities.Movie>>>();
+        var result = response.Result.ShouldBeOfType<Ok<List<Entities.Movie>>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status200OK);
 
@@ -61,7 +61,7 @@ public class MovieEndpointTests
         var response = await MoviesEndpoints.GetMovies(mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<ProblemHttpResult>();
+        var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
 
@@ -85,7 +85,7 @@ public class MovieEndpointTests
         var response = await MoviesEndpoints.GetMovieById(Guid.Empty, mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<Ok<Entities.Movie>>();
+        var result = response.Result.ShouldBeOfType<Ok<Entities.Movie>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status200OK);
 
@@ -113,7 +113,7 @@ public class MovieEndpointTests
         var response = await MoviesEndpoints.GetMovieById(Guid.Empty, mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<NotFound<string>>();
+        var result = response.Result.ShouldBeOfType<NotFound<string>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status404NotFound);
         result.Value.ShouldBe("Expected Exception");
@@ -133,7 +133,7 @@ public class MovieEndpointTests
         var response = await MoviesEndpoints.GetMovieById(Guid.Empty, mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<ProblemHttpResult>();
+        var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
 

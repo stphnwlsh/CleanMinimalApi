@@ -48,11 +48,8 @@ public class VersionEndpointTests : IDisposable
     {
         if (disposing)
         {
-            if (this.application != null)
-            {
-                this.application.Dispose();
-                this.application = null;
-            }
+            this.application?.Dispose();
+            this.application = null;
         }
     }
 }

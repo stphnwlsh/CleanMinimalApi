@@ -6,6 +6,7 @@ using CleanMinimalApi.Presentation.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Commands = Application.Reviews.Commands;
 using Entities = Application.Reviews.Entities;
@@ -63,38 +64,38 @@ public static class ReviewsEndpoints
         return app;
     }
 
-    public static async Task<IResult> GetReviews([FromServices] IMediator mediator)
+    public static async Task<Results<Ok<List<Entities.Review>>, ProblemHttpResult>> GetReviews([FromServices] IMediator mediator)
     {
         try
         {
-            return Results.Ok(await mediator.Send(new Queries.GetReviews.GetReviewsQuery()));
+            return TypedResults.Ok(await mediator.Send(new Queries.GetReviews.GetReviewsQuery()));
         }
         catch (Exception ex)
         {
-            return Results.Problem(ex.StackTrace, ex.Message, StatusCodes.Status500InternalServerError);
+            return TypedResults.Problem(ex.StackTrace, ex.Message, StatusCodes.Status500InternalServerError);
         }
     }
 
-    public static async Task<IResult> GetReviewById([Validate][FromRoute] Guid id, [FromServices] IMediator mediator)
+    public static async Task<Results<Ok<Entities.Review>, NotFound<string>, ProblemHttpResult>> GetReviewById([Validate][FromRoute] Guid id, [FromServices] IMediator mediator)
     {
         try
         {
-            return Results.Ok(await mediator.Send(new Queries.GetReviewById.GetReviewByIdQuery
+            return TypedResults.Ok(await mediator.Send(new Queries.GetReviewById.GetReviewByIdQuery
             {
                 Id = id
             }));
         }
         catch (NotFoundException ex)
         {
-            return Results.NotFound(ex.Message);
+            return TypedResults.NotFound(ex.Message);
         }
         catch (Exception ex)
         {
-            return Results.Problem(ex.StackTrace, ex.Message, StatusCodes.Status500InternalServerError);
+            return TypedResults.Problem(ex.StackTrace, ex.Message, StatusCodes.Status500InternalServerError);
         }
     }
 
-    public static async Task<IResult> CreateReview([Validate][FromBody] CreateReviewRequest request, [FromServices] IMediator mediator)
+    public static async Task<Results<Created<Entities.Review>, NotFound<string>, ProblemHttpResult>> CreateReview([Validate][FromBody] CreateReviewRequest request, [FromServices] IMediator mediator)
     {
         try
         {
@@ -105,19 +106,19 @@ public static class ReviewsEndpoints
                 Stars = request.Stars
             });
 
-            return Results.Created($"/api/review/{response.Id}", response);
+            return TypedResults.Created($"/api/review/{response.Id}", response);
         }
         catch (NotFoundException ex)
         {
-            return Results.NotFound(ex.Message);
+            return TypedResults.NotFound(ex.Message);
         }
         catch (Exception ex)
         {
-            return Results.Problem(ex.StackTrace, ex.Message, StatusCodes.Status500InternalServerError);
+            return TypedResults.Problem(ex.StackTrace, ex.Message, StatusCodes.Status500InternalServerError);
         }
     }
 
-    public static async Task<IResult> UpdateReview([Validate][FromRoute] Guid id, [Validate][FromBody] UpdateReviewRequest request, [FromServices] IMediator mediator)
+    public static async Task<Results<NoContent, NotFound<string>, ProblemHttpResult>> UpdateReview([Validate][FromRoute] Guid id, [Validate][FromBody] UpdateReviewRequest request, [FromServices] IMediator mediator)
     {
         try
         {
@@ -129,19 +130,19 @@ public static class ReviewsEndpoints
                 Stars = request.Stars
             });
 
-            return Results.NoContent();
+            return TypedResults.NoContent();
         }
         catch (NotFoundException ex)
         {
-            return Results.NotFound(ex.Message);
+            return TypedResults.NotFound(ex.Message);
         }
         catch (Exception ex)
         {
-            return Results.Problem(ex.StackTrace, ex.Message, StatusCodes.Status500InternalServerError);
+            return TypedResults.Problem(ex.StackTrace, ex.Message, StatusCodes.Status500InternalServerError);
         }
     }
 
-    public static async Task<IResult> DeleteReview([Validate][FromRoute] Guid id, [FromServices] IMediator mediator)
+    public static async Task<Results<NoContent, NotFound<string>, ProblemHttpResult>> DeleteReview([Validate][FromRoute] Guid id, [FromServices] IMediator mediator)
     {
         try
         {
@@ -150,15 +151,15 @@ public static class ReviewsEndpoints
                 Id = id,
             });
 
-            return Results.NoContent();
+            return TypedResults.NoContent();
         }
         catch (NotFoundException ex)
         {
-            return Results.NotFound(ex.Message);
+            return TypedResults.NotFound(ex.Message);
         }
         catch (Exception ex)
         {
-            return Results.Problem(ex.StackTrace, ex.Message, StatusCodes.Status500InternalServerError);
+            return TypedResults.Problem(ex.StackTrace, ex.Message, StatusCodes.Status500InternalServerError);
         }
     }
 }

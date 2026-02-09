@@ -30,7 +30,7 @@ public class VersionEndpointTests
         var response = await VersionEndpoints.GetVersion(mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<Ok<Entities.Version>>();
+        var result = response.Result.ShouldBeOfType<Ok<Entities.Version>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status200OK);
 
@@ -56,7 +56,7 @@ public class VersionEndpointTests
         var response = await VersionEndpoints.GetVersion(mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<ProblemHttpResult>();
+        var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
 

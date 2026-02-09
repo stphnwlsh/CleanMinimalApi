@@ -5,6 +5,7 @@ using CleanMinimalApi.Presentation.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Entities = Application.Movies.Entities;
 using Queries = Application.Movies.Queries;
@@ -35,34 +36,34 @@ public static class MoviesEndpoints
         return app;
     }
 
-    public static async Task<IResult> GetMovies([FromServices] IMediator mediator)
+    public static async Task<Results<Ok<List<Entities.Movie>>, ProblemHttpResult>> GetMovies([FromServices] IMediator mediator)
     {
         try
         {
-            return Results.Ok(await mediator.Send(new Queries.GetMovies.GetMoviesQuery()));
+            return TypedResults.Ok(await mediator.Send(new Queries.GetMovies.GetMoviesQuery()));
         }
         catch (Exception ex)
         {
-            return Results.Problem(ex.StackTrace, ex.Message, StatusCodes.Status500InternalServerError);
+            return TypedResults.Problem(ex.StackTrace, ex.Message, StatusCodes.Status500InternalServerError);
         }
     }
 
-    public static async Task<IResult> GetMovieById([Validate][FromRoute] Guid id, [FromServices] IMediator mediator)
+    public static async Task<Results<Ok<Entities.Movie>, NotFound<string>, ProblemHttpResult>> GetMovieById([Validate][FromRoute] Guid id, [FromServices] IMediator mediator)
     {
         try
         {
-            return Results.Ok(await mediator.Send(new Queries.GetMovieById.GetMovieByIdQuery
+            return TypedResults.Ok(await mediator.Send(new Queries.GetMovieById.GetMovieByIdQuery
             {
                 Id = id
             }));
         }
         catch (NotFoundException ex)
         {
-            return Results.NotFound(ex.Message);
+            return TypedResults.NotFound(ex.Message);
         }
         catch (Exception ex)
         {
-            return Results.Problem(ex.StackTrace, ex.Message, StatusCodes.Status500InternalServerError);
+            return TypedResults.Problem(ex.StackTrace, ex.Message, StatusCodes.Status500InternalServerError);
         }
     }
 }

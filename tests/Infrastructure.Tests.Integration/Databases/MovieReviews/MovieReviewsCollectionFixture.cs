@@ -65,11 +65,8 @@ public class MovieReviewsDataFixture : IDisposable
     {
         if (disposing)
         {
-            if (this.Context != null)
-            {
-                this.Context.Dispose();
-                this.Context = null;
-            }
+            this.Context?.Dispose();
+            this.Context = null;
         }
     }
 }

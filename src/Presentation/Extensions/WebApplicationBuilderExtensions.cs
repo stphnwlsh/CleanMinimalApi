@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Application;
+using CleanMinimalApi.Presentation.Serialization;
 using FluentValidation;
 using Infrastructure;
 using Microsoft.AspNetCore.Builder;
@@ -45,6 +46,7 @@ public static class WebApplicationBuilderExtensions
             opt.SerializerOptions.PropertyNameCaseInsensitive = true;
             opt.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             opt.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+            opt.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
         });
 
         #endregion Serialisation

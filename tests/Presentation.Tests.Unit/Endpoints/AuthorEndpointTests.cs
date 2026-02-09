@@ -33,7 +33,7 @@ public class AuthorEndpointTests
         var response = await AuthorsEndpoints.GetAuthors(mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<Ok<List<Entities.Author>>>();
+        var result = response.Result.ShouldBeOfType<Ok<List<Entities.Author>>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status200OK);
 
@@ -63,7 +63,7 @@ public class AuthorEndpointTests
         var response = await AuthorsEndpoints.GetAuthors(mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<ProblemHttpResult>();
+        var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
 
@@ -87,7 +87,7 @@ public class AuthorEndpointTests
         var response = await AuthorsEndpoints.GetAuthorById(Guid.Empty, mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<Ok<Entities.Author>>();
+        var result = response.Result.ShouldBeOfType<Ok<Entities.Author>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status200OK);
 
@@ -117,7 +117,7 @@ public class AuthorEndpointTests
         var response = await AuthorsEndpoints.GetAuthorById(Guid.Empty, mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<NotFound<string>>();
+        var result = response.Result.ShouldBeOfType<NotFound<string>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status404NotFound);
         result.Value.ShouldBe("Expected Exception");
@@ -137,7 +137,7 @@ public class AuthorEndpointTests
         var response = await AuthorsEndpoints.GetAuthorById(Guid.Empty, mediator);
 
         // Assert
-        var result = response.ShouldBeOfType<ProblemHttpResult>();
+        var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
 

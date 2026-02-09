@@ -2,6 +2,7 @@ namespace CleanMinimalApi.Presentation.Filters;
 
 using System.Reflection;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 
 public static class ValidationFilter
 {
@@ -32,7 +33,7 @@ public static class ValidationFilter
 
                 if (!validationResult.IsValid)
                 {
-                    return Results.ValidationProblem(validationResult.ToDictionary());
+                    return TypedResults.ValidationProblem(validationResult.ToDictionary());
                 }
             }
         }
