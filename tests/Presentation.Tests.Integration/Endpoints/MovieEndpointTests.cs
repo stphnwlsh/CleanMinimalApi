@@ -11,7 +11,7 @@ using Entities = Application.Movies.Entities;
 
 public class MovieEndpointTests : IDisposable
 {
-    private MinimalApiApplication application;
+    private CleanMinimalApiApplication application;
 
     public MovieEndpointTests()
     {

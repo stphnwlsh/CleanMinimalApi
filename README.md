@@ -82,5 +82,3 @@ This sample would not have been possible without gaining inspiration from the fo
 If you like this, or want to checkout my other work, please connect with me on [LinkedIn](https://www.linkedin.com/in/stphnwlsh), and/or follow me on [Medium](https://stphnwlsh.medium.com) or [GitHub](https://github.com/stphnwlsh).
 
 If you want to see more updates or more projects then please support me at [GitHub Sponsors](https://github.com/stphnwlsh) or [Buy Me A Coffee](https://www.buymeacoffee.com/stphnwlsh)
-
-![Please Sponsor Me](docs/sponsor.jpg)

@@ -11,7 +11,7 @@ using Entities = Application.Authors.Entities;
 
 public class AuthorEndpointTests : IDisposable
 {
-    private MinimalApiApplication application;
+    private CleanMinimalApiApplication application;
 
     public AuthorEndpointTests()
     {
