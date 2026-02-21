@@ -20,9 +20,9 @@ public class MovieEndpointTests
     public async Task GetMovies_ShouldReturn_Ok()
     {
         // Arrange
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Queries.GetMovies.GetMoviesQuery>())
             .ReturnsForAnyArgs(
             [
@@ -30,7 +30,7 @@ public class MovieEndpointTests
             ]);
 
         // Act
-        var response = await MoviesEndpoints.GetMovies(mediator);
+        var response = await MoviesEndpoints.GetMovies(sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<Ok<List<Entities.Movie>>>();
@@ -51,14 +51,14 @@ public class MovieEndpointTests
     public async Task GetMovies_ShouldReturn_Problem()
     {
         // Arrange
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Queries.GetMovies.GetMoviesQuery>())
             .Throws(new ArgumentException("Expected Exception"));
 
         // Act
-        var response = await MoviesEndpoints.GetMovies(mediator);
+        var response = await MoviesEndpoints.GetMovies(sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
@@ -75,14 +75,14 @@ public class MovieEndpointTests
     public async Task GetMovieById_ShouldReturn_Ok()
     {
         // Arrange
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Queries.GetMovieById.GetMovieByIdQuery>())
             .ReturnsForAnyArgs(new Entities.Movie(Guid.Empty, "Lorem Ipsum"));
 
         // Act
-        var response = await MoviesEndpoints.GetMovieById(Guid.Empty, mediator);
+        var response = await MoviesEndpoints.GetMovieById(Guid.Empty, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<Ok<Entities.Movie>>();
@@ -103,14 +103,14 @@ public class MovieEndpointTests
     public async Task GetMovieById_ShouldReturn_NotFound()
     {
         // Arrange
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Queries.GetMovieById.GetMovieByIdQuery>())
             .Throws(new NotFoundException("Expected Exception"));
 
         // Act
-        var response = await MoviesEndpoints.GetMovieById(Guid.Empty, mediator);
+        var response = await MoviesEndpoints.GetMovieById(Guid.Empty, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<NotFound<string>>();
@@ -123,14 +123,14 @@ public class MovieEndpointTests
     public async Task GetMovieById_ShouldReturn_Problem()
     {
         // Arrange
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Queries.GetMovieById.GetMovieByIdQuery>())
             .Throws(new ArgumentException("Expected Exception"));
 
         // Act
-        var response = await MoviesEndpoints.GetMovieById(Guid.Empty, mediator);
+        var response = await MoviesEndpoints.GetMovieById(Guid.Empty, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<ProblemHttpResult>();

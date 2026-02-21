@@ -18,16 +18,16 @@ public class VersionEndpointTests
     public async Task GetVersion_ShouldReturn_Ok()
     {
         // Arrange
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
 
-        _ = mediator.Send(Arg.Any<Queries.GetVersion.GetVersionQuery>()).ReturnsForAnyArgs(new Entities.Version
+        _ = sender.Send(Arg.Any<Queries.GetVersion.GetVersionQuery>()).ReturnsForAnyArgs(new Entities.Version
         {
             FileVersion = "1.2.3.4",
             InformationalVersion = "5.6.7.8"
         });
 
         // Act
-        var response = await VersionEndpoints.GetVersion(mediator);
+        var response = await VersionEndpoints.GetVersion(sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<Ok<Entities.Version>>();
@@ -46,14 +46,14 @@ public class VersionEndpointTests
     public async Task GetVersion_ShouldReturn_Problem()
     {
         // Arrange
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Queries.GetVersion.GetVersionQuery>())
             .Throws(new ArgumentException("Expected Exception"));
 
         // Act
-        var response = await VersionEndpoints.GetVersion(mediator);
+        var response = await VersionEndpoints.GetVersion(sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<ProblemHttpResult>();

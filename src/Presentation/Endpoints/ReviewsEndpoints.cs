@@ -64,11 +64,11 @@ public static class ReviewsEndpoints
         return app;
     }
 
-    public static async Task<Results<Ok<List<Entities.Review>>, ProblemHttpResult>> GetReviews([FromServices] IMediator mediator)
+    public static async Task<Results<Ok<List<Entities.Review>>, ProblemHttpResult>> GetReviews([FromServices] ISender sender)
     {
         try
         {
-            return TypedResults.Ok(await mediator.Send(new Queries.GetReviews.GetReviewsQuery()));
+            return TypedResults.Ok(await sender.Send(new Queries.GetReviews.GetReviewsQuery()));
         }
         catch (Exception ex)
         {
@@ -76,11 +76,11 @@ public static class ReviewsEndpoints
         }
     }
 
-    public static async Task<Results<Ok<Entities.Review>, NotFound<string>, ProblemHttpResult>> GetReviewById([Validate][FromRoute] Guid id, [FromServices] IMediator mediator)
+    public static async Task<Results<Ok<Entities.Review>, NotFound<string>, ProblemHttpResult>> GetReviewById([Validate][FromRoute] Guid id, [FromServices] ISender sender)
     {
         try
         {
-            return TypedResults.Ok(await mediator.Send(new Queries.GetReviewById.GetReviewByIdQuery
+            return TypedResults.Ok(await sender.Send(new Queries.GetReviewById.GetReviewByIdQuery
             {
                 Id = id
             }));
@@ -95,11 +95,11 @@ public static class ReviewsEndpoints
         }
     }
 
-    public static async Task<Results<Created<Entities.Review>, NotFound<string>, ProblemHttpResult>> CreateReview([Validate][FromBody] CreateReviewRequest request, [FromServices] IMediator mediator)
+    public static async Task<Results<Created<Entities.Review>, NotFound<string>, ProblemHttpResult>> CreateReview([Validate][FromBody] CreateReviewRequest request, [FromServices] ISender sender)
     {
         try
         {
-            var response = await mediator.Send(new Commands.CreateReview.CreateReviewCommand
+            var response = await sender.Send(new Commands.CreateReview.CreateReviewCommand
             {
                 AuthorId = request.AuthorId,
                 MovieId = request.MovieId,
@@ -118,11 +118,11 @@ public static class ReviewsEndpoints
         }
     }
 
-    public static async Task<Results<NoContent, NotFound<string>, ProblemHttpResult>> UpdateReview([Validate][FromRoute] Guid id, [Validate][FromBody] UpdateReviewRequest request, [FromServices] IMediator mediator)
+    public static async Task<Results<NoContent, NotFound<string>, ProblemHttpResult>> UpdateReview([Validate][FromRoute] Guid id, [Validate][FromBody] UpdateReviewRequest request, [FromServices] ISender sender)
     {
         try
         {
-            _ = await mediator.Send(new Commands.UpdateReview.UpdateReviewCommand
+            _ = await sender.Send(new Commands.UpdateReview.UpdateReviewCommand
             {
                 Id = id,
                 AuthorId = request.AuthorId,
@@ -142,11 +142,11 @@ public static class ReviewsEndpoints
         }
     }
 
-    public static async Task<Results<NoContent, NotFound<string>, ProblemHttpResult>> DeleteReview([Validate][FromRoute] Guid id, [FromServices] IMediator mediator)
+    public static async Task<Results<NoContent, NotFound<string>, ProblemHttpResult>> DeleteReview([Validate][FromRoute] Guid id, [FromServices] ISender sender)
     {
         try
         {
-            _ = await mediator.Send(new Commands.DeleteReview.DeleteReviewCommand
+            _ = await sender.Send(new Commands.DeleteReview.DeleteReviewCommand
             {
                 Id = id,
             });

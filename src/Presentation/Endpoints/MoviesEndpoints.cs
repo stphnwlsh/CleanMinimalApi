@@ -36,11 +36,11 @@ public static class MoviesEndpoints
         return app;
     }
 
-    public static async Task<Results<Ok<List<Entities.Movie>>, ProblemHttpResult>> GetMovies([FromServices] IMediator mediator)
+    public static async Task<Results<Ok<List<Entities.Movie>>, ProblemHttpResult>> GetMovies([FromServices] ISender sender)
     {
         try
         {
-            return TypedResults.Ok(await mediator.Send(new Queries.GetMovies.GetMoviesQuery()));
+            return TypedResults.Ok(await sender.Send(new Queries.GetMovies.GetMoviesQuery()));
         }
         catch (Exception ex)
         {
@@ -48,11 +48,11 @@ public static class MoviesEndpoints
         }
     }
 
-    public static async Task<Results<Ok<Entities.Movie>, NotFound<string>, ProblemHttpResult>> GetMovieById([Validate][FromRoute] Guid id, [FromServices] IMediator mediator)
+    public static async Task<Results<Ok<Entities.Movie>, NotFound<string>, ProblemHttpResult>> GetMovieById([Validate][FromRoute] Guid id, [FromServices] ISender sender)
     {
         try
         {
-            return TypedResults.Ok(await mediator.Send(new Queries.GetMovieById.GetMovieByIdQuery
+            return TypedResults.Ok(await sender.Send(new Queries.GetMovieById.GetMovieByIdQuery
             {
                 Id = id
             }));

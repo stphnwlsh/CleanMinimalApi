@@ -20,9 +20,9 @@ public class AuthorEndpointTests
     public async Task GetAuthors_ShouldReturn_Ok()
     {
         // Arrange
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Queries.GetAuthors.GetAuthorsQuery>())
             .ReturnsForAnyArgs(
             [
@@ -30,7 +30,7 @@ public class AuthorEndpointTests
             ]);
 
         // Act
-        var response = await AuthorsEndpoints.GetAuthors(mediator);
+        var response = await AuthorsEndpoints.GetAuthors(sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<Ok<List<Entities.Author>>>();
@@ -53,14 +53,14 @@ public class AuthorEndpointTests
     public async Task GetAuthors_ShouldReturn_Problem()
     {
         // Arrange
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Queries.GetAuthors.GetAuthorsQuery>())
             .Throws(new ArgumentException("Expected Exception"));
 
         // Act
-        var response = await AuthorsEndpoints.GetAuthors(mediator);
+        var response = await AuthorsEndpoints.GetAuthors(sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
@@ -77,14 +77,14 @@ public class AuthorEndpointTests
     public async Task GetAuthorById_ShouldReturn_Ok()
     {
         // Arrange
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Queries.GetAuthorById.GetAuthorByIdQuery>())
             .ReturnsForAnyArgs(new Entities.Author(Guid.Empty, "Lorem", "Ipsum"));
 
         // Act
-        var response = await AuthorsEndpoints.GetAuthorById(Guid.Empty, mediator);
+        var response = await AuthorsEndpoints.GetAuthorById(Guid.Empty, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<Ok<Entities.Author>>();
@@ -107,14 +107,14 @@ public class AuthorEndpointTests
     public async Task GetAuthorById_ShouldReturn_NotFound()
     {
         // Arrange
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Queries.GetAuthorById.GetAuthorByIdQuery>())
             .Throws(new NotFoundException("Expected Exception"));
 
         // Act
-        var response = await AuthorsEndpoints.GetAuthorById(Guid.Empty, mediator);
+        var response = await AuthorsEndpoints.GetAuthorById(Guid.Empty, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<NotFound<string>>();
@@ -127,14 +127,14 @@ public class AuthorEndpointTests
     public async Task GetAuthorById_ShouldReturn_Problem()
     {
         // Arrange
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Queries.GetAuthorById.GetAuthorByIdQuery>())
             .Throws(new ArgumentException("Expected Exception"));
 
         // Act
-        var response = await AuthorsEndpoints.GetAuthorById(Guid.Empty, mediator);
+        var response = await AuthorsEndpoints.GetAuthorById(Guid.Empty, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<ProblemHttpResult>();

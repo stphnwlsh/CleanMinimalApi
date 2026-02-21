@@ -23,11 +23,11 @@ public static class VersionEndpoints
         return app;
     }
 
-    public static async Task<Results<Ok<Entities.Version>, ProblemHttpResult>> GetVersion(IMediator mediator)
+    public static async Task<Results<Ok<Entities.Version>, ProblemHttpResult>> GetVersion(ISender sender)
     {
         try
         {
-            return TypedResults.Ok(await mediator.Send(new Queries.GetVersion.GetVersionQuery()));
+            return TypedResults.Ok(await sender.Send(new Queries.GetVersion.GetVersionQuery()));
         }
         catch (Exception ex)
         {

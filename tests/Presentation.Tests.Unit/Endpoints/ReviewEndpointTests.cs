@@ -22,9 +22,9 @@ public class ReviewEndpointTests
     public async Task GetReviews_ShouldReturn_Ok()
     {
         // Arrange
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Queries.GetReviews.GetReviewsQuery>())
             .ReturnsForAnyArgs(
             [
@@ -37,7 +37,7 @@ public class ReviewEndpointTests
             ]);
 
         // Act
-        var response = await ReviewsEndpoints.GetReviews(mediator);
+        var response = await ReviewsEndpoints.GetReviews(sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<Ok<List<Entities.Review>>>();
@@ -68,14 +68,14 @@ public class ReviewEndpointTests
     public async Task GetReviews_ShouldReturn_Problem()
     {
         // Arrange
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Queries.GetReviews.GetReviewsQuery>())
             .Throws(new ArgumentException("Expected Exception"));
 
         // Act
-        var response = await ReviewsEndpoints.GetReviews(mediator);
+        var response = await ReviewsEndpoints.GetReviews(sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
@@ -92,9 +92,9 @@ public class ReviewEndpointTests
     public async Task GetReviewById_ShouldReturn_Ok()
     {
         // Arrange
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Queries.GetReviewById.GetReviewByIdQuery>())
             .ReturnsForAnyArgs(new Entities.Review(
                 Guid.Empty,
@@ -104,7 +104,7 @@ public class ReviewEndpointTests
             ));
 
         // Act
-        var response = await ReviewsEndpoints.GetReviewById(Guid.Empty, mediator);
+        var response = await ReviewsEndpoints.GetReviewById(Guid.Empty, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<Ok<Entities.Review>>();
@@ -135,14 +135,14 @@ public class ReviewEndpointTests
     public async Task GetReviewById_ShouldReturn_NotFound()
     {
         // Arrange
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Queries.GetReviewById.GetReviewByIdQuery>())
             .Throws(new NotFoundException("Expected Exception"));
 
         // Act
-        var response = await ReviewsEndpoints.GetReviewById(Guid.Empty, mediator);
+        var response = await ReviewsEndpoints.GetReviewById(Guid.Empty, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<NotFound<string>>();
@@ -155,14 +155,14 @@ public class ReviewEndpointTests
     public async Task GetReviewById_ShouldReturn_Problem()
     {
         // Arrange
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Queries.GetReviewById.GetReviewByIdQuery>())
             .Throws(new ArgumentException("Expected Exception"));
 
         // Act
-        var response = await ReviewsEndpoints.GetReviewById(Guid.Empty, mediator);
+        var response = await ReviewsEndpoints.GetReviewById(Guid.Empty, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
@@ -180,7 +180,7 @@ public class ReviewEndpointTests
     {
         // Arrange
         //var httpRequest = Substitute.For<HttpRequest>();
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
         var request = new Requests.CreateReviewRequest
         {
             AuthorId = Guid.Empty,
@@ -188,7 +188,7 @@ public class ReviewEndpointTests
             Stars = 5
         };
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Commands.CreateReview.CreateReviewCommand>())
             .ReturnsForAnyArgs(new Entities.Review(
                 Guid.Empty,
@@ -198,7 +198,7 @@ public class ReviewEndpointTests
             ));
 
         // Act
-        var response = await ReviewsEndpoints.CreateReview(request, mediator);
+        var response = await ReviewsEndpoints.CreateReview(request, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<Created<Entities.Review>>();
@@ -230,7 +230,7 @@ public class ReviewEndpointTests
     {
         // Arrange
         //var httpRequest = Substitute.For<HttpRequest>();
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
         var request = new Requests.CreateReviewRequest
         {
             AuthorId = Guid.Empty,
@@ -238,12 +238,12 @@ public class ReviewEndpointTests
             Stars = 5
         };
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Commands.CreateReview.CreateReviewCommand>())
             .Throws(new NotFoundException("Expected Exception"));
 
         // Act
-        var response = await ReviewsEndpoints.CreateReview(request, mediator);
+        var response = await ReviewsEndpoints.CreateReview(request, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<NotFound<string>>();
@@ -257,7 +257,7 @@ public class ReviewEndpointTests
     {
         // Arrange
         var httpRequest = Substitute.For<HttpRequest>();
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
         var request = new Requests.CreateReviewRequest
         {
             AuthorId = Guid.Empty,
@@ -265,12 +265,12 @@ public class ReviewEndpointTests
             Stars = 5
         };
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Commands.CreateReview.CreateReviewCommand>())
             .Throws(new ArgumentException("Expected Exception"));
 
         // Act
-        var response = await ReviewsEndpoints.CreateReview(request, mediator);
+        var response = await ReviewsEndpoints.CreateReview(request, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
@@ -287,7 +287,7 @@ public class ReviewEndpointTests
     public async Task UpdateReview_ShouldReturn_NoContent()
     {
         // Arrange
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
         var request = new Requests.UpdateReviewRequest
         {
             AuthorId = Guid.Empty,
@@ -295,12 +295,12 @@ public class ReviewEndpointTests
             Stars = 5
         };
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Commands.UpdateReview.UpdateReviewCommand>())
             .ReturnsForAnyArgs(true);
 
         // Act
-        var response = await ReviewsEndpoints.UpdateReview(Guid.NewGuid(), request, mediator);
+        var response = await ReviewsEndpoints.UpdateReview(Guid.NewGuid(), request, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<NoContent>();
@@ -312,7 +312,7 @@ public class ReviewEndpointTests
     public async Task UpdateReview_ShouldReturn_NotFound()
     {
         // Arrange
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
         var request = new Requests.UpdateReviewRequest
         {
             AuthorId = Guid.Empty,
@@ -320,12 +320,12 @@ public class ReviewEndpointTests
             Stars = 5
         };
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Commands.UpdateReview.UpdateReviewCommand>())
             .Throws(new NotFoundException("Expected Exception"));
 
         // Act
-        var response = await ReviewsEndpoints.UpdateReview(Guid.NewGuid(), request, mediator);
+        var response = await ReviewsEndpoints.UpdateReview(Guid.NewGuid(), request, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<NotFound<string>>();
@@ -338,7 +338,7 @@ public class ReviewEndpointTests
     public async Task UpdateReview_ShouldReturn_Problem()
     {
         // Arrange
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
         var request = new Requests.UpdateReviewRequest
         {
             AuthorId = Guid.Empty,
@@ -346,12 +346,12 @@ public class ReviewEndpointTests
             Stars = 5
         };
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Commands.UpdateReview.UpdateReviewCommand>())
             .Throws(new ArgumentException("Expected Exception"));
 
         // Act
-        var response = await ReviewsEndpoints.UpdateReview(Guid.NewGuid(), request, mediator);
+        var response = await ReviewsEndpoints.UpdateReview(Guid.NewGuid(), request, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
@@ -368,14 +368,14 @@ public class ReviewEndpointTests
     public async Task DeleteReview_ShouldReturn_NoContent()
     {
         // Arrange
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Commands.DeleteReview.DeleteReviewCommand>())
             .ReturnsForAnyArgs(true);
 
         // Act
-        var response = await ReviewsEndpoints.DeleteReview(Guid.NewGuid(), mediator);
+        var response = await ReviewsEndpoints.DeleteReview(Guid.NewGuid(), sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<NoContent>();
@@ -387,14 +387,14 @@ public class ReviewEndpointTests
     public async Task DeleteReview_ShouldReturn_NotFound()
     {
         // Arrange
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Commands.DeleteReview.DeleteReviewCommand>())
             .Throws(new NotFoundException("Expected Exception"));
 
         // Act
-        var response = await ReviewsEndpoints.DeleteReview(Guid.NewGuid(), mediator);
+        var response = await ReviewsEndpoints.DeleteReview(Guid.NewGuid(), sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<NotFound<string>>();
@@ -407,14 +407,14 @@ public class ReviewEndpointTests
     public async Task DeleteReview_ShouldReturn_Problem()
     {
         // Arrange
-        var mediator = Substitute.For<IMediator>();
+        var sender = Substitute.For<ISender>();
 
-        _ = mediator
+        _ = sender
             .Send(Arg.Any<Commands.DeleteReview.DeleteReviewCommand>())
             .Throws(new ArgumentException("Expected Exception"));
 
         // Act
-        var response = await ReviewsEndpoints.DeleteReview(Guid.Empty, mediator);
+        var response = await ReviewsEndpoints.DeleteReview(Guid.Empty, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<ProblemHttpResult>();

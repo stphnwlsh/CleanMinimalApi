@@ -36,11 +36,11 @@ public static class AuthorsEndpoints
         return app;
     }
 
-    public static async Task<Results<Ok<List<Entities.Author>>, ProblemHttpResult>> GetAuthors([FromServices] IMediator mediator)
+    public static async Task<Results<Ok<List<Entities.Author>>, ProblemHttpResult>> GetAuthors([FromServices] ISender sender)
     {
         try
         {
-            return TypedResults.Ok(await mediator.Send(new Queries.GetAuthors.GetAuthorsQuery()));
+            return TypedResults.Ok(await sender.Send(new Queries.GetAuthors.GetAuthorsQuery()));
         }
         catch (Exception ex)
         {
@@ -48,11 +48,11 @@ public static class AuthorsEndpoints
         }
     }
 
-    public static async Task<Results<Ok<Entities.Author>, NotFound<string>, ProblemHttpResult>> GetAuthorById([Validate][FromRoute] Guid id, [FromServices] IMediator mediator)
+    public static async Task<Results<Ok<Entities.Author>, NotFound<string>, ProblemHttpResult>> GetAuthorById([Validate][FromRoute] Guid id, [FromServices] ISender sender)
     {
         try
         {
-            return TypedResults.Ok(await mediator.Send(new Queries.GetAuthorById.GetAuthorByIdQuery
+            return TypedResults.Ok(await sender.Send(new Queries.GetAuthorById.GetAuthorByIdQuery
             {
                 Id = id
             }));
