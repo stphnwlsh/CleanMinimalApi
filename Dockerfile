@@ -19,7 +19,7 @@ ENV DOTNET_ENVIRONMENT=${ENVIRONMENT}
 WORKDIR /sln
 
 # Dotnet Restore
-COPY ./*.sln ./NuGet.config  ./
+COPY ./*.sln ./NuGet.config ./Directory.Build.props ./
 COPY src/*/*.csproj ./
 RUN for file in $(ls *.csproj); do mkdir -p src/${file%.*}/ && mv $file src/${file%.*}/; done
 COPY tests/*/*.csproj ./
