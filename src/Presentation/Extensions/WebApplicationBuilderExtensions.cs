@@ -11,6 +11,7 @@ using FluentValidation;
 using Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Json;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi;
 using Serilog;
@@ -21,6 +22,9 @@ public static class WebApplicationBuilderExtensions
     public static WebApplicationBuilder ConfigureApplicationBuilder(this WebApplicationBuilder builder)
     {
         #region Logging
+
+        _ = builder.Services.AddHttpLogging(logging =>
+            logging.LoggingFields = HttpLoggingFields.RequestPropertiesAndHeaders | HttpLoggingFields.ResponsePropertiesAndHeaders);
 
         _ = builder.Host.UseSerilog((hostContext, loggerConfiguration) =>
         {

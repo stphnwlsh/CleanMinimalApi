@@ -3,12 +3,12 @@ namespace CleanMinimalApi.Presentation.Tests.Unit.Endpoints;
 using System.Threading.Tasks;
 using CleanMinimalApi.Application.Common.Exceptions;
 using CleanMinimalApi.Application.Reviews.Entities;
+using CleanMinimalApi.Presentation.Endpoints;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using Presentation.Endpoints;
 using Shouldly;
 using Xunit;
 using Entities = Application.Movies.Entities;
@@ -30,7 +30,7 @@ public class MovieEndpointTests
             ]);
 
         // Act
-        var response = await MoviesEndpoints.GetMovies(sender);
+        var response = await MovieEndpoints.GetMovies(sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<Ok<List<Entities.Movie>>>();
@@ -58,7 +58,7 @@ public class MovieEndpointTests
             .Throws(new ArgumentException("Expected Exception"));
 
         // Act
-        var response = await MoviesEndpoints.GetMovies(sender);
+        var response = await MovieEndpoints.GetMovies(sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
@@ -82,7 +82,7 @@ public class MovieEndpointTests
             .ReturnsForAnyArgs(new Entities.Movie(Guid.Empty, "Lorem Ipsum"));
 
         // Act
-        var response = await MoviesEndpoints.GetMovieById(Guid.Empty, sender);
+        var response = await MovieEndpoints.GetMovieById(Guid.Empty, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<Ok<Entities.Movie>>();
@@ -110,7 +110,7 @@ public class MovieEndpointTests
             .Throws(new NotFoundException("Expected Exception"));
 
         // Act
-        var response = await MoviesEndpoints.GetMovieById(Guid.Empty, sender);
+        var response = await MovieEndpoints.GetMovieById(Guid.Empty, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<NotFound<string>>();
@@ -130,7 +130,7 @@ public class MovieEndpointTests
             .Throws(new ArgumentException("Expected Exception"));
 
         // Act
-        var response = await MoviesEndpoints.GetMovieById(Guid.Empty, sender);
+        var response = await MovieEndpoints.GetMovieById(Guid.Empty, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<ProblemHttpResult>();

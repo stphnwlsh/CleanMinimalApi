@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 using CleanMinimalApi.Application.Authors.Entities;
 using CleanMinimalApi.Application.Common.Exceptions;
 using CleanMinimalApi.Application.Movies.Entities;
+using CleanMinimalApi.Presentation.Endpoints;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using Presentation.Endpoints;
 using Shouldly;
 using Xunit;
 using Commands = Application.Reviews.Commands;
@@ -37,7 +37,7 @@ public class ReviewEndpointTests
             ]);
 
         // Act
-        var response = await ReviewsEndpoints.GetReviews(sender);
+        var response = await ReviewEndpoints.GetReviews(sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<Ok<List<Entities.Review>>>();
@@ -75,7 +75,7 @@ public class ReviewEndpointTests
             .Throws(new ArgumentException("Expected Exception"));
 
         // Act
-        var response = await ReviewsEndpoints.GetReviews(sender);
+        var response = await ReviewEndpoints.GetReviews(sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
@@ -104,7 +104,7 @@ public class ReviewEndpointTests
             ));
 
         // Act
-        var response = await ReviewsEndpoints.GetReviewById(Guid.Empty, sender);
+        var response = await ReviewEndpoints.GetReviewById(Guid.Empty, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<Ok<Entities.Review>>();
@@ -142,7 +142,7 @@ public class ReviewEndpointTests
             .Throws(new NotFoundException("Expected Exception"));
 
         // Act
-        var response = await ReviewsEndpoints.GetReviewById(Guid.Empty, sender);
+        var response = await ReviewEndpoints.GetReviewById(Guid.Empty, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<NotFound<string>>();
@@ -162,7 +162,7 @@ public class ReviewEndpointTests
             .Throws(new ArgumentException("Expected Exception"));
 
         // Act
-        var response = await ReviewsEndpoints.GetReviewById(Guid.Empty, sender);
+        var response = await ReviewEndpoints.GetReviewById(Guid.Empty, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
@@ -198,7 +198,7 @@ public class ReviewEndpointTests
             ));
 
         // Act
-        var response = await ReviewsEndpoints.CreateReview(request, sender);
+        var response = await ReviewEndpoints.CreateReview(request, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<Created<Entities.Review>>();
@@ -243,7 +243,7 @@ public class ReviewEndpointTests
             .Throws(new NotFoundException("Expected Exception"));
 
         // Act
-        var response = await ReviewsEndpoints.CreateReview(request, sender);
+        var response = await ReviewEndpoints.CreateReview(request, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<NotFound<string>>();
@@ -270,7 +270,7 @@ public class ReviewEndpointTests
             .Throws(new ArgumentException("Expected Exception"));
 
         // Act
-        var response = await ReviewsEndpoints.CreateReview(request, sender);
+        var response = await ReviewEndpoints.CreateReview(request, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
@@ -300,7 +300,7 @@ public class ReviewEndpointTests
             .ReturnsForAnyArgs(true);
 
         // Act
-        var response = await ReviewsEndpoints.UpdateReview(Guid.NewGuid(), request, sender);
+        var response = await ReviewEndpoints.UpdateReview(Guid.NewGuid(), request, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<NoContent>();
@@ -325,7 +325,7 @@ public class ReviewEndpointTests
             .Throws(new NotFoundException("Expected Exception"));
 
         // Act
-        var response = await ReviewsEndpoints.UpdateReview(Guid.NewGuid(), request, sender);
+        var response = await ReviewEndpoints.UpdateReview(Guid.NewGuid(), request, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<NotFound<string>>();
@@ -351,7 +351,7 @@ public class ReviewEndpointTests
             .Throws(new ArgumentException("Expected Exception"));
 
         // Act
-        var response = await ReviewsEndpoints.UpdateReview(Guid.NewGuid(), request, sender);
+        var response = await ReviewEndpoints.UpdateReview(Guid.NewGuid(), request, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
@@ -375,7 +375,7 @@ public class ReviewEndpointTests
             .ReturnsForAnyArgs(true);
 
         // Act
-        var response = await ReviewsEndpoints.DeleteReview(Guid.NewGuid(), sender);
+        var response = await ReviewEndpoints.DeleteReview(Guid.NewGuid(), sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<NoContent>();
@@ -394,7 +394,7 @@ public class ReviewEndpointTests
             .Throws(new NotFoundException("Expected Exception"));
 
         // Act
-        var response = await ReviewsEndpoints.DeleteReview(Guid.NewGuid(), sender);
+        var response = await ReviewEndpoints.DeleteReview(Guid.NewGuid(), sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<NotFound<string>>();
@@ -414,7 +414,7 @@ public class ReviewEndpointTests
             .Throws(new ArgumentException("Expected Exception"));
 
         // Act
-        var response = await ReviewsEndpoints.DeleteReview(Guid.Empty, sender);
+        var response = await ReviewEndpoints.DeleteReview(Guid.Empty, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<ProblemHttpResult>();

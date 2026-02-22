@@ -3,12 +3,12 @@ namespace CleanMinimalApi.Presentation.Tests.Unit.Endpoints;
 using System.Threading.Tasks;
 using CleanMinimalApi.Application.Common.Exceptions;
 using CleanMinimalApi.Application.Reviews.Entities;
+using CleanMinimalApi.Presentation.Endpoints;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using Presentation.Endpoints;
 using Shouldly;
 using Xunit;
 using Entities = Application.Authors.Entities;
@@ -30,7 +30,7 @@ public class AuthorEndpointTests
             ]);
 
         // Act
-        var response = await AuthorsEndpoints.GetAuthors(sender);
+        var response = await AuthorEndpoints.GetAuthors(sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<Ok<List<Entities.Author>>>();
@@ -60,7 +60,7 @@ public class AuthorEndpointTests
             .Throws(new ArgumentException("Expected Exception"));
 
         // Act
-        var response = await AuthorsEndpoints.GetAuthors(sender);
+        var response = await AuthorEndpoints.GetAuthors(sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
@@ -84,7 +84,7 @@ public class AuthorEndpointTests
             .ReturnsForAnyArgs(new Entities.Author(Guid.Empty, "Lorem", "Ipsum"));
 
         // Act
-        var response = await AuthorsEndpoints.GetAuthorById(Guid.Empty, sender);
+        var response = await AuthorEndpoints.GetAuthorById(Guid.Empty, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<Ok<Entities.Author>>();
@@ -114,7 +114,7 @@ public class AuthorEndpointTests
             .Throws(new NotFoundException("Expected Exception"));
 
         // Act
-        var response = await AuthorsEndpoints.GetAuthorById(Guid.Empty, sender);
+        var response = await AuthorEndpoints.GetAuthorById(Guid.Empty, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<NotFound<string>>();
@@ -134,7 +134,7 @@ public class AuthorEndpointTests
             .Throws(new ArgumentException("Expected Exception"));
 
         // Act
-        var response = await AuthorsEndpoints.GetAuthorById(Guid.Empty, sender);
+        var response = await AuthorEndpoints.GetAuthorById(Guid.Empty, sender);
 
         // Assert
         var result = response.Result.ShouldBeOfType<ProblemHttpResult>();

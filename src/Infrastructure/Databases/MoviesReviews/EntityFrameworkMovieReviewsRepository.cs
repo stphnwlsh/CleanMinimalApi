@@ -25,16 +25,17 @@ internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMovi
         TimeProvider timeProvider,
         IMapper mapper)
     {
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(timeProvider);
+        ArgumentNullException.ThrowIfNull(mapper);
+
         this.context = context;
         this.timeProvider = timeProvider;
         this.mapper = mapper;
 
-        if (this.context != null)
-        {
-            _ = this.context.Database.EnsureDeleted();
-            _ = this.context.Database.EnsureCreated();
-            _ = this.context.AddData();
-        }
+        _ = this.context.Database.EnsureDeleted();
+        _ = this.context.Database.EnsureCreated();
+        _ = this.context.AddData();
     }
 
     #region Authors

@@ -47,12 +47,9 @@ public class MovieReviewsDataFixture : IDisposable
 
         this.Repository = new EntityFrameworkMovieReviewsRepository(this.Context, this.TimeProvider, this.Mapper);
 
-        if (this.Context != null)
-        {
-            _ = this.Context.Database.EnsureDeleted();
-            _ = this.Context.Database.EnsureCreated();
-            _ = this.Context.AddTestData();
-        }
+        _ = this.Context.Database.EnsureDeleted();
+        _ = this.Context.Database.EnsureCreated();
+        _ = this.Context.AddTestData();
     }
 
     public void Dispose()
