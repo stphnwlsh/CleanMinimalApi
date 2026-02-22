@@ -12,7 +12,7 @@ using Commands = Application.Reviews.Commands;
 using Entities = Application.Reviews.Entities;
 using Queries = Application.Reviews.Queries;
 
-public static class ReviewsEndpoints
+public static class ReviewEndpoints
 {
     public static WebApplication MapReviewEndpoints(this WebApplication app)
     {

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Entities = Application.Authors.Entities;
 using Queries = Application.Authors.Queries;
 
-public static class AuthorsEndpoints
+public static class AuthorEndpoints
 {
     public static WebApplication MapAuthorEndpoints(this WebApplication app)
     {

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Entities = Application.Movies.Entities;
 using Queries = Application.Movies.Queries;
 
-public static class MoviesEndpoints
+public static class MovieEndpoints
 {
     public static WebApplication MapMovieEndpoints(this WebApplication app)
     {
