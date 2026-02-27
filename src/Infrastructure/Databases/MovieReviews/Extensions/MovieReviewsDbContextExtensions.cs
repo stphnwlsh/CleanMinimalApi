@@ -1,4 +1,4 @@
-namespace CleanMinimalApi.Infrastructure.Databases.MoviesReviews.Extensions;
+namespace CleanMinimalApi.Infrastructure.Databases.MovieReviews.Extensions;
 
 using System;
 using Bogus;

@@ -4,7 +4,7 @@ using System;
 using Application.Authors;
 using Application.Movies;
 using Application.Reviews;
-using Databases.MoviesReviews;
+using Databases.MovieReviews;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

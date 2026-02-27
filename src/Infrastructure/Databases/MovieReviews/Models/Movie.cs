@@ -1,4 +1,4 @@
-namespace CleanMinimalApi.Infrastructure.Databases.MoviesReviews.Models;
+namespace CleanMinimalApi.Infrastructure.Databases.MovieReviews.Models;
 
 using System.Diagnostics.CodeAnalysis;
 

@@ -3,8 +3,8 @@ namespace CleanMinimalApi.Infrastructure.Tests.Integration.Databases.MovieReview
 using System;
 using AutoMapper;
 using Extensions;
-using Infrastructure.Databases.MoviesReviews;
-using Infrastructure.Databases.MoviesReviews.Mapping;
+using Infrastructure.Databases.MovieReviews;
+using Infrastructure.Databases.MovieReviews.Mapping;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Time.Testing;
 using Xunit;

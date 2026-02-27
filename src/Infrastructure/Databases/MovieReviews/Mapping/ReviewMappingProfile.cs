@@ -1,4 +1,4 @@
-namespace CleanMinimalApi.Infrastructure.Databases.MoviesReviews.Mapping;
+namespace CleanMinimalApi.Infrastructure.Databases.MovieReviews.Mapping;
 
 using AutoMapper;
 using Application = Application.Reviews.Entities;
