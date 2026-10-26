@@ -130,6 +130,8 @@ jobs:
     name: Nuget Template
     runs-on: ubuntu-latest
     needs: pipeline
+    permissions:
+      contents: read
 
     strategy:
       fail-fast: true
