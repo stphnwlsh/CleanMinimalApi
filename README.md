@@ -66,7 +66,7 @@ There are plenty of handy implementations of features throughout this solution, 
 - Validation using [FluentValidation](https://github.com/FluentValidation/FluentValidation)
 - Testing using [Shouldly](https://github.com/shouldly/shouldly) and [NSubstitute](https://github.com/nsubstitute/NSubstitute)
 - OpenApi using [Swashbuckle](https://github.com/domaindrivendev/Swashbuckle.AspNetCore)
-- Object Mapping using [AutoMapper](https://github.com/AutoMapper/AutoMapper)
+- Object Mapping using [Mapperly](https://mapperly.riok.app)
 
 ## Resources
 
