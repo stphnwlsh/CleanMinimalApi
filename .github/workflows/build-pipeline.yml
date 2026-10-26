@@ -74,7 +74,7 @@ jobs:
 
       - name: Analysis
         id: analysis
-        uses: codecov/codecov-action@v7
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7
         with:
           files: ./out/coverage.opencover.xml
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -96,7 +96,7 @@ jobs:
 
       - name: Scan
         id: scan
-        uses: aquasecurity/trivy-action@v0.36.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: ${{ steps.initialize.outputs.name }}:${{ steps.initialize.outputs.docker_tag }}
           format: sarif
