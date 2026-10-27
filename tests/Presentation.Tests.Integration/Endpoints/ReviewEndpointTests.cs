@@ -34,7 +34,7 @@ public class ReviewEndpointTests : IDisposable
         using var movieResponse = await client.GetAsync("/api/movie");
         var movieResult = (await movieResponse.Content.ReadAsStringAsync()).Deserialize<List<Movie>>()[0];
         var json = (new { Stars = 5, AuthorId = authorResult.Id, MovieId = movieResult.Id }).Serialize();
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        using var content = new StringContent(json, Encoding.UTF8, "application/json");
 
         // Act
         using var response = await client.PostAsync("/api/review", content);
@@ -218,7 +218,7 @@ public class ReviewEndpointTests : IDisposable
         // Arrange
         using var client = this.application.CreateClient();
         var json = (new { Stars = 0, AuthorId = Guid.Empty, MovieId = Guid.Empty }).Serialize();
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        using var content = new StringContent(json, Encoding.UTF8, "application/json");
 
         // Act
         using var response = await client.PostAsync("/api/review", content);
@@ -240,7 +240,7 @@ public class ReviewEndpointTests : IDisposable
         // Arrange
         using var client = this.application.CreateClient();
         var json = (new { Stars = 5, AuthorId = Guid.NewGuid(), MovieId = Guid.NewGuid() }).Serialize();
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        using var content = new StringContent(json, Encoding.UTF8, "application/json");
 
         // Act
         using var response = await client.PostAsync("/api/review", content);
@@ -273,7 +273,7 @@ public class ReviewEndpointTests : IDisposable
             .Deserialize<List<Entities.Review>>()[0];
 
         var json = (new { Stars = 5, AuthorId = authorResult.Id, MovieId = movieResult.Id }).Serialize();
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        using var content = new StringContent(json, Encoding.UTF8, "application/json");
 
         // Act
         using var response = await client.PutAsync($"/api/review/{reviewResult.Id}", content);
