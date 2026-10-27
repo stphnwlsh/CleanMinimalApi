@@ -34,7 +34,8 @@ public class UpdateReviewHandlerTests
         _ = moviesRepository.MovieExists(default, default).ReturnsForAnyArgs(true);
 
         var handler = new UpdateReviewHandler(authorsRepository, moviesRepository, reviewsRepository);
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         // Act
         _ = await handler.Handle(command, token);
@@ -67,7 +68,8 @@ public class UpdateReviewHandlerTests
         _ = moviesRepository.MovieExists(default, default).ReturnsForAnyArgs(true);
 
         var handler = new UpdateReviewHandler(authorsRepository, moviesRepository, reviewsRepository);
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         // Act
         var exception = Should.Throw<NotFoundException>(async () => await handler.Handle(command, token));
@@ -102,7 +104,8 @@ public class UpdateReviewHandlerTests
         _ = moviesRepository.MovieExists(default, default).ReturnsForAnyArgs(true);
 
         var handler = new UpdateReviewHandler(authorsRepository, moviesRepository, reviewsRepository);
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         // Act
         var exception = Should.Throw<NotFoundException>(async () => await handler.Handle(command, token));
@@ -137,7 +140,8 @@ public class UpdateReviewHandlerTests
         _ = moviesRepository.MovieExists(default, default).ReturnsForAnyArgs(false);
 
         var handler = new UpdateReviewHandler(authorsRepository, moviesRepository, reviewsRepository);
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         // Act
         var exception = Should.Throw<NotFoundException>(async () => await handler.Handle(command, token));

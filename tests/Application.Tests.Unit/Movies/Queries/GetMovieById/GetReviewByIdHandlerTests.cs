@@ -23,7 +23,8 @@ public class ReadByIdHandlerTests
 
         var context = Substitute.For<IMoviesRepository>();
         var handler = new GetMovieByIdHandler(context);
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         _ = context.GetMovieById(Arg.Any<Guid>(), token).Returns(new Movie(Guid.Empty, "Title"));
 
@@ -52,7 +53,8 @@ public class ReadByIdHandlerTests
 
         var context = Substitute.For<IMoviesRepository>();
         var handler = new GetMovieByIdHandler(context);
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         // Act
         var exception = Should.Throw<NotFoundException>(async () => await handler.Handle(query, token));

@@ -16,7 +16,8 @@ public class GetVersionHandlerTests
         var query = new GetVersionQuery();
 
         var handler = new GetVersionHandler();
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         // Act
         var result = await handler.Handle(query, token);

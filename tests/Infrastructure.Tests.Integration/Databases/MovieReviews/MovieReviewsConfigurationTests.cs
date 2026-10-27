@@ -13,7 +13,8 @@ public class MovieReviewsConfigurationTests(MovieReviewsDataFixture fixture)
     {
         // Arrange
         var context = fixture.Context;
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         // Act
         var author = await context.Authors

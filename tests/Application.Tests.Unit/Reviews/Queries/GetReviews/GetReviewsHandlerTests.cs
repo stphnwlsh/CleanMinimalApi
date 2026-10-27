@@ -19,7 +19,8 @@ public class GetReviewsHandlerTests
 
         var context = Substitute.For<IReviewsRepository>();
         var handler = new GetReviewsHandler(context);
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         _ = context.GetReviews(token).Returns([new Review(Guid.Empty, 5)]);
 
