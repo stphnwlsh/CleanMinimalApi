@@ -4,11 +4,11 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Entities;
-using MediatR;
+using Mediator;
 
 public class GetVersionHandler : IRequestHandler<GetVersionQuery, Version>
 {
-    public Task<Version> Handle(GetVersionQuery request, CancellationToken cancellationToken)
+    public ValueTask<Version> Handle(GetVersionQuery request, CancellationToken cancellationToken)
     {
         var assembly = Assembly.GetEntryAssembly();
 
@@ -20,6 +20,6 @@ public class GetVersionHandler : IRequestHandler<GetVersionQuery, Version>
                 $"{assembly?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion}"
         };
 
-        return Task.FromResult(version);
+        return ValueTask.FromResult(version);
     }
 }

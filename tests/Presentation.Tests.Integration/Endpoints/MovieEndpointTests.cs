@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Extensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shouldly;
 using Xunit;
@@ -66,7 +67,8 @@ public class MovieEndpointTests : IDisposable
         using var client = this.application.CreateClient();
         using var movieResponse = await client.GetAsync("/api/movie");
         var movieResult = (await movieResponse.Content.ReadAsStringAsync())
-            .Deserialize<List<Entities.Movie>>()[0];
+            .Deserialize<List<Entities.Movie>>()
+            .First(m => m.Reviews.Count > 0);
 
         // Act
         using var response = await client.GetAsync($"/api/movie/{movieResult.Id}");
@@ -96,17 +98,14 @@ public class MovieEndpointTests : IDisposable
         }
     }
 
-    [Theory]
-    [InlineData("00000000-0000-0000-0000-000000000000")]
-    [InlineData("1")]
-    [InlineData("fake")]
-    public async Task GetMovieId_ShouldReturn_ValidationProblem(string input)
+    [Fact]
+    public async Task GetMovieId_ShouldReturn_ValidationProblem()
     {
         // Arrange
         using var client = this.application.CreateClient();
 
         // Act
-        using var response = await client.GetAsync($"/api/movie/{input}");
+        using var response = await client.GetAsync($"/api/movie/{Guid.Empty}");
         var result = (await response.Content.ReadAsStringAsync()).Deserialize<ValidationProblemDetails>();
 
         // Assert
@@ -114,10 +113,48 @@ public class MovieEndpointTests : IDisposable
 
         _ = result.ShouldNotBeNull();
 
-        result.Errors.ShouldNotBeEmpty();
+        result.Status.ShouldBe(StatusCodes.Status400BadRequest);
+        result.Errors.ShouldContainKey("Id");
+        result.Errors["Id"].ShouldBe(["A Movie Id was not supplied."]);
+    }
 
-        result.Errors.ShouldContainKey("");
-        result.Errors[""].ShouldBe(["The Id supplied in the request is not valid."]);
+    [Fact]
+    public async Task GetMovieId_ShouldReturn_NotFound()
+    {
+        // Arrange
+        using var client = this.application.CreateClient();
+
+        // Act
+        using var response = await client.GetAsync($"/api/movie/{Guid.NewGuid()}");
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<ProblemDetails>();
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+
+        _ = result.ShouldNotBeNull();
+
+        result.Status.ShouldBe(StatusCodes.Status404NotFound);
+        result.Detail.ShouldBe("The Movie with the supplied id was not found.");
+    }
+
+    [Theory]
+    [InlineData("1")]
+    [InlineData("fake")]
+    public async Task GetMovieId_ShouldReturn_NotFound_WhenIdIsNotAGuid(string input)
+    {
+        // Arrange
+        using var client = this.application.CreateClient();
+
+        // Act
+        using var response = await client.GetAsync($"/api/movie/{input}");
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<ProblemDetails>();
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+
+        _ = result.ShouldNotBeNull();
+
+        result.Status.ShouldBe(StatusCodes.Status404NotFound);
     }
 
     public void Dispose()

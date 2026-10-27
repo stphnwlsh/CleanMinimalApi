@@ -1,7 +1,7 @@
 namespace CleanMinimalApi.Application.Reviews.Queries.GetReviewById;
 
 using Entities;
-using MediatR;
+using Mediator;
 
 public class GetReviewByIdQuery : IRequest<Review>
 {

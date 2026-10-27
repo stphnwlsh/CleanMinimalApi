@@ -10,6 +10,13 @@ public static class WebApplicationExtensions
 {
     public static WebApplication ConfigureApplication(this WebApplication app)
     {
+        #region Errors
+
+        _ = app.UseExceptionHandler();
+        _ = app.UseStatusCodePages();
+
+        #endregion Errors
+
         #region Logging
 
         _ = app.UseHttpLogging();

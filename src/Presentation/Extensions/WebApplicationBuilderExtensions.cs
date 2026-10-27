@@ -6,8 +6,8 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Application;
+using CleanMinimalApi.Presentation.Errors;
 using CleanMinimalApi.Presentation.Serialization;
-using FluentValidation;
 using Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Json;
@@ -85,14 +85,16 @@ public static class WebApplicationBuilderExtensions
 
         #endregion Swagger
 
-        #region Validation
+        #region Errors
 
-        _ = builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly(), ServiceLifetime.Singleton);
+        _ = builder.Services.AddProblemDetails();
+        _ = builder.Services.AddExceptionHandler<ApplicationExceptionHandler>();
 
-        #endregion Validation
+        #endregion Errors
 
         #region Project Dependencies
 
+        _ = builder.Services.AddMediator(options => options.ServiceLifetime = ServiceLifetime.Scoped);
         _ = builder.Services.AddInfrastructure();
         _ = builder.Services.AddApplication();
 

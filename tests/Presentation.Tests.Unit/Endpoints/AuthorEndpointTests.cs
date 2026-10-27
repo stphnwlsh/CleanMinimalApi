@@ -1,14 +1,12 @@
 namespace CleanMinimalApi.Presentation.Tests.Unit.Endpoints;
 
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Common.Exceptions;
 using CleanMinimalApi.Application.Reviews.Entities;
 using CleanMinimalApi.Presentation.Endpoints;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 using Shouldly;
 using Xunit;
 using Entities = Application.Authors.Entities;
@@ -33,7 +31,7 @@ public class AuthorEndpointTests
         var response = await AuthorEndpoints.GetAuthors(sender);
 
         // Assert
-        var result = response.Result.ShouldBeOfType<Ok<List<Entities.Author>>>();
+        var result = response.ShouldBeOfType<Ok<List<Entities.Author>>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status200OK);
 
@@ -50,30 +48,6 @@ public class AuthorEndpointTests
     }
 
     [Fact]
-    public async Task GetAuthors_ShouldReturn_Problem()
-    {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-
-        _ = sender
-            .Send(Arg.Any<Queries.GetAuthors.GetAuthorsQuery>())
-            .Throws(new ArgumentException("Expected Exception"));
-
-        // Act
-        var response = await AuthorEndpoints.GetAuthors(sender);
-
-        // Assert
-        var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
-
-        result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
-
-        result.ProblemDetails.Title.ShouldBe("An error occurred while processing your request.");
-        result.ProblemDetails.Instance.ShouldBe("Expected Exception");
-        result.ProblemDetails.Status.ShouldBe(StatusCodes.Status500InternalServerError);
-        result.ProblemDetails.Detail.ShouldNotBeNullOrEmpty();
-    }
-
-    [Fact]
     public async Task GetAuthorById_ShouldReturn_Ok()
     {
         // Arrange
@@ -87,7 +61,7 @@ public class AuthorEndpointTests
         var response = await AuthorEndpoints.GetAuthorById(Guid.Empty, sender);
 
         // Assert
-        var result = response.Result.ShouldBeOfType<Ok<Entities.Author>>();
+        var result = response.ShouldBeOfType<Ok<Entities.Author>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status200OK);
 
@@ -101,49 +75,5 @@ public class AuthorEndpointTests
         value.LastName.ShouldBe("Ipsum");
         _ = value.Reviews.ShouldBeAssignableTo<ICollection<Review>>();
         value.Reviews.ShouldBeNull();
-    }
-
-    [Fact]
-    public async Task GetAuthorById_ShouldReturn_NotFound()
-    {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-
-        _ = sender
-            .Send(Arg.Any<Queries.GetAuthorById.GetAuthorByIdQuery>())
-            .Throws(new NotFoundException("Expected Exception"));
-
-        // Act
-        var response = await AuthorEndpoints.GetAuthorById(Guid.Empty, sender);
-
-        // Assert
-        var result = response.Result.ShouldBeOfType<NotFound<string>>();
-
-        result.StatusCode.ShouldBe(StatusCodes.Status404NotFound);
-        result.Value.ShouldBe("Expected Exception");
-    }
-
-    [Fact]
-    public async Task GetAuthorById_ShouldReturn_Problem()
-    {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-
-        _ = sender
-            .Send(Arg.Any<Queries.GetAuthorById.GetAuthorByIdQuery>())
-            .Throws(new ArgumentException("Expected Exception"));
-
-        // Act
-        var response = await AuthorEndpoints.GetAuthorById(Guid.Empty, sender);
-
-        // Assert
-        var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
-
-        result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
-
-        result.ProblemDetails.Title.ShouldBe("An error occurred while processing your request.");
-        result.ProblemDetails.Instance.ShouldBe("Expected Exception");
-        result.ProblemDetails.Status.ShouldBe(StatusCodes.Status500InternalServerError);
-        result.ProblemDetails.Detail.ShouldNotBeNullOrEmpty();
     }
 }

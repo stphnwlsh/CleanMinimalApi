@@ -6,14 +6,14 @@ using CleanMinimalApi.Application.Authors;
 using CleanMinimalApi.Application.Movies;
 using Common.Enums;
 using Common.Exceptions;
-using MediatR;
+using Mediator;
 
 public class UpdateReviewHandler(
     IAuthorsRepository authorsRepository,
     IMoviesRepository moviesRepository,
     IReviewsRepository reviewsRepository) : IRequestHandler<UpdateReviewCommand, bool>
 {
-    public async Task<bool> Handle(UpdateReviewCommand request, CancellationToken cancellationToken)
+    public async ValueTask<bool> Handle(UpdateReviewCommand request, CancellationToken cancellationToken)
     {
         if (!await reviewsRepository.ReviewExists(request.Id, cancellationToken))
         {

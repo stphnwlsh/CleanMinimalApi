@@ -1,11 +1,10 @@
 namespace CleanMinimalApi.Presentation.Tests.Unit.Endpoints;
 
 using System.Threading.Tasks;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 using Presentation.Endpoints;
 using Shouldly;
 using Xunit;
@@ -30,7 +29,7 @@ public class VersionEndpointTests
         var response = await VersionEndpoints.GetVersion(sender);
 
         // Assert
-        var result = response.Result.ShouldBeOfType<Ok<Entities.Version>>();
+        var result = response.ShouldBeOfType<Ok<Entities.Version>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status200OK);
 
@@ -40,29 +39,5 @@ public class VersionEndpointTests
         value.FileVersion.ShouldBe("1.2.3.4");
         _ = value.InformationalVersion.ShouldBeOfType<string>();
         value.InformationalVersion.ShouldBe("5.6.7.8");
-    }
-
-    [Fact]
-    public async Task GetVersion_ShouldReturn_Problem()
-    {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-
-        _ = sender
-            .Send(Arg.Any<Queries.GetVersion.GetVersionQuery>())
-            .Throws(new ArgumentException("Expected Exception"));
-
-        // Act
-        var response = await VersionEndpoints.GetVersion(sender);
-
-        // Assert
-        var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
-
-        result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
-
-        result.ProblemDetails.Title.ShouldBe("An error occurred while processing your request.");
-        result.ProblemDetails.Instance.ShouldBe("Expected Exception");
-        result.ProblemDetails.Status.ShouldBe(StatusCodes.Status500InternalServerError);
-        result.ProblemDetails.Detail.ShouldNotBeNullOrEmpty();
     }
 }

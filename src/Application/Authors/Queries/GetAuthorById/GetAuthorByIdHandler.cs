@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using Common.Enums;
 using Common.Exceptions;
 using Entities;
-using MediatR;
+using Mediator;
 
 public class GetAuthorByIdHandler(IAuthorsRepository repository) : IRequestHandler<GetAuthorByIdQuery, Author>
 {
-    public async Task<Author> Handle(GetAuthorByIdQuery request, CancellationToken cancellationToken)
+    public async ValueTask<Author> Handle(GetAuthorByIdQuery request, CancellationToken cancellationToken)
     {
         var result = await repository.GetAuthorById(request.Id, cancellationToken);
 

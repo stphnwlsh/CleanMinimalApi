@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Extensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shouldly;
 using Xunit;
@@ -94,17 +95,14 @@ public class AuthorEndpointTests : IDisposable
         }
     }
 
-    [Theory]
-    [InlineData("00000000-0000-0000-0000-000000000000")]
-    [InlineData("1")]
-    [InlineData("fake")]
-    public async Task GetAuthorById_ShouldReturn_ValidationProblem(string input)
+    [Fact]
+    public async Task GetAuthorById_ShouldReturn_ValidationProblem()
     {
         // Arrange
         using var client = this.application.CreateClient();
 
         // Act
-        using var response = await client.GetAsync($"/api/author/{input}");
+        using var response = await client.GetAsync($"/api/author/{Guid.Empty}");
         var result = (await response.Content.ReadAsStringAsync()).Deserialize<ValidationProblemDetails>();
 
         // Assert
@@ -112,10 +110,48 @@ public class AuthorEndpointTests : IDisposable
 
         _ = result.ShouldNotBeNull();
 
-        result.Errors.ShouldNotBeEmpty();
+        result.Status.ShouldBe(StatusCodes.Status400BadRequest);
+        result.Errors.ShouldContainKey("Id");
+        result.Errors["Id"].ShouldBe(["An Author Id was not supplied."]);
+    }
 
-        result.Errors.ShouldContainKey("");
-        result.Errors[""].ShouldBe(["The Id supplied in the request is not valid."]);
+    [Fact]
+    public async Task GetAuthorById_ShouldReturn_NotFound()
+    {
+        // Arrange
+        using var client = this.application.CreateClient();
+
+        // Act
+        using var response = await client.GetAsync($"/api/author/{Guid.NewGuid()}");
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<ProblemDetails>();
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+
+        _ = result.ShouldNotBeNull();
+
+        result.Status.ShouldBe(StatusCodes.Status404NotFound);
+        result.Detail.ShouldBe("The Author with the supplied id was not found.");
+    }
+
+    [Theory]
+    [InlineData("1")]
+    [InlineData("fake")]
+    public async Task GetAuthorById_ShouldReturn_NotFound_WhenIdIsNotAGuid(string input)
+    {
+        // Arrange
+        using var client = this.application.CreateClient();
+
+        // Act
+        using var response = await client.GetAsync($"/api/author/{input}");
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<ProblemDetails>();
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+
+        _ = result.ShouldNotBeNull();
+
+        result.Status.ShouldBe(StatusCodes.Status404NotFound);
     }
 
     public void Dispose()
