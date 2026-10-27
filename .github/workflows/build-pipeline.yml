@@ -5,20 +5,27 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  schedule:
+    - cron: "0 3 * * 1"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
-  pipeline:
-    name: Build, Test and Publish
+  build:
+    name: Build and Test
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      security-events: write
 
-    strategy:
-      fail-fast: true
-      matrix:
-        language: ["csharp"]
+    outputs:
+      name: ${{ steps.initialize.outputs.name }}
+      docker_tag: ${{ steps.initialize.outputs.docker_tag }}
 
     steps:
       - name: Checkout
@@ -56,15 +63,28 @@ jobs:
           echo "branch=$(eval printf "%s" "$BRANCH_CURRENT")" >> $GITHUB_OUTPUT
         shell: bash
 
-      - name: Build
-        id: build
+      - name: Test
+        id: test
         run: docker build .
           --target coverage
           --output type=local,dest=out
-          --tag $NAME:$DOCKER_TAG
-          --tag $NAME:latest
           --build-arg VERSION_PREFIX=$VERSION_PREFIX
           --build-arg VERSION_SUFFIX=$VERSION_SUFFIX
+        env:
+          DOCKER_BUILDKIT: 1
+          VERSION_PREFIX: ${{ steps.initialize.outputs.version_prefix }}
+          VERSION_SUFFIX: ${{ steps.initialize.outputs.version_suffix }}
+
+      - name: Build
+        id: build
+        run: |
+          docker build . \
+            --target run \
+            --tag $NAME:$DOCKER_TAG \
+            --tag $NAME:latest \
+            --build-arg VERSION_PREFIX=$VERSION_PREFIX \
+            --build-arg VERSION_SUFFIX=$VERSION_SUFFIX
+          docker save $NAME:$DOCKER_TAG $NAME:latest --output image.tar
         env:
           DOCKER_BUILDKIT: 1
           NAME: ${{ steps.initialize.outputs.name }}
@@ -72,33 +92,115 @@ jobs:
           VERSION_SUFFIX: ${{ steps.initialize.outputs.version_suffix }}
           DOCKER_TAG: ${{ steps.initialize.outputs.docker_tag }}
 
-      - name: Analysis
-        id: analysis
+      - name: Setup .NET
+        id: setup
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Pack
+        id: pack
+        run: |
+          if [ -z "$SUFFIX" ]; then
+            dotnet pack template/template.csproj -p:PackageVersion=$VERSION --configuration Release --output packages
+          else
+            dotnet pack template/template.csproj -p:PackageVersion=$VERSION-$SUFFIX --configuration Release --output packages
+          fi
+        env:
+          VERSION: ${{ steps.initialize.outputs.version_prefix }}
+          SUFFIX: ${{ steps.initialize.outputs.version_suffix }}
+        shell: bash
+
+      - name: Upload Coverage
+        id: upload-coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: out/coverage.opencover.xml
+          retention-days: 1
+
+      - name: Upload Image
+        id: upload-image
+        uses: actions/upload-artifact@v4
+        with:
+          name: image
+          path: image.tar
+          retention-days: 1
+
+      - name: Upload Template
+        id: upload-template
+        uses: actions/upload-artifact@v4
+        with:
+          name: template
+          path: packages/*.nupkg
+          retention-days: 1
+
+  coverage:
+    name: Code Coverage
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Download Coverage
+        id: download
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage
+          path: out
+
+      - name: Upload to Codecov
+        id: codecov
         uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7
         with:
           files: ./out/coverage.opencover.xml
           token: ${{ secrets.CODECOV_TOKEN }}
 
-      - name: Publish
-        id: publish
-        run: docker build .
-          --target run
-          --tag $NAME:$DOCKER_TAG
-          --tag $NAME:latest
-          --build-arg VERSION_PREFIX=$VERSION_PREFIX
-          --build-arg VERSION_SUFFIX=$VERSION_SUFFIX
+      - name: Enforce Threshold
+        id: threshold
+        run: |
+          python3 - <<'PY'
+          import os, sys, xml.etree.ElementTree as ET
+          summary = ET.parse("out/coverage.opencover.xml").getroot().find("Summary")
+          total = int(summary.get("numSequencePoints"))
+          visited = int(summary.get("visitedSequencePoints"))
+          coverage = 100 * visited / total if total else 0
+          threshold = float(os.environ["THRESHOLD"])
+          print(f"Line coverage {coverage:.2f}% ({visited}/{total}), threshold {threshold}%")
+          sys.exit(0 if coverage >= threshold else 1)
+          PY
         env:
-          DOCKER_BUILDKIT: 1
-          NAME: ${{ steps.initialize.outputs.name }}
-          VERSION_PREFIX: ${{ steps.initialize.outputs.version_prefix }}
-          VERSION_SUFFIX: ${{ steps.initialize.outputs.version_suffix }}
-          DOCKER_TAG: ${{ steps.initialize.outputs.docker_tag }}
+          THRESHOLD: 95
+
+  scan:
+    name: Container Scan
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Download Image
+        id: download
+        uses: actions/download-artifact@v4
+        with:
+          name: image
+
+      - name: Load Image
+        id: load
+        run: docker load --input image.tar
 
       - name: Scan
         id: scan
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
-          image-ref: ${{ steps.initialize.outputs.name }}:${{ steps.initialize.outputs.docker_tag }}
+          image-ref: ${{ needs.build.outputs.name }}:${{ needs.build.outputs.docker_tag }}
           format: sarif
           output: trivy-results.sarif
           severity: CRITICAL,HIGH
@@ -111,33 +213,30 @@ jobs:
           sarif_file: trivy-results.sarif
           category: trivy
 
-      - name: Docker Login
-        id: login
-        if: ${{ github.ref == 'refs/heads/main' }}
-        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
+      - name: Enforce Findings
+        id: enforce
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
-          username: ${{ secrets.DOCKER_LOGIN }}
-          password: ${{ secrets.DOCKER_TOKEN }}
+          image-ref: ${{ needs.build.outputs.name }}:${{ needs.build.outputs.docker_tag }}
+          format: table
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: 1
+          skip-setup-trivy: true
 
-      - name: Docker Push
-        id: push
-        if: ${{ github.ref == 'refs/heads/main' }}
-        run: docker push $NAME --all-tags
-        env:
-          NAME: ${{ steps.initialize.outputs.name }}
-
-  template:
-    name: Nuget Template
+  analysis:
+    name: Static Analysis
     runs-on: ubuntu-latest
-    needs: pipeline
+    needs: build
     permissions:
+      actions: read
       contents: read
-      id-token: write
+      security-events: write
 
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
-        language: ["csharp"]
+        language: ["actions", "csharp"]
 
     steps:
       - name: Checkout
@@ -146,62 +245,64 @@ jobs:
 
       - name: Initialize
         id: initialize
-        run: |
-          NAME=$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')
-          VERSION_PREFIX=$(date +'%Y.%m.%d').${GITHUB_RUN_NUMBER}
-          BRANCH_CURRENT=${GITHUB_REF#refs/*/}
-          BRANCH_CURRENT=${BRANCH_CURRENT//[^a-zA-Z0-9]/-}
-
-          if [[ ${GITHUB_EVENT_NAME} == 'pull_request' ]]; then
-            BRANCH_BASE=${GITHUB_BASE_REF#refs/*/}
-            BRANCH_BASE=${BRANCH_BASE/[^a-zA-Z0-9]//-}
-            BRANCH_COMPARE=${GITHUB_HEAD_REF#refs/*/}
-            BRANCH_COMPARE=${BRANCH_COMPARE//[^a-zA-Z0-9]/-}
-            VERSION_SUFFIX="merge-${BRANCH_BASE}-${BRANCH_COMPARE}"
-          elif [[ ${GITHUB_EVENT_NAME} == ${{ github.event.repository.default_branch }} ]]; then
-            VERSION_SUFFIX="${BRANCH_CURRENT}"
-          fi
-
-          if [[ $VERSION_SUFFIX == '' ]]; then
-            DOCKER_TAG=$VERSION_PREFIX
-          else
-            DOCKER_TAG=$VERSION_PREFIX-$VERSION_SUFFIX
-          fi
-
-          echo "name=$(eval printf "%s" "$NAME")" >> $GITHUB_OUTPUT
-          echo "version_prefix=$(eval printf "%s" "$VERSION_PREFIX")" >> $GITHUB_OUTPUT
-          echo "version_suffix=$(eval printf "%s" "$VERSION_SUFFIX")" >> $GITHUB_OUTPUT
-          echo "docker_tag=$(eval printf "%s" "$DOCKER_TAG")" >> $GITHUB_OUTPUT
-          echo "branch=$(eval printf "%s" "$BRANCH_CURRENT")" >> $GITHUB_OUTPUT
-        shell: bash
-
-      - name: Setup .NET
-        id: setup
-        uses: actions/setup-dotnet@v4
+        uses: github/codeql-action/init@v4
         with:
-          dotnet-version: '10.0.x'
+          languages: ${{ matrix.language }}
+          build-mode: none
+          queries: security-and-quality
 
-      - name: Pack
-        id: pack
-        run: |
-          if [ -z "$SUFFIX" ]; then
-            dotnet pack template/template.csproj -p:PackageVersion=$VERSION --configuration Release
-          else
-            dotnet pack template/template.csproj -p:PackageVersion=$VERSION-$SUFFIX --configuration Release
-          fi
+      - name: Analysis
+        id: analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:${{ matrix.language }}"
+
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    needs: [build, coverage, scan, analysis]
+    if: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Download Image
+        id: download-image
+        uses: actions/download-artifact@v4
+        with:
+          name: image
+
+      - name: Download Template
+        id: download-template
+        uses: actions/download-artifact@v4
+        with:
+          name: template
+          path: packages
+
+      - name: Load Image
+        id: load
+        run: docker load --input image.tar
+
+      - name: Docker Login
+        id: docker-login
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
+        with:
+          username: ${{ secrets.DOCKER_LOGIN }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Docker Push
+        id: docker-push
+        run: docker push $NAME --all-tags
         env:
-          VERSION: ${{ steps.initialize.outputs.version_prefix }}
-          SUFFIX: ${{ steps.initialize.outputs.version_suffix }}
-        shell: bash
+          NAME: ${{ needs.build.outputs.name }}
 
       - name: Login to NuGet
         id: nuget-login
-        if: ${{ github.ref == 'refs/heads/main' }}
         uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
         with:
           user: ${{ secrets.NUGET_USER }}
 
-      - name: Publish
-        id: publish
-        if: ${{ github.ref == 'refs/heads/main' }}
-        run: dotnet nuget push template/**/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+      - name: NuGet Push
+        id: nuget-push
+        run: dotnet nuget push packages/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
