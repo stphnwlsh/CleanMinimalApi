@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/stphnwlsh/CleanMinimalApi/security/advisories/new
+    about: Please report security vulnerabilities privately, not in a public issue.
+  - name: Get help using the template
+    url: https://github.com/stphnwlsh/CleanMinimalApi/blob/main/SUPPORT.md
+    about: Where to look for help before opening an issue.
+  - name: Sponsor the project
+    url: https://github.com/sponsors/stphnwlsh
+    about: Support ongoing work on all five Clean templates.

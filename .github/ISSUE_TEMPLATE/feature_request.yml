@@ -1,0 +1,61 @@
+name: Feature request
+description: Suggest an improvement to the template.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the suggestion. This template is one of five that share their Application and Infrastructure layers, so it helps to know whether your idea is specific to this template or would apply to all of them.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What problem would this solve? For example, "I'm always frustrated when ..."
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: What would you like to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Any other approaches or workarounds you've thought about.
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Which layers does it affect?
+      multiple: true
+      options:
+        - Presentation (this template only)
+        - Application (all five templates)
+        - Infrastructure (all five templates)
+        - Tests
+        - Build pipeline or repository setup
+        - Documentation
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: contribute
+    attributes:
+      label: Would you like to work on it?
+      options:
+        - "Yes, I'd like to open a pull request"
+        - "No, I'm just suggesting it"
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched the existing issues and this hasn't been suggested yet.
+          required: true
+        - label: I agree to follow this project's [code of conduct](https://github.com/stphnwlsh/CleanMinimalApi/blob/main/CODE_OF_CONDUCT.md).
+          required: true

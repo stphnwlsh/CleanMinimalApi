@@ -52,6 +52,6 @@ RUN dotnet publish ./src/**/Presentation.csproj --no-restore -c Release -v quiet
 # Runtime Image
 FROM ${BASE_IMAGE_REPO}/${BASE_IMAGE_RUNTIME}:${BASE_IMAGE_RUNTIME_TAG} AS run
 WORKDIR /
-EXPOSE 80
+EXPOSE 8080
 COPY --from=publish /sln/app .
 ENTRYPOINT ["dotnet", "Presentation.dll"]

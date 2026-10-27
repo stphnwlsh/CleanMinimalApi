@@ -1,0 +1,84 @@
+name: Bug report
+description: Something in the template or the generated solution doesn't work as expected.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please search the [existing issues](https://github.com/stphnwlsh/CleanMinimalApi/issues) first, and report security vulnerabilities through the [security policy](https://github.com/stphnwlsh/CleanMinimalApi/security/policy) instead.
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear description of the bug.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: The commands you ran and the steps that trigger the bug.
+      placeholder: |
+        1. dotnet new install CleanMinimalApi.Template
+        2. dotnet new cleanminimalapi --name Sample
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+      description: What you expected to happen instead.
+    validations:
+      required: true
+  - type: input
+    id: template-version
+    attributes:
+      label: Template version
+      description: Run `dotnet new list cleanminimalapi` or check NuGet.
+      placeholder: "2026.10.27.1"
+    validations:
+      required: true
+  - type: input
+    id: sdk-version
+    attributes:
+      label: .NET SDK version
+      description: Run `dotnet --version`.
+      placeholder: "10.0.100"
+    validations:
+      required: true
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Where does it happen?
+      multiple: true
+      options:
+        - Running with the .NET CLI
+        - Running in Docker
+        - Running the tests
+        - Installing or creating from the template
+        - The GitHub Actions pipeline
+        - Somewhere else
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: "Windows 11, macOS 15, Ubuntu 24.04"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs or output
+      description: Paste any error messages or stack traces. This is rendered as code, so no backticks are needed.
+      render: shell
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched the existing issues and this hasn't been reported yet.
+          required: true
+        - label: I agree to follow this project's [code of conduct](https://github.com/stphnwlsh/CleanMinimalApi/blob/main/CODE_OF_CONDUCT.md).
+          required: true
