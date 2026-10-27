@@ -67,7 +67,8 @@ public class MovieEndpointTests : IDisposable
         using var client = this.application.CreateClient();
         using var movieResponse = await client.GetAsync("/api/movie");
         var movieResult = (await movieResponse.Content.ReadAsStringAsync())
-            .Deserialize<List<Entities.Movie>>()[0];
+            .Deserialize<List<Entities.Movie>>()
+            .First(m => m.Reviews.Count > 0);
 
         // Act
         using var response = await client.GetAsync($"/api/movie/{movieResult.Id}");
