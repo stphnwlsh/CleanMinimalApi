@@ -73,7 +73,7 @@ The one deliberate break from Clean Architecture is that the Presentation projec
 
 ### Project structure
 
-1. **Presentation** - Exposes the Application layer over HTTP using ASP.NET Core Minimal APIs. Endpoints are grouped by feature and pass requests through endpoint filters for validation before handing them to MediatR.
+1. **Presentation** - Exposes the Application layer over HTTP using ASP.NET Core Minimal APIs. Endpoints are grouped by feature, send commands and queries through Mediator, and turn Application errors into Problem Details responses.
 1. **Application** - Owns the domain and business logic. Commands and queries are validated and handled here, and each domain type has its own repository interface. This layer doesn't care what fulfils those contracts, as long as something does.
 1. **Infrastructure** - Owns the data. It implements the repository interfaces to fetch, create, update and remove data, and maps its own data models onto the Application entities so persistence details don't leak upwards.
 
