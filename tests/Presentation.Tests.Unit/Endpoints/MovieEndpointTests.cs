@@ -1,14 +1,12 @@
 namespace CleanMinimalApi.Presentation.Tests.Unit.Endpoints;
 
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Common.Exceptions;
 using CleanMinimalApi.Application.Reviews.Entities;
 using CleanMinimalApi.Presentation.Endpoints;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 using Shouldly;
 using Xunit;
 using Entities = Application.Movies.Entities;
@@ -33,7 +31,7 @@ public class MovieEndpointTests
         var response = await MovieEndpoints.GetMovies(sender);
 
         // Assert
-        var result = response.Result.ShouldBeOfType<Ok<List<Entities.Movie>>>();
+        var result = response.ShouldBeOfType<Ok<List<Entities.Movie>>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status200OK);
 
@@ -45,30 +43,6 @@ public class MovieEndpointTests
         value[0].Title.ShouldBe("Lorem Ipsum");
         _ = value[0].Reviews.ShouldBeAssignableTo<ICollection<Review>>();
         value[0].Reviews.ShouldBeNull();
-    }
-
-    [Fact]
-    public async Task GetMovies_ShouldReturn_Problem()
-    {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-
-        _ = sender
-            .Send(Arg.Any<Queries.GetMovies.GetMoviesQuery>())
-            .Throws(new ArgumentException("Expected Exception"));
-
-        // Act
-        var response = await MovieEndpoints.GetMovies(sender);
-
-        // Assert
-        var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
-
-        result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
-
-        result.ProblemDetails.Title.ShouldBe("An error occurred while processing your request.");
-        result.ProblemDetails.Instance.ShouldBe("Expected Exception");
-        result.ProblemDetails.Status.ShouldBe(StatusCodes.Status500InternalServerError);
-        result.ProblemDetails.Detail.ShouldNotBeNullOrEmpty();
     }
 
     [Fact]
@@ -85,7 +59,7 @@ public class MovieEndpointTests
         var response = await MovieEndpoints.GetMovieById(Guid.Empty, sender);
 
         // Assert
-        var result = response.Result.ShouldBeOfType<Ok<Entities.Movie>>();
+        var result = response.ShouldBeOfType<Ok<Entities.Movie>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status200OK);
 
@@ -97,49 +71,5 @@ public class MovieEndpointTests
         value.Title.ShouldBe("Lorem Ipsum");
         _ = value.Reviews.ShouldBeAssignableTo<ICollection<Review>>();
         value.Reviews.ShouldBeNull();
-    }
-
-    [Fact]
-    public async Task GetMovieById_ShouldReturn_NotFound()
-    {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-
-        _ = sender
-            .Send(Arg.Any<Queries.GetMovieById.GetMovieByIdQuery>())
-            .Throws(new NotFoundException("Expected Exception"));
-
-        // Act
-        var response = await MovieEndpoints.GetMovieById(Guid.Empty, sender);
-
-        // Assert
-        var result = response.Result.ShouldBeOfType<NotFound<string>>();
-
-        result.StatusCode.ShouldBe(StatusCodes.Status404NotFound);
-        result.Value.ShouldBe("Expected Exception");
-    }
-
-    [Fact]
-    public async Task GetMovieById_ShouldReturn_Problem()
-    {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-
-        _ = sender
-            .Send(Arg.Any<Queries.GetMovieById.GetMovieByIdQuery>())
-            .Throws(new ArgumentException("Expected Exception"));
-
-        // Act
-        var response = await MovieEndpoints.GetMovieById(Guid.Empty, sender);
-
-        // Assert
-        var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
-
-        result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
-
-        result.ProblemDetails.Title.ShouldBe("An error occurred while processing your request.");
-        result.ProblemDetails.Instance.ShouldBe("Expected Exception");
-        result.ProblemDetails.Status.ShouldBe(StatusCodes.Status500InternalServerError);
-        result.ProblemDetails.Detail.ShouldNotBeNullOrEmpty();
     }
 }

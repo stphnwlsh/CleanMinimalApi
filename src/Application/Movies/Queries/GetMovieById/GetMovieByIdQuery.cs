@@ -2,7 +2,7 @@ namespace CleanMinimalApi.Application.Movies.Queries.GetMovieById;
 
 using System.ComponentModel.DataAnnotations;
 using Entities;
-using MediatR;
+using Mediator;
 
 public class GetMovieByIdQuery : IRequest<Movie>
 {

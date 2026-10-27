@@ -2,14 +2,12 @@ namespace CleanMinimalApi.Presentation.Tests.Unit.Endpoints;
 
 using System.Threading.Tasks;
 using CleanMinimalApi.Application.Authors.Entities;
-using CleanMinimalApi.Application.Common.Exceptions;
 using CleanMinimalApi.Application.Movies.Entities;
 using CleanMinimalApi.Presentation.Endpoints;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 using Shouldly;
 using Xunit;
 using Commands = Application.Reviews.Commands;
@@ -40,7 +38,7 @@ public class ReviewEndpointTests
         var response = await ReviewEndpoints.GetReviews(sender);
 
         // Assert
-        var result = response.Result.ShouldBeOfType<Ok<List<Entities.Review>>>();
+        var result = response.ShouldBeOfType<Ok<List<Entities.Review>>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status200OK);
 
@@ -65,30 +63,6 @@ public class ReviewEndpointTests
     }
 
     [Fact]
-    public async Task GetReviews_ShouldReturn_Problem()
-    {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-
-        _ = sender
-            .Send(Arg.Any<Queries.GetReviews.GetReviewsQuery>())
-            .Throws(new ArgumentException("Expected Exception"));
-
-        // Act
-        var response = await ReviewEndpoints.GetReviews(sender);
-
-        // Assert
-        var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
-
-        result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
-
-        result.ProblemDetails.Title.ShouldBe("An error occurred while processing your request.");
-        result.ProblemDetails.Instance.ShouldBe("Expected Exception");
-        result.ProblemDetails.Status.ShouldBe(StatusCodes.Status500InternalServerError);
-        result.ProblemDetails.Detail.ShouldNotBeNullOrEmpty();
-    }
-
-    [Fact]
     public async Task GetReviewById_ShouldReturn_Ok()
     {
         // Arrange
@@ -107,7 +81,7 @@ public class ReviewEndpointTests
         var response = await ReviewEndpoints.GetReviewById(Guid.Empty, sender);
 
         // Assert
-        var result = response.Result.ShouldBeOfType<Ok<Entities.Review>>();
+        var result = response.ShouldBeOfType<Ok<Entities.Review>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status200OK);
 
@@ -129,50 +103,6 @@ public class ReviewEndpointTests
         value.ReviewedMovie.Id.ShouldBe(Guid.Empty);
         _ = value.ReviewedMovie.Title.ShouldBeOfType<string>();
         value.ReviewedMovie.Title.ShouldBe("Lorem Ipsum");
-    }
-
-    [Fact]
-    public async Task GetReviewById_ShouldReturn_NotFound()
-    {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-
-        _ = sender
-            .Send(Arg.Any<Queries.GetReviewById.GetReviewByIdQuery>())
-            .Throws(new NotFoundException("Expected Exception"));
-
-        // Act
-        var response = await ReviewEndpoints.GetReviewById(Guid.Empty, sender);
-
-        // Assert
-        var result = response.Result.ShouldBeOfType<NotFound<string>>();
-
-        result.StatusCode.ShouldBe(StatusCodes.Status404NotFound);
-        result.Value.ShouldBe("Expected Exception");
-    }
-
-    [Fact]
-    public async Task GetReviewById_ShouldReturn_Problem()
-    {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-
-        _ = sender
-            .Send(Arg.Any<Queries.GetReviewById.GetReviewByIdQuery>())
-            .Throws(new ArgumentException("Expected Exception"));
-
-        // Act
-        var response = await ReviewEndpoints.GetReviewById(Guid.Empty, sender);
-
-        // Assert
-        var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
-
-        result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
-
-        result.ProblemDetails.Title.ShouldBe("An error occurred while processing your request.");
-        result.ProblemDetails.Instance.ShouldBe("Expected Exception");
-        result.ProblemDetails.Status.ShouldBe(StatusCodes.Status500InternalServerError);
-        result.ProblemDetails.Detail.ShouldNotBeNullOrEmpty();
     }
 
     [Fact]
@@ -201,7 +131,7 @@ public class ReviewEndpointTests
         var response = await ReviewEndpoints.CreateReview(request, sender);
 
         // Assert
-        var result = response.Result.ShouldBeOfType<Created<Entities.Review>>();
+        var result = response.ShouldBeOfType<Created<Entities.Review>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status201Created);
 
@@ -226,64 +156,6 @@ public class ReviewEndpointTests
     }
 
     [Fact]
-    public async Task CreateReview_ShouldReturn_NotFound()
-    {
-        // Arrange
-        //var httpRequest = Substitute.For<HttpRequest>();
-        var sender = Substitute.For<ISender>();
-        var request = new Requests.CreateReviewRequest
-        {
-            AuthorId = Guid.Empty,
-            MovieId = Guid.Empty,
-            Stars = 5
-        };
-
-        _ = sender
-            .Send(Arg.Any<Commands.CreateReview.CreateReviewCommand>())
-            .Throws(new NotFoundException("Expected Exception"));
-
-        // Act
-        var response = await ReviewEndpoints.CreateReview(request, sender);
-
-        // Assert
-        var result = response.Result.ShouldBeOfType<NotFound<string>>();
-
-        result.StatusCode.ShouldBe(StatusCodes.Status404NotFound);
-        result.Value.ShouldBe("Expected Exception");
-    }
-
-    [Fact]
-    public async Task CreateReview_ShouldReturn_Problem()
-    {
-        // Arrange
-        var httpRequest = Substitute.For<HttpRequest>();
-        var sender = Substitute.For<ISender>();
-        var request = new Requests.CreateReviewRequest
-        {
-            AuthorId = Guid.Empty,
-            MovieId = Guid.Empty,
-            Stars = 5
-        };
-
-        _ = sender
-            .Send(Arg.Any<Commands.CreateReview.CreateReviewCommand>())
-            .Throws(new ArgumentException("Expected Exception"));
-
-        // Act
-        var response = await ReviewEndpoints.CreateReview(request, sender);
-
-        // Assert
-        var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
-
-        result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
-
-        result.ProblemDetails.Title.ShouldBe("An error occurred while processing your request.");
-        result.ProblemDetails.Instance.ShouldBe("Expected Exception");
-        result.ProblemDetails.Status.ShouldBe(StatusCodes.Status500InternalServerError);
-        result.ProblemDetails.Detail.ShouldNotBeNullOrEmpty();
-    }
-
-    [Fact]
     public async Task UpdateReview_ShouldReturn_NoContent()
     {
         // Arrange
@@ -303,65 +175,9 @@ public class ReviewEndpointTests
         var response = await ReviewEndpoints.UpdateReview(Guid.NewGuid(), request, sender);
 
         // Assert
-        var result = response.Result.ShouldBeOfType<NoContent>();
+        var result = response.ShouldBeOfType<NoContent>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status204NoContent);
-    }
-
-    [Fact]
-    public async Task UpdateReview_ShouldReturn_NotFound()
-    {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var request = new Requests.UpdateReviewRequest
-        {
-            AuthorId = Guid.Empty,
-            MovieId = Guid.Empty,
-            Stars = 5
-        };
-
-        _ = sender
-            .Send(Arg.Any<Commands.UpdateReview.UpdateReviewCommand>())
-            .Throws(new NotFoundException("Expected Exception"));
-
-        // Act
-        var response = await ReviewEndpoints.UpdateReview(Guid.NewGuid(), request, sender);
-
-        // Assert
-        var result = response.Result.ShouldBeOfType<NotFound<string>>();
-
-        result.StatusCode.ShouldBe(StatusCodes.Status404NotFound);
-        result.Value.ShouldBe("Expected Exception");
-    }
-
-    [Fact]
-    public async Task UpdateReview_ShouldReturn_Problem()
-    {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var request = new Requests.UpdateReviewRequest
-        {
-            AuthorId = Guid.Empty,
-            MovieId = Guid.Empty,
-            Stars = 5
-        };
-
-        _ = sender
-            .Send(Arg.Any<Commands.UpdateReview.UpdateReviewCommand>())
-            .Throws(new ArgumentException("Expected Exception"));
-
-        // Act
-        var response = await ReviewEndpoints.UpdateReview(Guid.NewGuid(), request, sender);
-
-        // Assert
-        var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
-
-        result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
-
-        result.ProblemDetails.Title.ShouldBe("An error occurred while processing your request.");
-        result.ProblemDetails.Instance.ShouldBe("Expected Exception");
-        result.ProblemDetails.Status.ShouldBe(StatusCodes.Status500InternalServerError);
-        result.ProblemDetails.Detail.ShouldNotBeNullOrEmpty();
     }
 
     [Fact]
@@ -378,52 +194,8 @@ public class ReviewEndpointTests
         var response = await ReviewEndpoints.DeleteReview(Guid.NewGuid(), sender);
 
         // Assert
-        var result = response.Result.ShouldBeOfType<NoContent>();
+        var result = response.ShouldBeOfType<NoContent>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status204NoContent);
-    }
-
-    [Fact]
-    public async Task DeleteReview_ShouldReturn_NotFound()
-    {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-
-        _ = sender
-            .Send(Arg.Any<Commands.DeleteReview.DeleteReviewCommand>())
-            .Throws(new NotFoundException("Expected Exception"));
-
-        // Act
-        var response = await ReviewEndpoints.DeleteReview(Guid.NewGuid(), sender);
-
-        // Assert
-        var result = response.Result.ShouldBeOfType<NotFound<string>>();
-
-        result.StatusCode.ShouldBe(StatusCodes.Status404NotFound);
-        result.Value.ShouldBe("Expected Exception");
-    }
-
-    [Fact]
-    public async Task DeleteReview_ShouldReturn_Problem()
-    {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-
-        _ = sender
-            .Send(Arg.Any<Commands.DeleteReview.DeleteReviewCommand>())
-            .Throws(new ArgumentException("Expected Exception"));
-
-        // Act
-        var response = await ReviewEndpoints.DeleteReview(Guid.Empty, sender);
-
-        // Assert
-        var result = response.Result.ShouldBeOfType<ProblemHttpResult>();
-
-        result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
-
-        result.ProblemDetails.Title.ShouldBe("An error occurred while processing your request.");
-        result.ProblemDetails.Instance.ShouldBe("Expected Exception");
-        result.ProblemDetails.Status.ShouldBe(StatusCodes.Status500InternalServerError);
-        result.ProblemDetails.Detail.ShouldNotBeNullOrEmpty();
     }
 }

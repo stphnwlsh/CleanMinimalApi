@@ -6,7 +6,7 @@ using Authors;
 using Common.Enums;
 using Common.Exceptions;
 using Entities;
-using MediatR;
+using Mediator;
 using Movies;
 
 public class CreateReviewHandler(
@@ -14,7 +14,7 @@ public class CreateReviewHandler(
     IMoviesRepository moviesRepository,
     IReviewsRepository reviewsRepository) : IRequestHandler<CreateReviewCommand, Review>
 {
-    public async Task<Review> Handle(CreateReviewCommand request, CancellationToken cancellationToken)
+    public async ValueTask<Review> Handle(CreateReviewCommand request, CancellationToken cancellationToken)
     {
         if (!await authorsRepository.AuthorExists(request.AuthorId, cancellationToken))
         {

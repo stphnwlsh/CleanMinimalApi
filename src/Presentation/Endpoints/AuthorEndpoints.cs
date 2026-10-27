@@ -1,8 +1,6 @@
 namespace CleanMinimalApi.Presentation.Endpoints;
 
-using CleanMinimalApi.Application.Common.Exceptions;
-using CleanMinimalApi.Presentation.Filters;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -15,7 +13,6 @@ public static class AuthorEndpoints
     public static WebApplication MapAuthorEndpoints(this WebApplication app)
     {
         var root = app.MapGroup("/api/author")
-            .AddEndpointFilterFactory(ValidationFilter.ValidationFilterFactory)
             .WithTags("author")
             .WithDescription("Lookup and Find Authors");
 
@@ -25,7 +22,7 @@ public static class AuthorEndpoints
             .WithSummary("Lookup all Authors")
             .WithDescription("\n    GET /author");
 
-        _ = root.MapGet("/{id}", GetAuthorById)
+        _ = root.MapGet("/{id:guid}", GetAuthorById)
             .Produces<Entities.Author>()
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status404NotFound)
@@ -36,34 +33,16 @@ public static class AuthorEndpoints
         return app;
     }
 
-    public static async Task<Results<Ok<List<Entities.Author>>, ProblemHttpResult>> GetAuthors([FromServices] ISender sender)
+    public static async Task<Ok<List<Entities.Author>>> GetAuthors([FromServices] ISender sender)
     {
-        try
-        {
-            return TypedResults.Ok(await sender.Send(new Queries.GetAuthors.GetAuthorsQuery()));
-        }
-        catch (Exception ex)
-        {
-            return TypedResults.Problem(ex.StackTrace, ex.Message, StatusCodes.Status500InternalServerError);
-        }
+        return TypedResults.Ok(await sender.Send(new Queries.GetAuthors.GetAuthorsQuery()));
     }
 
-    public static async Task<Results<Ok<Entities.Author>, NotFound<string>, ProblemHttpResult>> GetAuthorById([Validate][FromRoute] Guid id, [FromServices] ISender sender)
+    public static async Task<Ok<Entities.Author>> GetAuthorById([FromRoute] Guid id, [FromServices] ISender sender)
     {
-        try
+        return TypedResults.Ok(await sender.Send(new Queries.GetAuthorById.GetAuthorByIdQuery
         {
-            return TypedResults.Ok(await sender.Send(new Queries.GetAuthorById.GetAuthorByIdQuery
-            {
-                Id = id
-            }));
-        }
-        catch (NotFoundException ex)
-        {
-            return TypedResults.NotFound(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            return TypedResults.Problem(ex.StackTrace, ex.Message, StatusCodes.Status500InternalServerError);
-        }
+            Id = id
+        }));
     }
 }

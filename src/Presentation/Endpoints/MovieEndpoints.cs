@@ -1,8 +1,6 @@
 namespace CleanMinimalApi.Presentation.Endpoints;
 
-using CleanMinimalApi.Application.Common.Exceptions;
-using CleanMinimalApi.Presentation.Filters;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -15,7 +13,6 @@ public static class MovieEndpoints
     public static WebApplication MapMovieEndpoints(this WebApplication app)
     {
         var root = app.MapGroup("/api/movie")
-            .AddEndpointFilterFactory(ValidationFilter.ValidationFilterFactory)
             .WithTags("movie")
             .WithDescription("Lookup and Find Movies");
 
@@ -25,7 +22,7 @@ public static class MovieEndpoints
             .WithSummary("Lookup all Movies")
             .WithDescription("\n    GET /movie");
 
-        _ = root.MapGet("/{id}", GetMovieById)
+        _ = root.MapGet("/{id:guid}", GetMovieById)
             .Produces<Entities.Movie>()
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status404NotFound)
@@ -36,34 +33,16 @@ public static class MovieEndpoints
         return app;
     }
 
-    public static async Task<Results<Ok<List<Entities.Movie>>, ProblemHttpResult>> GetMovies([FromServices] ISender sender)
+    public static async Task<Ok<List<Entities.Movie>>> GetMovies([FromServices] ISender sender)
     {
-        try
-        {
-            return TypedResults.Ok(await sender.Send(new Queries.GetMovies.GetMoviesQuery()));
-        }
-        catch (Exception ex)
-        {
-            return TypedResults.Problem(ex.StackTrace, ex.Message, StatusCodes.Status500InternalServerError);
-        }
+        return TypedResults.Ok(await sender.Send(new Queries.GetMovies.GetMoviesQuery()));
     }
 
-    public static async Task<Results<Ok<Entities.Movie>, NotFound<string>, ProblemHttpResult>> GetMovieById([Validate][FromRoute] Guid id, [FromServices] ISender sender)
+    public static async Task<Ok<Entities.Movie>> GetMovieById([FromRoute] Guid id, [FromServices] ISender sender)
     {
-        try
+        return TypedResults.Ok(await sender.Send(new Queries.GetMovieById.GetMovieByIdQuery
         {
-            return TypedResults.Ok(await sender.Send(new Queries.GetMovieById.GetMovieByIdQuery
-            {
-                Id = id
-            }));
-        }
-        catch (NotFoundException ex)
-        {
-            return TypedResults.NotFound(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            return TypedResults.Problem(ex.StackTrace, ex.Message, StatusCodes.Status500InternalServerError);
-        }
+            Id = id
+        }));
     }
 }

@@ -2,7 +2,7 @@ namespace CleanMinimalApi.Application.Authors.Queries.GetAuthorById;
 
 using System.ComponentModel.DataAnnotations;
 using Entities;
-using MediatR;
+using Mediator;
 
 public class GetAuthorByIdQuery : IRequest<Author>
 {

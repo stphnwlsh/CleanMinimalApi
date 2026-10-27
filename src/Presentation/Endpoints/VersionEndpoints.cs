@@ -1,9 +1,10 @@
 namespace CleanMinimalApi.Presentation.Endpoints;
 
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Entities = Application.Versions.Entities;
 using Queries = Application.Versions.Queries;
 
@@ -23,15 +24,8 @@ public static class VersionEndpoints
         return app;
     }
 
-    public static async Task<Results<Ok<Entities.Version>, ProblemHttpResult>> GetVersion(ISender sender)
+    public static async Task<Ok<Entities.Version>> GetVersion([FromServices] ISender sender)
     {
-        try
-        {
-            return TypedResults.Ok(await sender.Send(new Queries.GetVersion.GetVersionQuery()));
-        }
-        catch (Exception ex)
-        {
-            return TypedResults.Problem(ex.StackTrace, ex.Message, StatusCodes.Status500InternalServerError);
-        }
+        return TypedResults.Ok(await sender.Send(new Queries.GetVersion.GetVersionQuery()));
     }
 }
