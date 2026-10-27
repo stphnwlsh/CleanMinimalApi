@@ -166,12 +166,31 @@ jobs:
         run: |
           python3 - <<'PY'
           import os, sys, xml.etree.ElementTree as ET
-          summary = ET.parse("out/coverage.opencover.xml").getroot().find("Summary")
-          total = int(summary.get("numSequencePoints"))
-          visited = int(summary.get("visitedSequencePoints"))
-          coverage = 100 * visited / total if total else 0
+          from collections import defaultdict
+          root = ET.parse("out/coverage.opencover.xml").getroot()
+          lines = {}
+          for module in root.iter("Module"):
+              files = {f.get("uid"): f.get("fullPath").replace("\\", "/").split("/sln/", 1)[-1] for f in module.iter("File")}
+              for method in module.iter("Method"):
+                  ref = method.find("FileRef")
+                  default = ref.get("uid") if ref is not None else None
+                  for point in method.iter("SequencePoint"):
+                      path = files.get(point.get("fileid", default))
+                      if path is None or not os.path.isfile(path):
+                          continue
+                      key = (path, int(point.get("sl")))
+                      lines[key] = max(lines.get(key, 0), int(point.get("vc")))
+          per_file = defaultdict(lambda: [0, 0])
+          for (path, _), hits in lines.items():
+              per_file[path][1] += 1
+              per_file[path][0] += hits > 0
+          for path, (hit, total) in sorted(per_file.items(), key=lambda item: item[1][0] / item[1][1])[:10]:
+              print(f"{100 * hit / total:6.2f}%  {hit}/{total}  {path}")
+          total = len(lines)
+          hit = sum(1 for hits in lines.values() if hits > 0)
+          coverage = 100 * hit / total if total else 0
           threshold = float(os.environ["THRESHOLD"])
-          print(f"Line coverage {coverage:.2f}% ({visited}/{total}), threshold {threshold}%")
+          print(f"Line coverage {coverage:.2f}% ({hit}/{total}), threshold {threshold}%")
           sys.exit(0 if coverage >= threshold else 1)
           PY
         env:
