@@ -16,7 +16,8 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     {
         // Arrange
         var repository = fixture.Repository;
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         // Act
         var result = await repository.GetAuthors(token);
@@ -32,7 +33,8 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     {
         // Arrange
         var repository = fixture.Repository;
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
         var author = fixture.Context.Authors.FirstOrDefault(a => a.FirstName == "One");
 
         // Act
@@ -52,7 +54,8 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     {
         // Arrange
         var repository = fixture.Repository;
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         // Act
         var result = await repository.GetAuthorById(Guid.Empty, token);
@@ -66,7 +69,8 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     {
         // Arrange
         var repository = fixture.Repository;
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
         var author = fixture.Context.Authors.FirstOrDefault(a => a.FirstName == "One");
 
         // Act
@@ -81,7 +85,8 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     {
         // Arrange
         var repository = fixture.Repository;
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         // Act
         var result = await repository.AuthorExists(Guid.Empty, token);
@@ -99,7 +104,8 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     {
         // Arrange
         var repository = fixture.Repository;
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         // Act
         var result = await repository.GetMovies(token);
@@ -115,7 +121,8 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     {
         // Arrange
         var repository = fixture.Repository;
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
         var movie = fixture.Context.Movies.FirstOrDefault(m => m.Title == "One");
 
         // Act
@@ -134,7 +141,8 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     {
         // Arrange
         var repository = fixture.Repository;
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         // Act
         var result = await repository.GetMovieById(Guid.Empty, token);
@@ -148,7 +156,8 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     {
         // Arrange
         var repository = fixture.Repository;
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
         var movie = fixture.Context.Movies.FirstOrDefault(m => m.Title == "One");
 
         // Act
@@ -163,7 +172,8 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     {
         // Arrange
         var repository = fixture.Repository;
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         // Act
         var result = await repository.MovieExists(Guid.Empty, token);
@@ -186,7 +196,8 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
             MovieId = fixture.Context.Movies.FirstOrDefault(m => m.Title == "One").Id,
             Stars = 5
         };
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         // Act
         var result = await fixture.Repository.CreateReview(review.AuthorId, review.MovieId, review.Stars, token);
@@ -207,7 +218,8 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     {
         // Arrange
         var id = fixture.Context.Reviews.FirstOrDefault(r => r.Stars == 1).Id;
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         // Act
         var result = await fixture.Repository.DeleteReview(id, token);
@@ -225,7 +237,8 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     public async Task DeleteReview_ShouldReturn_False()
     {
         // Arrange
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         // Act
         var result = await fixture.Repository.DeleteReview(Guid.Empty, token);
@@ -239,7 +252,8 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     {
         // Arrange
         var repository = fixture.Repository;
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         // Act
         var result = await repository.GetReviews(token);
@@ -255,7 +269,8 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     {
         // Arrange
         var repository = fixture.Repository;
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
         var review = fixture.Context.Reviews.FirstOrDefault(m => m.Stars == 5);
 
         // Act
@@ -279,7 +294,8 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     {
         // Arrange
         var repository = fixture.Repository;
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         // Act
         var result = await repository.GetReviewById(Guid.Empty, token);
@@ -293,7 +309,8 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     {
         // Arrange
         var repository = fixture.Repository;
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
         var review = fixture.Context.Reviews.FirstOrDefault(m => m.Stars == 5);
 
         // Act
@@ -308,7 +325,8 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     {
         // Arrange
         var repository = fixture.Repository;
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         // Act
         var result = await repository.ReviewExists(Guid.Empty, token);
@@ -328,7 +346,8 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
             MovieId = fixture.Context.Movies.FirstOrDefault(m => m.Title == "Two").Id,
             Stars = 4
         };
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         // Act
         var result = await fixture.Repository.UpdateReview(review.Id, review.AuthorId, review.MovieId, review.Stars, token);
@@ -356,7 +375,8 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
             MovieId = fixture.Context.Movies.FirstOrDefault(m => m.Title == "One").Id,
             Stars = 5
         };
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         // Act
         var result = await fixture.Repository.UpdateReview(review.Id, review.AuthorId, review.MovieId, review.Stars, token);

@@ -19,7 +19,8 @@ public class GetAuthorsHandlerTests
 
         var context = Substitute.For<IAuthorsRepository>();
         var handler = new GetAuthorsHandler(context);
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         _ = context.GetAuthors(token).Returns([new Author(Guid.Empty, "FirstName", "LastName")]);
 

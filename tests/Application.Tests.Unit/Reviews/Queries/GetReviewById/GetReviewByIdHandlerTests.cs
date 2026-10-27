@@ -23,7 +23,8 @@ public class GetReviewByIdHandlerTests
 
         var context = Substitute.For<IReviewsRepository>();
         var handler = new GetReviewByIdHandler(context);
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         _ = context.GetReviewById(Arg.Any<Guid>(), token).Returns(new Review(Guid.Empty, 5));
 
@@ -52,7 +53,8 @@ public class GetReviewByIdHandlerTests
 
         var context = Substitute.For<IReviewsRepository>();
         var handler = new GetReviewByIdHandler(context);
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         // Act
         var exception = Should.Throw<NotFoundException>(async () => await handler.Handle(query, token));

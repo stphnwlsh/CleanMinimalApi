@@ -23,7 +23,8 @@ public class GetAuthorByIdHandlerTests
 
         var context = Substitute.For<IAuthorsRepository>();
         var handler = new GetAuthorByIdHandler(context);
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         _ = context.GetAuthorById(Arg.Any<Guid>(), token).Returns(new Author(Guid.Empty, "FirstName", "LastName"));
 
@@ -54,7 +55,8 @@ public class GetAuthorByIdHandlerTests
 
         var context = Substitute.For<IAuthorsRepository>();
         var handler = new GetAuthorByIdHandler(context);
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         // Act
         var exception = Should.Throw<NotFoundException>(async () => await handler.Handle(query, token));

@@ -19,7 +19,8 @@ public class GetMoviesHandlerTests
 
         var context = Substitute.For<IMoviesRepository>();
         var handler = new GetMoviesHandler(context);
-        var token = new CancellationTokenSource().Token;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         _ = context.GetMovies(token).Returns([new Movie(Guid.Empty, "Title")]);
 
