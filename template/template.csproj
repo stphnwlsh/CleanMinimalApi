@@ -24,7 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="../**/*" Exclude="../**/bin/**;../**/obj/**;../**/*.user;../**/*.lock.json;../**/.DS_Store;../**/.git/**;../**/.github/**;../**/.vs/**;../LICENSE.md;../**/*.gitattributes;../NUGET.md;../README.md;../**/*.gitignore;../**/nuget.config;../template/**;../**/.dockerignore;../**/.editorconfig;../icon.png;" />
+    <Content Include="../**/*" Exclude="../**/bin/**;../**/obj/**;../**/*.user;../**/*.lock.json;../**/.DS_Store;../**/.git/**;../**/.github/**;../**/.vs/**;../LICENSE.md;../**/*.gitattributes;../NUGET.md;../README.md;../CONTRIBUTING.md;../CODE_OF_CONDUCT.md;../**/*.gitignore;../**/nuget.config;../template/**;../**/.dockerignore;../**/.editorconfig;../icon.png;" />
     <None Include="../icon.png" Pack="true" PackagePath="images/" />
     <None Include="../LICENSE.md" Pack="true" PackagePath="docs/" />
     <None Include="../NUGET.md" Pack="true" PackagePath="docs/" />
