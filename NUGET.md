@@ -1,23 +1,25 @@
 # Clean Minimal API
 
-This is a template API using a streamlined version of [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) alongside .NET's [Minimal APIs](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis?view=aspnetcore-10.0).  
+A `dotnet new` template for an API built with a streamlined version of Clean Architecture and ASP.NET Core [Minimal APIs](https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis).
+
+It shares its Application and Infrastructure layers with four sibling templates for Minimal APIs, Web API controllers, GraphQL, Model Context Protocol and AWS Lambda.
 
 ## Installation
-
-This is a template and you can install it using the [dotnet new cli](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-new).  To install the lastest version of the template run the following command.
 
 ``` bash
 dotnet new install CleanMinimalApi.Template
 ```
 
-To create a new solution using this template run the following command
+## Usage
 
 ``` bash
-dotnet new cleanminimalapi --name {YOUR_SOLUTION_NAMESPACE} --au "{YOU_AUTHORS_NAME}"
+dotnet new cleanminimalapi --name {YOUR_SOLUTION_NAMESPACE} --author "{YOUR_NAME}"
 ```
 
-## Connect and Support
+## Documentation
 
-If you like this, or want to checkout my other work, please connect with me on [LinkedIn](https://www.linkedin.com/in/stphnwlsh), and/or follow me on [Medium](https://stphnwlsh.medium.com) or [GitHub](https://github.com/stphnwlsh).
+The [README on GitHub](https://github.com/stphnwlsh/CleanMinimalApi#readme) covers the architecture, features and how to run the generated solution. Report bugs and ideas in [GitHub issues](https://github.com/stphnwlsh/CleanMinimalApi/issues).
 
-If you want to see more updates or more projects then please support me at [GitHub Sponsors](https://github.com/stphnwlsh) or [Buy Me A Coffee](https://www.buymeacoffee.com/stphnwlsh)
+## Support
+
+If this template saves you time, please consider [sponsoring me on GitHub](https://github.com/sponsors/stphnwlsh).
