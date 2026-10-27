@@ -30,7 +30,7 @@ jobs:
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Initialize
         id: initialize
@@ -94,7 +94,7 @@ jobs:
 
       - name: Setup .NET
         id: setup
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: '10.0.x'
 
@@ -113,7 +113,7 @@ jobs:
 
       - name: Upload Coverage
         id: upload-coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage
           path: out/coverage.opencover.xml
@@ -121,7 +121,7 @@ jobs:
 
       - name: Upload Image
         id: upload-image
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: image
           path: image.tar
@@ -129,7 +129,7 @@ jobs:
 
       - name: Upload Template
         id: upload-template
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: template
           path: packages/*.nupkg
@@ -145,11 +145,11 @@ jobs:
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Download Coverage
         id: download
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: coverage
           path: out
@@ -207,7 +207,7 @@ jobs:
     steps:
       - name: Download Image
         id: download
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: image
 
@@ -260,7 +260,7 @@ jobs:
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Initialize
         id: initialize
@@ -288,13 +288,13 @@ jobs:
     steps:
       - name: Download Image
         id: download-image
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: image
 
       - name: Download Template
         id: download-template
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: template
           path: packages
