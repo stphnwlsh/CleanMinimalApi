@@ -27,9 +27,6 @@ RUN for file in $(ls *.csproj); do mkdir -p tests/${file%.*}/ && mv $file tests/
 
 RUN dotnet restore -v minimal
 
-# Bust Cache
-ARG CACHE_BUST 1
-
 # Copy Remaining Files
 COPY . .
 

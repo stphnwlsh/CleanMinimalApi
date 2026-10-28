@@ -25,7 +25,6 @@ jobs:
 
     outputs:
       name: ${{ steps.initialize.outputs.name }}
-      docker_tag: ${{ steps.initialize.outputs.docker_tag }}
       version: ${{ steps.initialize.outputs.version }}
 
     steps:
@@ -38,8 +37,6 @@ jobs:
         run: |
           NAME=$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')
           VERSION_PREFIX=$(date +'%Y.%m.%d').${GITHUB_RUN_NUMBER}
-          BRANCH_CURRENT=${GITHUB_REF#refs/*/}
-          BRANCH_CURRENT=${BRANCH_CURRENT//[^a-zA-Z0-9]/-}
 
           if [[ ${GITHUB_EVENT_NAME} == 'pull_request' ]]; then
             BRANCH_BASE=${GITHUB_BASE_REF#refs/*/}
@@ -47,22 +44,18 @@ jobs:
             BRANCH_COMPARE=${GITHUB_HEAD_REF#refs/*/}
             BRANCH_COMPARE=${BRANCH_COMPARE//[^a-zA-Z0-9]/-}
             VERSION_SUFFIX="merge-${BRANCH_BASE}-${BRANCH_COMPARE}"
-          elif [[ ${GITHUB_EVENT_NAME} == ${{ github.event.repository.default_branch }} ]]; then
-            VERSION_SUFFIX="${BRANCH_CURRENT}"
           fi
 
           if [[ $VERSION_SUFFIX == '' ]]; then
-            DOCKER_TAG=$VERSION_PREFIX
+            VERSION=$VERSION_PREFIX
           else
-            DOCKER_TAG=$VERSION_PREFIX-$VERSION_SUFFIX
+            VERSION=$VERSION_PREFIX-$VERSION_SUFFIX
           fi
 
           echo "name=$(eval printf "%s" "$NAME")" >> $GITHUB_OUTPUT
           echo "version_prefix=$(eval printf "%s" "$VERSION_PREFIX")" >> $GITHUB_OUTPUT
           echo "version_suffix=$(eval printf "%s" "$VERSION_SUFFIX")" >> $GITHUB_OUTPUT
-          echo "docker_tag=$(eval printf "%s" "$DOCKER_TAG")" >> $GITHUB_OUTPUT
-          echo "version=$(eval printf "%s" "$DOCKER_TAG")" >> $GITHUB_OUTPUT
-          echo "branch=$(eval printf "%s" "$BRANCH_CURRENT")" >> $GITHUB_OUTPUT
+          echo "version=$(eval printf "%s" "$VERSION")" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Test
@@ -82,17 +75,16 @@ jobs:
         run: |
           docker build . \
             --target run \
-            --tag $NAME:$DOCKER_TAG \
-            --tag $NAME:latest \
+            --tag $NAME:$VERSION \
             --build-arg VERSION_PREFIX=$VERSION_PREFIX \
             --build-arg VERSION_SUFFIX=$VERSION_SUFFIX
-          docker save $NAME:$DOCKER_TAG $NAME:latest --output image.tar
+          docker save $NAME:$VERSION --output image.tar
         env:
           DOCKER_BUILDKIT: 1
           NAME: ${{ steps.initialize.outputs.name }}
           VERSION_PREFIX: ${{ steps.initialize.outputs.version_prefix }}
           VERSION_SUFFIX: ${{ steps.initialize.outputs.version_suffix }}
-          DOCKER_TAG: ${{ steps.initialize.outputs.docker_tag }}
+          VERSION: ${{ steps.initialize.outputs.version }}
 
       - name: Setup .NET
         id: setup
@@ -237,7 +229,7 @@ jobs:
         id: scan
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
-          image-ref: ${{ needs.build.outputs.name }}:${{ needs.build.outputs.docker_tag }}
+          image-ref: ${{ needs.build.outputs.name }}:${{ needs.build.outputs.version }}
           format: sarif
           output: trivy-results.sarif
           severity: CRITICAL,HIGH
@@ -254,7 +246,7 @@ jobs:
         id: enforce
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
-          image-ref: ${{ needs.build.outputs.name }}:${{ needs.build.outputs.docker_tag }}
+          image-ref: ${{ needs.build.outputs.name }}:${{ needs.build.outputs.version }}
           format: table
           severity: CRITICAL,HIGH
           ignore-unfixed: true
