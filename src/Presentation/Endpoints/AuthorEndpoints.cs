@@ -14,7 +14,8 @@ public static class AuthorEndpoints
     public static WebApplication MapAuthorEndpoints(this WebApplication app)
     {
         var root = app.MapGroup("/api/author")
-            .WithTags("Authors");
+            .WithTags("Authors")
+            .RequireAuthorization();
 
         _ = root.MapGet("/", GetAuthors)
             .WithName(nameof(GetAuthors))

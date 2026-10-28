@@ -25,6 +25,60 @@
       "displayName": "The name of the author of the solution.",
       "defaultValue": "Stephen Walsh",
       "replaces": "Stephen Walsh"
+    },
+    "authority": {
+      "type": "parameter",
+      "datatype": "string",
+      "displayName": "The OAuth authorization server that issues access tokens. Leave empty to run the API without authentication.",
+      "defaultValue": ""
+    },
+    "audience": {
+      "type": "parameter",
+      "datatype": "string",
+      "displayName": "The audience access tokens must be issued for, usually the API's own URL.",
+      "defaultValue": ""
+    },
+    "authorityValue": {
+      "type": "generated",
+      "generator": "join",
+      "replaces": "\"Authority\": \"\"",
+      "parameters": {
+        "symbols": [
+          {
+            "type": "const",
+            "value": "\"Authority\": \""
+          },
+          {
+            "type": "ref",
+            "value": "authority"
+          },
+          {
+            "type": "const",
+            "value": "\""
+          }
+        ]
+      }
+    },
+    "audienceValue": {
+      "type": "generated",
+      "generator": "join",
+      "replaces": "\"Audience\": \"\"",
+      "parameters": {
+        "symbols": [
+          {
+            "type": "const",
+            "value": "\"Audience\": \""
+          },
+          {
+            "type": "ref",
+            "value": "audience"
+          },
+          {
+            "type": "const",
+            "value": "\""
+          }
+        ]
+      }
     }
   }
 }
