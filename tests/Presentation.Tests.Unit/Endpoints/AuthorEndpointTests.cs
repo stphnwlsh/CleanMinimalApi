@@ -1,6 +1,7 @@
 namespace CleanMinimalApi.Presentation.Tests.Unit.Endpoints;
 
 using System.Threading.Tasks;
+using CleanMinimalApi.Application.Common.Paging;
 using CleanMinimalApi.Application.Reviews.Entities;
 using CleanMinimalApi.Presentation.Endpoints;
 using Mediator;
@@ -75,5 +76,33 @@ public class AuthorEndpointTests
         value.LastName.ShouldBe("Ipsum");
         _ = value.Reviews.ShouldBeAssignableTo<ICollection<Review>>();
         value.Reviews.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task SearchAuthors_ShouldReturn_Ok()
+    {
+        // Arrange
+        var sender = Substitute.For<ISender>();
+
+        _ = sender
+            .Send(Arg.Is<Queries.SearchAuthors.SearchAuthorsQuery>(q => q.Query == "Lorem" && q.Limit == 5 && q.Cursor == "cursor"))
+            .Returns(new Page<Entities.Author>([new Entities.Author(Guid.Empty, "Lorem", "Ipsum")], 6, "next"));
+
+        // Act
+        var response = await AuthorEndpoints.SearchAuthors("Lorem", sender, 5, "cursor");
+
+        // Assert
+        var result = response.ShouldBeOfType<Ok<Page<Entities.Author>>>();
+
+        result.StatusCode.ShouldBe(StatusCodes.Status200OK);
+
+        var value = result.Value.ShouldBeOfType<Page<Entities.Author>>();
+
+        value.TotalCount.ShouldBe(6);
+        value.NextCursor.ShouldBe("next");
+        _ = value.Items.ShouldHaveSingleItem();
+        value.Items[0].Id.ShouldBe(Guid.Empty);
+        value.Items[0].FirstName.ShouldBe("Lorem");
+        value.Items[0].LastName.ShouldBe("Ipsum");
     }
 }

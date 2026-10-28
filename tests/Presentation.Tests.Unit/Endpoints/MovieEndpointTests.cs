@@ -1,6 +1,7 @@
 namespace CleanMinimalApi.Presentation.Tests.Unit.Endpoints;
 
 using System.Threading.Tasks;
+using CleanMinimalApi.Application.Common.Paging;
 using CleanMinimalApi.Application.Reviews.Entities;
 using CleanMinimalApi.Presentation.Endpoints;
 using Mediator;
@@ -71,5 +72,32 @@ public class MovieEndpointTests
         value.Title.ShouldBe("Lorem Ipsum");
         _ = value.Reviews.ShouldBeAssignableTo<ICollection<Review>>();
         value.Reviews.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task SearchMovies_ShouldReturn_Ok()
+    {
+        // Arrange
+        var sender = Substitute.For<ISender>();
+
+        _ = sender
+            .Send(Arg.Is<Queries.SearchMovies.SearchMoviesQuery>(q => q.Query == "Lorem" && q.Limit == 5 && q.Cursor == "cursor"))
+            .Returns(new Page<Entities.Movie>([new Entities.Movie(Guid.Empty, "Lorem Ipsum")], 6, "next"));
+
+        // Act
+        var response = await MovieEndpoints.SearchMovies("Lorem", sender, 5, "cursor");
+
+        // Assert
+        var result = response.ShouldBeOfType<Ok<Page<Entities.Movie>>>();
+
+        result.StatusCode.ShouldBe(StatusCodes.Status200OK);
+
+        var value = result.Value.ShouldBeOfType<Page<Entities.Movie>>();
+
+        value.TotalCount.ShouldBe(6);
+        value.NextCursor.ShouldBe("next");
+        _ = value.Items.ShouldHaveSingleItem();
+        value.Items[0].Id.ShouldBe(Guid.Empty);
+        value.Items[0].Title.ShouldBe("Lorem Ipsum");
     }
 }

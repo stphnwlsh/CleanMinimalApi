@@ -81,6 +81,7 @@ Every endpoint is documented with XML comments: a summary, a description with a 
 - OpenAPI using [Microsoft.AspNetCore.OpenApi](https://learn.microsoft.com/aspnet/core/fundamentals/openapi/overview), documented from [XML comments](https://learn.microsoft.com/aspnet/core/fundamentals/openapi/openapi-comments) and browsed with [Scalar](https://github.com/scalar/scalar)
 - Logging using [Serilog](https://github.com/serilog/serilog), with [Seq](https://datalust.co/seq) when running in Docker
 - Mediator pattern using [Mediator](https://github.com/martinothamar/Mediator)
+- Search and cursor paging for movies, authors and reviews, on `/api/movie/search`, `/api/author/search` and `/api/review/search`
 - Validation using [FluentValidation](https://github.com/FluentValidation/FluentValidation) in an Application pipeline behaviour
 - Error responses using [Problem Details (RFC 9457)](https://learn.microsoft.com/aspnet/core/fundamentals/error-handling-api)
 - Object mapping using [Mapperly](https://mapperly.riok.app)

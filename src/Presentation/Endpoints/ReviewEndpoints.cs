@@ -1,5 +1,6 @@
 namespace CleanMinimalApi.Presentation.Endpoints;
 
+using Application.Common.Paging;
 using CleanMinimalApi.Presentation.Requests;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
@@ -20,6 +21,12 @@ public static class ReviewEndpoints
         _ = root.MapGet("/", GetReviews)
             .WithName(nameof(GetReviews))
             .Produces<List<Entities.Review>>()
+            .ProducesProblem(StatusCodes.Status500InternalServerError);
+
+        _ = root.MapGet("/search", SearchReviews)
+            .WithName(nameof(SearchReviews))
+            .Produces<Page<Entities.Review>>()
+            .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
         _ = root.MapGet("/{id:guid}", GetReviewById)
@@ -68,6 +75,41 @@ public static class ReviewEndpoints
     public static async Task<Ok<List<Entities.Review>>> GetReviews([FromServices] ISender sender)
     {
         return TypedResults.Ok(await sender.Send(new Queries.GetReviews.GetReviewsQuery()));
+    }
+
+    /// <summary>
+    /// Search Reviews by movie or author
+    /// </summary>
+    /// <remarks>
+    /// Returns one page of reviews, optionally only those of one movie, by one author, or both,
+    /// ordered by movie then author. When more results remain, the response holds a nextCursor.
+    /// Send it back as the cursor to fetch the next page.
+    ///
+    /// Sample request:
+    ///
+    ///     GET /api/review/search?movieId=3fa85f64-5717-4562-b3fc-2c963f66afa6&amp;limit=10
+    /// </remarks>
+    /// <param name="movieId">Only return reviews of this movie. Leave it out for every movie.</param>
+    /// <param name="authorId">Only return reviews by this author. Leave it out for every author.</param>
+    /// <param name="limit">The largest number of reviews to return, from 1 to 50.</param>
+    /// <param name="cursor">The nextCursor from a previous page. Leave it out for the first page.</param>
+    /// <response code="200">One page of matching Reviews.</response>
+    /// <response code="400">An Id, the limit or the cursor is not valid.</response>
+    /// <response code="500">An unexpected error occurred.</response>
+    public static async Task<Ok<Page<Entities.Review>>> SearchReviews(
+        [FromQuery] Guid? movieId,
+        [FromQuery] Guid? authorId,
+        [FromServices] ISender sender,
+        [FromQuery] int limit = Paging.DefaultLimit,
+        [FromQuery] string cursor = null)
+    {
+        return TypedResults.Ok(await sender.Send(new Queries.SearchReviews.SearchReviewsQuery
+        {
+            MovieId = movieId,
+            AuthorId = authorId,
+            Limit = limit,
+            Cursor = cursor
+        }));
     }
 
     /// <summary>

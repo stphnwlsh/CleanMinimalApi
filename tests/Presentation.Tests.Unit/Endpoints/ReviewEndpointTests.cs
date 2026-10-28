@@ -2,6 +2,7 @@ namespace CleanMinimalApi.Presentation.Tests.Unit.Endpoints;
 
 using System.Threading.Tasks;
 using CleanMinimalApi.Application.Authors.Entities;
+using CleanMinimalApi.Application.Common.Paging;
 using CleanMinimalApi.Application.Movies.Entities;
 using CleanMinimalApi.Presentation.Endpoints;
 using Mediator;
@@ -197,5 +198,44 @@ public class ReviewEndpointTests
         var result = response.ShouldBeOfType<NoContent>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status204NoContent);
+    }
+
+    [Fact]
+    public async Task SearchReviews_ShouldReturn_Ok()
+    {
+        // Arrange
+        var sender = Substitute.For<ISender>();
+        var movieId = Guid.NewGuid();
+        var authorId = Guid.NewGuid();
+
+        _ = sender
+            .Send(Arg.Is<Queries.SearchReviews.SearchReviewsQuery>(q =>
+                q.MovieId == movieId && q.AuthorId == authorId && q.Limit == 5 && q.Cursor == "cursor"))
+            .Returns(new Page<Entities.Review>(
+            [
+                new Entities.Review(
+                    Guid.Empty,
+                    5,
+                    new ReviewedMovie(movieId, "Lorem Ipsum"),
+                    new ReviewAuthor(authorId, "Lorem", "Ipsum")
+                )
+            ], 6, "next"));
+
+        // Act
+        var response = await ReviewEndpoints.SearchReviews(movieId, authorId, sender, 5, "cursor");
+
+        // Assert
+        var result = response.ShouldBeOfType<Ok<Page<Entities.Review>>>();
+
+        result.StatusCode.ShouldBe(StatusCodes.Status200OK);
+
+        var value = result.Value.ShouldBeOfType<Page<Entities.Review>>();
+
+        value.TotalCount.ShouldBe(6);
+        value.NextCursor.ShouldBe("next");
+        _ = value.Items.ShouldHaveSingleItem();
+        value.Items[0].Stars.ShouldBe(5);
+        value.Items[0].ReviewedMovie.Id.ShouldBe(movieId);
+        value.Items[0].ReviewAuthor.Id.ShouldBe(authorId);
     }
 }

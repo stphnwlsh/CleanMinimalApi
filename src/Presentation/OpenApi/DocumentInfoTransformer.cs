@@ -41,9 +41,9 @@ public sealed class DocumentInfoTransformer(IHostEnvironment environment) : IOpe
 
         document.Tags = new HashSet<OpenApiTag>
         {
-            CreateTag("Authors", "Lookup all Authors or find them by Id"),
-            CreateTag("Movies", "Lookup all Movies or find them by Id"),
-            CreateTag("Reviews", "Create new Reviews, Lookup all Reviews or find them by Id, Update and Delete Reviews"),
+            CreateTag("Authors", "Lookup all Authors, search them by name or find them by Id"),
+            CreateTag("Movies", "Lookup all Movies, search them by title or find them by Id"),
+            CreateTag("Reviews", "Create new Reviews, Lookup all Reviews, search them by movie or author or find them by Id, Update and Delete Reviews"),
             CreateTag("Version", "Lookup the application version details")
         };
 

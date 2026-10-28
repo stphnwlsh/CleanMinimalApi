@@ -2,6 +2,7 @@ namespace CleanMinimalApi.Presentation.Serialization;
 
 using System.Text.Json.Serialization;
 using Application.Authors.Entities;
+using Application.Common.Paging;
 using Application.Movies.Entities;
 using Application.Reviews.Entities;
 using Application.Versions.Entities;
@@ -19,10 +20,13 @@ using Requests;
     GenerationMode = JsonSourceGenerationMode.Default)]
 [JsonSerializable(typeof(Author))]
 [JsonSerializable(typeof(List<Author>))]
+[JsonSerializable(typeof(Page<Author>))]
 [JsonSerializable(typeof(Movie))]
 [JsonSerializable(typeof(List<Movie>))]
+[JsonSerializable(typeof(Page<Movie>))]
 [JsonSerializable(typeof(Review))]
 [JsonSerializable(typeof(List<Review>))]
+[JsonSerializable(typeof(Page<Review>))]
 [JsonSerializable(typeof(ReviewAuthor))]
 [JsonSerializable(typeof(ReviewedMovie))]
 [JsonSerializable(typeof(Version))]
