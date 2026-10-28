@@ -19,6 +19,13 @@ public interface IReviewsRepository
 
     public Task<bool> ReviewExists(Guid id, CancellationToken cancellationToken);
 
+    public Task<(List<Review> Items, int TotalCount)> SearchReviews(
+        Guid? movieId,
+        Guid? authorId,
+        int offset,
+        int limit,
+        CancellationToken cancellationToken);
+
     public Task<bool> UpdateReview(
         Guid id,
         Guid authorId,

@@ -95,6 +95,44 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
         result.ShouldBeFalse();
     }
 
+    [Theory]
+    [InlineData(null, 3)]
+    [InlineData("one", 1)]
+    [InlineData("TWO TWO", 1)]
+    [InlineData("missing", 0)]
+    public async Task SearchAuthors_ShouldReturn_Matches(string query, int expected)
+    {
+        // Arrange
+        var repository = fixture.Repository;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
+
+        // Act
+        var (items, totalCount) = await repository.SearchAuthors(query, 0, 10, token);
+
+        // Assert
+        items.Count.ShouldBe(expected);
+        totalCount.ShouldBe(expected);
+        items.ShouldAllBe(a => a.Reviews != null);
+    }
+
+    [Fact]
+    public async Task SearchAuthors_ShouldReturn_Page()
+    {
+        // Arrange
+        var repository = fixture.Repository;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
+
+        // Act
+        var (items, totalCount) = await repository.SearchAuthors(null, 1, 1, token);
+
+        // Assert
+        items.Count.ShouldBe(1);
+        items[0].LastName.ShouldBe("Three");
+        totalCount.ShouldBe(3);
+    }
+
     #endregion Authors
 
     #region Movies
@@ -180,6 +218,46 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
 
         // Assert
         result.ShouldBeFalse();
+    }
+
+    [Theory]
+    [InlineData(null, 3)]
+    [InlineData("t", 2)]
+    [InlineData("ONE", 1)]
+    [InlineData("missing", 0)]
+    public async Task SearchMovies_ShouldReturn_Matches(string query, int expected)
+    {
+        // Arrange
+        var repository = fixture.Repository;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
+
+        // Act
+        var (items, totalCount) = await repository.SearchMovies(query, 0, 10, token);
+
+        // Assert
+        items.Count.ShouldBe(expected);
+        totalCount.ShouldBe(expected);
+        items.ShouldAllBe(m => m.Reviews != null);
+    }
+
+    [Fact]
+    public async Task SearchMovies_ShouldReturn_PagesInTitleOrder()
+    {
+        // Arrange
+        var repository = fixture.Repository;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
+
+        // Act
+        var (first, firstTotal) = await repository.SearchMovies(null, 0, 2, token);
+        var (second, secondTotal) = await repository.SearchMovies(null, 2, 2, token);
+
+        // Assert
+        first.Select(m => m.Title).ShouldBe(["One", "Three"]);
+        second.Select(m => m.Title).ShouldBe(["Two"]);
+        firstTotal.ShouldBe(3);
+        secondTotal.ShouldBe(3);
     }
 
     #endregion Movies
@@ -383,6 +461,58 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
 
         // Assert
         result.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task SearchReviews_ShouldReturn_ReviewsForMovie()
+    {
+        // Arrange
+        var repository = fixture.Repository;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
+        var movieId = fixture.Context.Movies.First(m => m.Title == "Two").Id;
+
+        // Act
+        var (items, totalCount) = await repository.SearchReviews(movieId, null, 0, 50, token);
+
+        // Assert
+        items.ShouldNotBeEmpty();
+        items.Count.ShouldBe(totalCount);
+        items.ShouldAllBe(r => r.ReviewedMovie.Id == movieId && r.ReviewedMovie.Title == "Two");
+        items.ShouldAllBe(r => r.ReviewAuthor != null);
+    }
+
+    [Fact]
+    public async Task SearchReviews_ShouldReturn_ReviewsForAuthorAndMovie()
+    {
+        // Arrange
+        var repository = fixture.Repository;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
+        var movieId = fixture.Context.Movies.First(m => m.Title == "Three").Id;
+        var authorId = fixture.Context.Authors.First(a => a.FirstName == "Two").Id;
+
+        // Act
+        var (items, _) = await repository.SearchReviews(movieId, authorId, 0, 50, token);
+
+        // Assert
+        items.ShouldAllBe(r => r.ReviewedMovie.Id == movieId && r.ReviewAuthor.Id == authorId);
+    }
+
+    [Fact]
+    public async Task SearchReviews_ShouldReturn_Page()
+    {
+        // Arrange
+        var repository = fixture.Repository;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
+
+        // Act
+        var (items, totalCount) = await repository.SearchReviews(null, null, 0, 2, token);
+
+        // Assert
+        items.Count.ShouldBe(2);
+        totalCount.ShouldBeGreaterThan(2);
     }
 
     #endregion Reviews
