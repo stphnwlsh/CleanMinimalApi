@@ -121,8 +121,8 @@ public class AuthenticationTests : IDisposable
     public async Task GetOpenApiDocument_WithoutAuthentication_ShouldNotDescribe_Security()
     {
         // Arrange
-        using var application = new MinimalApiApplication();
-        using var client = application.CreateClient();
+        using var anonymousApplication = new MinimalApiApplication();
+        using var client = anonymousApplication.CreateClient();
 
         // Act
         using var document = JsonDocument.Parse(await client.GetStringAsync("/openapi/v1.json"));
