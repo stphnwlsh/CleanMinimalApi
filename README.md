@@ -43,6 +43,16 @@ dotnet new install CleanMinimalApi.Template
 dotnet new cleanminimalapi --name {YOUR_SOLUTION_NAMESPACE} --authorName "{YOUR_NAME}"
 ```
 
+### Protect the API with bearer tokens (optional)
+
+The API runs without authentication unless you give it an authorization server. Pass one when you create the solution, or set `Authentication:Authority` and `Authentication:Audience` in `appsettings.json` later.
+
+``` bash
+dotnet new cleanminimalapi --name {YOUR_SOLUTION_NAMESPACE} --authority https://{YOUR_AUTHORIZATION_SERVER} --audience https://{YOUR_API_URL}
+```
+
+With an authority set, the movie, author and review endpoints need a JWT bearer token issued by that server for the audience, and answer `401 Unauthorized` without one. The version endpoint, the OpenAPI document and Scalar stay open. Scalar shows the bearer scheme so you can paste a token and try the endpoints.
+
 ## Running the project
 
 ``` bash
@@ -79,6 +89,7 @@ Every endpoint is documented with XML comments: a summary, a description with a 
 
 - HTTP endpoints using [Minimal APIs](https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis)
 - OpenAPI using [Microsoft.AspNetCore.OpenApi](https://learn.microsoft.com/aspnet/core/fundamentals/openapi/overview), documented from [XML comments](https://learn.microsoft.com/aspnet/core/fundamentals/openapi/openapi-comments) and browsed with [Scalar](https://github.com/scalar/scalar)
+- Optional JWT bearer authentication, turned on by setting an authority, with the security scheme shown in Scalar
 - Logging using [Serilog](https://github.com/serilog/serilog), with [Seq](https://datalust.co/seq) when running in Docker
 - Mediator pattern using [Mediator](https://github.com/martinothamar/Mediator)
 - Search and cursor paging for movies, authors and reviews, on `/api/movie/search`, `/api/author/search` and `/api/review/search`

@@ -14,7 +14,8 @@ public static class MovieEndpoints
     public static WebApplication MapMovieEndpoints(this WebApplication app)
     {
         var root = app.MapGroup("/api/movie")
-            .WithTags("Movies");
+            .WithTags("Movies")
+            .RequireAuthorization();
 
         _ = root.MapGet("/", GetMovies)
             .WithName(nameof(GetMovies))

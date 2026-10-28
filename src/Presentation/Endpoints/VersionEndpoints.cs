@@ -13,7 +13,8 @@ public static class VersionEndpoints
     public static WebApplication MapVersionEndpoints(this WebApplication app)
     {
         var root = app.MapGroup("/api/version")
-            .WithTags("Version");
+            .WithTags("Version")
+            .AllowAnonymous();
 
         _ = root.MapGet("/", GetVersion)
             .WithName(nameof(GetVersion))
