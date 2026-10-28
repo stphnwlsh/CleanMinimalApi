@@ -49,7 +49,7 @@ dotnet new cleanminimalapi --name {YOUR_SOLUTION_NAMESPACE} --author "{YOUR_NAME
 docker compose up -d
 ```
 
-Then open the Swagger UI at <http://localhost:8080/swagger>. See [docs/RUN.md](docs/RUN.md) for every way to run it.
+Then open the Scalar API reference at <http://localhost:8080/scalar>. See [docs/RUN.md](docs/RUN.md) for every way to run it.
 
 The `Dockerfile` has stages for testing, publishing and running, so you can build just the part you need. You can also stamp a version into the assembly.
 
@@ -77,10 +77,14 @@ The one deliberate break from Clean Architecture is that the Presentation projec
 1. **Application** - Owns the domain and business logic. Commands and queries are validated and handled here, and each domain type has its own repository interface. This layer doesn't care what fulfils those contracts, as long as something does.
 1. **Infrastructure** - Owns the data. It implements the repository interfaces to fetch, create, update and remove data, and maps its own data models onto the Application entities so persistence details don't leak upwards.
 
+## API documentation
+
+Every endpoint is documented with XML comments: a summary, a description with a sample request, each parameter and request body, and every response code. Request and response models are documented the same way, with examples. The built-in OpenAPI generator in .NET 10 reads those comments at build time, so the OpenAPI document at `/openapi/v1.json` always matches the code, and [Scalar](https://github.com/scalar/scalar) at `/scalar` turns it into an interactive reference with request samples you can run.
+
 ## Features
 
 - HTTP endpoints using [Minimal APIs](https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis)
-- OpenAPI using [Microsoft.AspNetCore.OpenApi](https://learn.microsoft.com/aspnet/core/fundamentals/openapi/overview) and [Swagger UI](https://github.com/domaindrivendev/Swashbuckle.AspNetCore)
+- OpenAPI using [Microsoft.AspNetCore.OpenApi](https://learn.microsoft.com/aspnet/core/fundamentals/openapi/overview), documented from [XML comments](https://learn.microsoft.com/aspnet/core/fundamentals/openapi/openapi-comments) and browsed with [Scalar](https://github.com/scalar/scalar)
 - Logging using [Serilog](https://github.com/serilog/serilog), with [Seq](https://datalust.co/seq) when running in Docker
 - Mediator pattern using [Mediator](https://github.com/martinothamar/Mediator)
 - Validation using [FluentValidation](https://github.com/FluentValidation/FluentValidation) in an Application pipeline behaviour
