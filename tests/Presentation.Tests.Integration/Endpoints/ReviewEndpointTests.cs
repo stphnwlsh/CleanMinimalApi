@@ -17,7 +17,7 @@ using Entities = Application.Reviews.Entities;
 
 public class ReviewEndpointTests : IDisposable
 {
-    private MinimalApiApplication application;
+    private readonly MinimalApiApplication application;
 
     public ReviewEndpointTests()
     {

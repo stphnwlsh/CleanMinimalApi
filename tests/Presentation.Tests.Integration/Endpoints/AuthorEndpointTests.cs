@@ -13,7 +13,7 @@ using Entities = Application.Authors.Entities;
 
 public class AuthorEndpointTests : IDisposable
 {
-    private MinimalApiApplication application;
+    private readonly MinimalApiApplication application;
 
     public AuthorEndpointTests()
     {

@@ -8,7 +8,7 @@ using Xunit;
 
 public class OpenApiDocumentTests : IDisposable
 {
-    private MinimalApiApplication application;
+    private readonly MinimalApiApplication application;
 
     public OpenApiDocumentTests()
     {
