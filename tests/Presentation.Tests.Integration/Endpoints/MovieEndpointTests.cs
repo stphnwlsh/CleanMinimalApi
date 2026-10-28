@@ -3,6 +3,7 @@ namespace CleanMinimalApi.Presentation.Tests.Integration.Endpoints;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using Application.Common.Paging;
 using Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -155,6 +156,96 @@ public class MovieEndpointTests : IDisposable
         _ = result.ShouldNotBeNull();
 
         result.Status.ShouldBe(StatusCodes.Status404NotFound);
+    }
+
+    [Fact]
+    public async Task SearchMovies_ShouldReturn_FirstPage()
+    {
+        // Arrange
+        using var client = this.application.CreateClient();
+
+        // Act
+        using var response = await client.GetAsync("/api/movie/search");
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Page<Entities.Movie>>();
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        _ = result.ShouldNotBeNull();
+
+        result.Items.Count.ShouldBe(Paging.DefaultLimit);
+        result.TotalCount.ShouldBe(50);
+        result.NextCursor.ShouldNotBeNullOrWhiteSpace();
+        result.Items.Select(m => m.Title).ShouldBe(result.Items.Select(m => m.Title).Order());
+    }
+
+    [Fact]
+    public async Task SearchMovies_ShouldReturn_NextPage()
+    {
+        // Arrange
+        using var client = this.application.CreateClient();
+        using var firstResponse = await client.GetAsync("/api/movie/search?limit=20");
+        var first = (await firstResponse.Content.ReadAsStringAsync()).Deserialize<Page<Entities.Movie>>();
+
+        // Act
+        using var response = await client.GetAsync($"/api/movie/search?limit=40&cursor={Uri.EscapeDataString(first.NextCursor)}");
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Page<Entities.Movie>>();
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        _ = result.ShouldNotBeNull();
+
+        result.Items.Count.ShouldBe(30);
+        result.TotalCount.ShouldBe(50);
+        result.NextCursor.ShouldBeNull();
+        result.Items.Select(m => m.Id).Intersect(first.Items.Select(m => m.Id)).ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task SearchMovies_ShouldReturn_Matches()
+    {
+        // Arrange
+        using var client = this.application.CreateClient();
+        using var moviesResponse = await client.GetAsync("/api/movie");
+        var title = (await moviesResponse.Content.ReadAsStringAsync())
+            .Deserialize<List<Entities.Movie>>()
+            .First().Title;
+
+        // Act
+        using var response = await client.GetAsync($"/api/movie/search?query={Uri.EscapeDataString(title.ToUpperInvariant())}");
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Page<Entities.Movie>>();
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        _ = result.ShouldNotBeNull();
+
+        result.Items.ShouldNotBeEmpty();
+        result.Items.ShouldAllBe(m => m.Title.Contains(title, StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Theory]
+    [InlineData("limit=0", "Limit", "A limit must be between 1 and 50.")]
+    [InlineData("limit=51", "Limit", "A limit must be between 1 and 50.")]
+    [InlineData("cursor=fake", "Cursor", "The cursor is not valid. Use the nextCursor from a previous page, or leave it empty for the first page.")]
+    public async Task SearchMovies_ShouldReturn_ValidationProblem(string queryString, string key, string message)
+    {
+        // Arrange
+        using var client = this.application.CreateClient();
+
+        // Act
+        using var response = await client.GetAsync($"/api/movie/search?{queryString}");
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<ValidationProblemDetails>();
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+        _ = result.ShouldNotBeNull();
+
+        result.Status.ShouldBe(StatusCodes.Status400BadRequest);
+        result.Errors.ShouldContainKey(key);
+        result.Errors[key].ShouldBe([message]);
     }
 
     public void Dispose()

@@ -3,6 +3,7 @@ namespace CleanMinimalApi.Presentation.Tests.Integration.Endpoints;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using Application.Common.Paging;
 using Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -152,6 +153,70 @@ public class AuthorEndpointTests : IDisposable
         _ = result.ShouldNotBeNull();
 
         result.Status.ShouldBe(StatusCodes.Status404NotFound);
+    }
+
+    [Fact]
+    public async Task SearchAuthors_ShouldReturn_FirstPage()
+    {
+        // Arrange
+        using var client = this.application.CreateClient();
+        using var authorsResponse = await client.GetAsync("/api/author");
+        var authors = (await authorsResponse.Content.ReadAsStringAsync()).Deserialize<List<Entities.Author>>();
+
+        // Act
+        using var response = await client.GetAsync("/api/author/search?limit=5");
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Page<Entities.Author>>();
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        _ = result.ShouldNotBeNull();
+
+        result.Items.Count.ShouldBe(Math.Min(5, authors.Count));
+        result.TotalCount.ShouldBe(authors.Count);
+    }
+
+    [Fact]
+    public async Task SearchAuthors_ShouldReturn_Matches()
+    {
+        // Arrange
+        using var client = this.application.CreateClient();
+        using var authorsResponse = await client.GetAsync("/api/author");
+        var lastName = (await authorsResponse.Content.ReadAsStringAsync())
+            .Deserialize<List<Entities.Author>>()
+            .First().LastName;
+
+        // Act
+        using var response = await client.GetAsync($"/api/author/search?query={Uri.EscapeDataString(lastName.ToLowerInvariant())}");
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Page<Entities.Author>>();
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        _ = result.ShouldNotBeNull();
+
+        result.Items.ShouldNotBeEmpty();
+        result.Items.ShouldAllBe(a => $"{a.FirstName} {a.LastName}".Contains(lastName, StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public async Task SearchAuthors_ShouldReturn_ValidationProblem()
+    {
+        // Arrange
+        using var client = this.application.CreateClient();
+
+        // Act
+        using var response = await client.GetAsync($"/api/author/search?query={new string('a', 101)}");
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<ValidationProblemDetails>();
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+        _ = result.ShouldNotBeNull();
+
+        result.Status.ShouldBe(StatusCodes.Status400BadRequest);
+        result.Errors.ShouldContainKey("Query");
+        result.Errors["Query"].ShouldBe(["A search term can't be longer than 100 characters."]);
     }
 
     public void Dispose()

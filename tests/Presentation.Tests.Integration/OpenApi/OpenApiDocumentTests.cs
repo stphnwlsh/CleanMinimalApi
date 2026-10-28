@@ -61,7 +61,7 @@ public class OpenApiDocumentTests : IDisposable
             .ToList();
 
         // Assert
-        operations.Count.ShouldBe(10);
+        operations.Count.ShouldBe(13);
 
         foreach (var operation in operations)
         {
@@ -94,6 +94,9 @@ public class OpenApiDocumentTests : IDisposable
     [InlineData("Movie")]
     [InlineData("Review")]
     [InlineData("Version")]
+    [InlineData("PageOfAuthor")]
+    [InlineData("PageOfMovie")]
+    [InlineData("PageOfReview")]
     [InlineData("CreateReviewRequest")]
     [InlineData("UpdateReviewRequest")]
     public async Task GetOpenApiDocument_ShouldDescribe_Schema(string name)
