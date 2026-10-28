@@ -12,7 +12,7 @@ using Entities = Application.Authors.Entities;
 
 public class AuthorEndpointTests : IDisposable
 {
-    private CleanMinimalApiApplication application;
+    private MinimalApiApplication application;
 
     public AuthorEndpointTests()
     {

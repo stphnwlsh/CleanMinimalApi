@@ -14,17 +14,24 @@
     <PackageLicenseFile>docs/LICENSE.md</PackageLicenseFile>
     <PackageReadmeFile>docs/NUGET.md</PackageReadmeFile>
     <PackageIcon>images/icon.png</PackageIcon>
-    <IncludeContentInPack>true</IncludeContentInPack>
+    <PackageReleaseNotes>https://github.com/stphnwlsh/CleanMinimalApi/releases</PackageReleaseNotes>
     <IncludeBuildOutput>false</IncludeBuildOutput>
-    <ContentTargetFolders>content</ContentTargetFolders>
     <NoWarn>$(NoWarn);NU5128;NU5118</NoWarn>
     <NoDefaultExcludes>true</NoDefaultExcludes>
     <IsTestProject>false</IsTestProject>
     <IsPublishable>false</IsPublishable>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <TemplateExcludes>../**/bin/**;../**/obj/**;../**/TestResults/**;../**/*.user;../**/.DS_Store</TemplateExcludes>
+  </PropertyGroup>
+
   <ItemGroup>
-    <Content Include="../**/*" Exclude="../**/bin/**;../**/obj/**;../**/*.user;../**/*.lock.json;../**/.DS_Store;../**/.git/**;../**/.github/**;../**/.vs/**;../LICENSE.md;../**/*.gitattributes;../NUGET.md;../README.md;../CONTRIBUTING.md;../CODE_OF_CONDUCT.md;../SECURITY.md;../SUPPORT.md;../docs/sponsor.jpg;../**/*.gitignore;../**/nuget.config;../template/**;../**/.dockerignore;../**/.editorconfig;../icon.png;" />
+    <None Include="../.template.config/**/*" Pack="true" PackagePath="content/.template.config/" />
+    <None Include="../src/**/*" Exclude="$(TemplateExcludes)" Pack="true" PackagePath="content/src/" />
+    <None Include="../tests/**/*" Exclude="$(TemplateExcludes)" Pack="true" PackagePath="content/tests/" />
+    <None Include="../docs/RUN.md" Pack="true" PackagePath="content/docs/" />
+    <None Include="../*.sln;../Directory.Build.props;../global.json;../NuGet.config;../Dockerfile;../docker-compose.yml;../icon.png;../.*ignore;../.editorconfig;../.gitattributes" Pack="true" PackagePath="content/" />
     <None Include="../icon.png" Pack="true" PackagePath="images/" />
     <None Include="../LICENSE.md" Pack="true" PackagePath="docs/" />
     <None Include="../NUGET.md" Pack="true" PackagePath="docs/" />

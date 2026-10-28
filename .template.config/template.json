@@ -20,7 +20,7 @@
   "sourceName": "CleanMinimalApi",
   "preferNameDirectory": true,
   "symbols": {
-    "author": {
+    "authorName": {
       "type": "parameter",
       "displayName": "The name of the author of the solution.",
       "defaultValue": "Stephen Walsh",
