@@ -26,6 +26,7 @@ jobs:
     outputs:
       name: ${{ steps.initialize.outputs.name }}
       docker_tag: ${{ steps.initialize.outputs.docker_tag }}
+      version: ${{ steps.initialize.outputs.version }}
 
     steps:
       - name: Checkout
@@ -60,6 +61,7 @@ jobs:
           echo "version_prefix=$(eval printf "%s" "$VERSION_PREFIX")" >> $GITHUB_OUTPUT
           echo "version_suffix=$(eval printf "%s" "$VERSION_SUFFIX")" >> $GITHUB_OUTPUT
           echo "docker_tag=$(eval printf "%s" "$DOCKER_TAG")" >> $GITHUB_OUTPUT
+          echo "version=$(eval printf "%s" "$DOCKER_TAG")" >> $GITHUB_OUTPUT
           echo "branch=$(eval printf "%s" "$BRANCH_CURRENT")" >> $GITHUB_OUTPUT
         shell: bash
 
@@ -109,6 +111,22 @@ jobs:
         env:
           VERSION: ${{ steps.initialize.outputs.version_prefix }}
           SUFFIX: ${{ steps.initialize.outputs.version_suffix }}
+        shell: bash
+
+      - name: Verify Template
+        id: verify-template
+        run: |
+          SIZE=$(stat --format=%s packages/*.nupkg)
+          echo "Template package is $SIZE bytes"
+          if [ "$SIZE" -gt "$MAX_SIZE" ]; then
+            echo "::error::Template package is larger than $MAX_SIZE bytes"
+            exit 1
+          fi
+          dotnet new install packages/*.nupkg
+          dotnet new $(jq -r .shortName .template.config/template.json) --name Template.Verification --output verification
+          dotnet build verification --configuration Release
+        env:
+          MAX_SIZE: 1048576
         shell: bash
 
       - name: Upload Coverage
@@ -282,39 +300,16 @@ jobs:
     needs: [build, coverage, scan, analysis]
     if: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
     permissions:
-      contents: read
+      contents: write
       id-token: write
 
     steps:
-      - name: Download Image
-        id: download-image
-        uses: actions/download-artifact@v8
-        with:
-          name: image
-
       - name: Download Template
         id: download-template
         uses: actions/download-artifact@v8
         with:
           name: template
           path: packages
-
-      - name: Load Image
-        id: load
-        run: docker load --input image.tar
-
-      - name: Docker Login
-        id: docker-login
-        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
-        with:
-          username: ${{ secrets.DOCKER_LOGIN }}
-          password: ${{ secrets.DOCKER_TOKEN }}
-
-      - name: Docker Push
-        id: docker-push
-        run: docker push $NAME --all-tags
-        env:
-          NAME: ${{ needs.build.outputs.name }}
 
       - name: Login to NuGet
         id: nuget-login
@@ -324,4 +319,11 @@ jobs:
 
       - name: NuGet Push
         id: nuget-push
-        run: dotnet nuget push packages/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+        run: dotnet nuget push packages/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }} --skip-duplicate
+
+      - name: GitHub Release
+        id: github-release
+        run: gh release create "$VERSION" packages/*.nupkg --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "$VERSION" --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.build.outputs.version }}

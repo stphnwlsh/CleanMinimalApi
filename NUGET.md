@@ -13,7 +13,7 @@ dotnet new install CleanMinimalApi.Template
 ## Usage
 
 ``` bash
-dotnet new cleanminimalapi --name {YOUR_SOLUTION_NAMESPACE} --author "{YOUR_NAME}"
+dotnet new cleanminimalapi --name {YOUR_SOLUTION_NAMESPACE} --authorName "{YOUR_NAME}"
 ```
 
 ## Documentation
