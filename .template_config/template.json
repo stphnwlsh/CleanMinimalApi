@@ -3,15 +3,15 @@
   "author": "Stephen Walsh",
   "classifications": [
     "Clean Architecture",
-    "Clean",
-    "Minimal API",
-    "Minimal",
+    "Web",
     "API",
+    "Minimal API",
     "Dotnet",
     "Docker"
   ],
   "identity": "CleanMinimalApi.Template",
   "name": "Clean Minimal API Template",
+  "description": "A dotnet new template for an ASP.NET Core Minimal API built with a streamlined Clean Architecture on .NET 10.",
   "shortName": "cleanminimalapi",
   "tags": {
     "language": "C#",
