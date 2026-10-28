@@ -10,4 +10,10 @@ public interface IMoviesRepository
     public Task<Movie> GetMovieById(Guid id, CancellationToken cancellationToken);
 
     public Task<bool> MovieExists(Guid id, CancellationToken cancellationToken);
+
+    public Task<(List<Movie> Items, int TotalCount)> SearchMovies(
+        string query,
+        int offset,
+        int limit,
+        CancellationToken cancellationToken);
 }

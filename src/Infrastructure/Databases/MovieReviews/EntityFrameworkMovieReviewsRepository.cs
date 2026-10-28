@@ -67,6 +67,36 @@ internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMovi
         return await this.context.Authors.AsNoTracking().AnyAsync(a => a.Id == id, cancellationToken);
     }
 
+    public virtual async Task<(List<ApplicationAuthor> Items, int TotalCount)> SearchAuthors(
+        string query,
+        int offset,
+        int limit,
+        CancellationToken cancellationToken)
+    {
+        var authors = this.context.Authors.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(query))
+        {
+            var term = query.Trim();
+
+            authors = authors.Where(a => (a.FirstName + " " + a.LastName).Contains(term, StringComparison.OrdinalIgnoreCase));
+        }
+
+        var totalCount = await authors.CountAsync(cancellationToken);
+
+        var result = await authors
+            .OrderBy(a => a.LastName)
+            .ThenBy(a => a.FirstName)
+            .ThenBy(a => a.Id)
+            .Skip(offset)
+            .Take(limit)
+            .Include(a => a.Reviews)
+            .ThenInclude(r => r.ReviewedMovie)
+            .ToListAsync(cancellationToken);
+
+        return ([.. result.Select(this.mapper.ToDomain)], totalCount);
+    }
+
     #endregion Authors
 
     #region Movies
@@ -97,6 +127,35 @@ internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMovi
     public virtual async Task<bool> MovieExists(Guid id, CancellationToken cancellationToken)
     {
         return await this.context.Movies.AsNoTracking().AnyAsync(m => m.Id == id, cancellationToken);
+    }
+
+    public virtual async Task<(List<ApplicationMovie> Items, int TotalCount)> SearchMovies(
+        string query,
+        int offset,
+        int limit,
+        CancellationToken cancellationToken)
+    {
+        var movies = this.context.Movies.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(query))
+        {
+            var term = query.Trim();
+
+            movies = movies.Where(m => m.Title.Contains(term, StringComparison.OrdinalIgnoreCase));
+        }
+
+        var totalCount = await movies.CountAsync(cancellationToken);
+
+        var result = await movies
+            .OrderBy(m => m.Title)
+            .ThenBy(m => m.Id)
+            .Skip(offset)
+            .Take(limit)
+            .Include(m => m.Reviews)
+            .ThenInclude(r => r.ReviewAuthor)
+            .ToListAsync(cancellationToken);
+
+        return ([.. result.Select(this.mapper.ToDomain)], totalCount);
     }
 
     #endregion Movies
@@ -173,6 +232,40 @@ internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMovi
     public async Task<bool> ReviewExists(Guid id, CancellationToken cancellationToken)
     {
         return await this.context.Reviews.AnyAsync(r => r.Id == id, cancellationToken);
+    }
+
+    public async Task<(List<ApplicationReview> Items, int TotalCount)> SearchReviews(
+        Guid? movieId,
+        Guid? authorId,
+        int offset,
+        int limit,
+        CancellationToken cancellationToken)
+    {
+        var reviews = this.context.Reviews.AsNoTracking();
+
+        if (movieId.HasValue)
+        {
+            reviews = reviews.Where(r => r.ReviewedMovieId == movieId.Value);
+        }
+
+        if (authorId.HasValue)
+        {
+            reviews = reviews.Where(r => r.ReviewAuthorId == authorId.Value);
+        }
+
+        var totalCount = await reviews.CountAsync(cancellationToken);
+
+        var result = await reviews
+            .Include(r => r.ReviewAuthor)
+            .Include(r => r.ReviewedMovie)
+            .OrderBy(r => r.ReviewedMovie.Title)
+            .ThenBy(r => r.ReviewAuthor.LastName)
+            .ThenBy(r => r.Id)
+            .Skip(offset)
+            .Take(limit)
+            .ToListAsync(cancellationToken);
+
+        return ([.. result.Select(this.mapper.ToDomain)], totalCount);
     }
 
     public async Task<bool> UpdateReview(
