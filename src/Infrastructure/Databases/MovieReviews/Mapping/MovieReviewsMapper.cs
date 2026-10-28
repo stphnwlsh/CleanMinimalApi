@@ -15,6 +15,8 @@ internal partial class MovieReviewsMapper
 {
     // Infrastructure → Domain
 
+    [MapperIgnoreSource(nameof(InfraAuthor.DateCreated))]
+    [MapperIgnoreSource(nameof(InfraAuthor.DateModified))]
     public partial AppAuthor ToDomain(InfraAuthor author);
 
     [MapperIgnoreSource(nameof(InfraAuthor.Reviews))]
@@ -22,6 +24,8 @@ internal partial class MovieReviewsMapper
     [MapperIgnoreSource(nameof(InfraAuthor.DateModified))]
     public partial AppReviewAuthor ToReviewAuthor(InfraAuthor author);
 
+    [MapperIgnoreSource(nameof(InfraMovie.DateCreated))]
+    [MapperIgnoreSource(nameof(InfraMovie.DateModified))]
     public partial AppMovie ToDomain(InfraMovie movie);
 
     [MapperIgnoreSource(nameof(InfraMovie.Reviews))]

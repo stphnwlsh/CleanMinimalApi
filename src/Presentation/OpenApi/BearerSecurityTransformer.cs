@@ -42,6 +42,7 @@ public sealed class BearerSecurityTransformer : IOpenApiDocumentTransformer, IOp
             [new OpenApiSecuritySchemeReference(SchemeName, context.Document)] = []
         });
 
+        operation.Responses ??= [];
         operation.Responses.TryAdd("401", new OpenApiResponse { Description = "The request has no valid bearer token." });
 
         return Task.CompletedTask;

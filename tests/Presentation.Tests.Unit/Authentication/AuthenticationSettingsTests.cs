@@ -25,7 +25,7 @@ public class AuthenticationSettingsTests
     {
         // Arrange
         var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string>
+            .AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["Authentication:Authority"] = "https://login.example.com",
                 ["Authentication:Audience"] = "https://api.example.com",

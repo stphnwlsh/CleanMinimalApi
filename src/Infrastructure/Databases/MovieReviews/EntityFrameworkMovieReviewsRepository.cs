@@ -2,11 +2,8 @@ namespace CleanMinimalApi.Infrastructure.Databases.MovieReviews;
 
 using System;
 using Application.Authors;
-using Application.Common.Enums;
-using Application.Common.Exceptions;
 using Application.Movies;
 using Application.Reviews;
-using Extensions;
 using Mapping;
 using Microsoft.EntityFrameworkCore;
 using Models;
@@ -32,43 +29,12 @@ internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMovi
         this.context = context;
         this.timeProvider = timeProvider;
         this.mapper = mapper;
-
-        _ = this.context.Database.EnsureDeleted();
-        _ = this.context.Database.EnsureCreated();
-        _ = this.context.AddData();
     }
 
     #region Authors
 
-    public virtual async Task<List<ApplicationAuthor>> GetAuthors(CancellationToken cancellationToken)
-    {
-        var authors = await this.context.Authors
-            .Include(a => a.Reviews)
-            .ThenInclude(r => r.ReviewedMovie)
-            .AsNoTracking()
-            .ToListAsync(cancellationToken);
-
-        return [.. authors.Select(this.mapper.ToDomain)];
-    }
-
-    public virtual async Task<ApplicationAuthor> GetAuthorById(Guid id, CancellationToken cancellationToken)
-    {
-        var author = await this.context.Authors
-            .Where(r => r.Id == id).Include(a => a.Reviews)
-            .ThenInclude(r => r.ReviewedMovie)
-            .AsNoTracking()
-            .FirstOrDefaultAsync(cancellationToken);
-
-        return this.mapper.ToDomain(author);
-    }
-
-    public virtual async Task<bool> AuthorExists(Guid id, CancellationToken cancellationToken)
-    {
-        return await this.context.Authors.AsNoTracking().AnyAsync(a => a.Id == id, cancellationToken);
-    }
-
-    public virtual async Task<(List<ApplicationAuthor> Items, int TotalCount)> SearchAuthors(
-        string query,
+    public virtual async Task<(List<ApplicationAuthor> Items, int TotalCount)> GetAuthors(
+        string? query,
         int offset,
         int limit,
         CancellationToken cancellationToken)
@@ -77,9 +43,9 @@ internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMovi
 
         if (!string.IsNullOrWhiteSpace(query))
         {
-            var term = query.Trim();
+            var pattern = ContainsPattern(query);
 
-            authors = authors.Where(a => (a.FirstName + " " + a.LastName).Contains(term, StringComparison.OrdinalIgnoreCase));
+            authors = authors.Where(a => EF.Functions.Like(a.FirstName + " " + a.LastName, pattern, EscapeCharacter));
         }
 
         var totalCount = await authors.CountAsync(cancellationToken);
@@ -97,40 +63,28 @@ internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMovi
         return ([.. result.Select(this.mapper.ToDomain)], totalCount);
     }
 
+    public virtual async Task<ApplicationAuthor?> GetAuthorById(Guid id, CancellationToken cancellationToken)
+    {
+        var author = await this.context.Authors
+            .Where(r => r.Id == id).Include(a => a.Reviews)
+            .ThenInclude(r => r.ReviewedMovie)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return author is null ? null : this.mapper.ToDomain(author);
+    }
+
+    public virtual async Task<bool> AuthorExists(Guid id, CancellationToken cancellationToken)
+    {
+        return await this.context.Authors.AsNoTracking().AnyAsync(a => a.Id == id, cancellationToken);
+    }
+
     #endregion Authors
 
     #region Movies
 
-    public virtual async Task<List<ApplicationMovie>> GetMovies(CancellationToken cancellationToken)
-    {
-        var result = await this.context.Movies
-            .Include(m => m.Reviews)
-            .ThenInclude(r => r.ReviewAuthor)
-            .AsNoTracking()
-            .ToListAsync(cancellationToken);
-
-        return [.. result.Select(this.mapper.ToDomain)];
-    }
-
-    public virtual async Task<ApplicationMovie> GetMovieById(Guid id, CancellationToken cancellationToken)
-    {
-        var result = await this.context.Movies
-            .Where(r => r.Id == id)
-            .Include(m => m.Reviews)
-            .ThenInclude(r => r.ReviewAuthor)
-            .AsNoTracking()
-            .FirstOrDefaultAsync(cancellationToken);
-
-        return this.mapper.ToDomain(result);
-    }
-
-    public virtual async Task<bool> MovieExists(Guid id, CancellationToken cancellationToken)
-    {
-        return await this.context.Movies.AsNoTracking().AnyAsync(m => m.Id == id, cancellationToken);
-    }
-
-    public virtual async Task<(List<ApplicationMovie> Items, int TotalCount)> SearchMovies(
-        string query,
+    public virtual async Task<(List<ApplicationMovie> Items, int TotalCount)> GetMovies(
+        string? query,
         int offset,
         int limit,
         CancellationToken cancellationToken)
@@ -139,9 +93,9 @@ internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMovi
 
         if (!string.IsNullOrWhiteSpace(query))
         {
-            var term = query.Trim();
+            var pattern = ContainsPattern(query);
 
-            movies = movies.Where(m => m.Title.Contains(term, StringComparison.OrdinalIgnoreCase));
+            movies = movies.Where(m => EF.Functions.Like(m.Title, pattern, EscapeCharacter));
         }
 
         var totalCount = await movies.CountAsync(cancellationToken);
@@ -158,6 +112,23 @@ internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMovi
         return ([.. result.Select(this.mapper.ToDomain)], totalCount);
     }
 
+    public virtual async Task<ApplicationMovie?> GetMovieById(Guid id, CancellationToken cancellationToken)
+    {
+        var result = await this.context.Movies
+            .Where(r => r.Id == id)
+            .Include(m => m.Reviews)
+            .ThenInclude(r => r.ReviewAuthor)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return result is null ? null : this.mapper.ToDomain(result);
+    }
+
+    public virtual async Task<bool> MovieExists(Guid id, CancellationToken cancellationToken)
+    {
+        return await this.context.Movies.AsNoTracking().AnyAsync(m => m.Id == id, cancellationToken);
+    }
+
     #endregion Movies
 
     #region Reviews
@@ -168,13 +139,15 @@ internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMovi
         int stars,
         CancellationToken cancellationToken)
     {
+        var now = this.timeProvider.GetUtcNow().UtcDateTime;
+
         var review = new Review
         {
             ReviewAuthorId = authorId,
             ReviewedMovieId = movieId,
             Stars = stars,
-            DateCreated = this.timeProvider.GetUtcNow().UtcDateTime,
-            DateModified = this.timeProvider.GetUtcNow().UtcDateTime
+            DateCreated = now,
+            DateModified = now
         };
 
         var id = this.context.Add(review).Entity.Id;
@@ -193,48 +166,14 @@ internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMovi
 
     public async Task<bool> DeleteReview(Guid id, CancellationToken cancellationToken)
     {
-        try
-        {
-            _ = this.context.Remove(this.context.Reviews.Single(r => r.Id == id));
-            _ = await this.context.SaveChangesAsync(cancellationToken);
-        }
-        catch (Exception)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    public async Task<List<ApplicationReview>> GetReviews(CancellationToken cancellationToken)
-    {
-        var result = await this.context.Reviews
-            .Include(r => r.ReviewAuthor)
-            .Include(r => r.ReviewedMovie)
-            .AsNoTracking()
-            .ToListAsync(cancellationToken);
-
-        return [.. result.Select(this.mapper.ToDomain)];
-    }
-
-    public async Task<ApplicationReview> GetReviewById(Guid id, CancellationToken cancellationToken)
-    {
-        var result = await this.context.Reviews
+        var deleted = await this.context.Reviews
             .Where(r => r.Id == id)
-            .Include(r => r.ReviewAuthor)
-            .Include(r => r.ReviewedMovie)
-            .AsNoTracking()
-            .FirstOrDefaultAsync(cancellationToken);
+            .ExecuteDeleteAsync(cancellationToken);
 
-        return this.mapper.ToDomain(result);
+        return deleted > 0;
     }
 
-    public async Task<bool> ReviewExists(Guid id, CancellationToken cancellationToken)
-    {
-        return await this.context.Reviews.AnyAsync(r => r.Id == id, cancellationToken);
-    }
-
-    public async Task<(List<ApplicationReview> Items, int TotalCount)> SearchReviews(
+    public async Task<(List<ApplicationReview> Items, int TotalCount)> GetReviews(
         Guid? movieId,
         Guid? authorId,
         int offset,
@@ -268,34 +207,57 @@ internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMovi
         return ([.. result.Select(this.mapper.ToDomain)], totalCount);
     }
 
-    public async Task<bool> UpdateReview(
-        Guid id,
-        Guid authorId,
-        Guid movieId,
-        int stars,
-        CancellationToken cancellationToken)
+    public async Task<ApplicationReview?> GetReviewById(Guid id, CancellationToken cancellationToken)
     {
-        try
-        {
-            var review = this.context.Reviews.FirstOrDefault(r => r.Id == id);
+        var result = await this.context.Reviews
+            .Where(r => r.Id == id)
+            .Include(r => r.ReviewAuthor)
+            .Include(r => r.ReviewedMovie)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(cancellationToken);
 
-            NotFoundException.ThrowIfNull(review, EntityType.Review);
+        return result is null ? null : this.mapper.ToDomain(result);
+    }
 
-            review.Stars = stars;
-            review.ReviewAuthorId = authorId;
-            review.ReviewedMovieId = movieId;
-            review.DateModified = this.timeProvider.GetUtcNow().UtcDateTime;
+    public async Task<bool> ReviewExists(Guid id, CancellationToken cancellationToken)
+    {
+        return await this.context.Reviews.AnyAsync(r => r.Id == id, cancellationToken);
+    }
 
-            _ = this.context.Update(review);
-            _ = await this.context.SaveChangesAsync(cancellationToken);
-        }
-        catch (Exception)
-        {
-            return false;
-        }
+    public async Task<bool> UpdateReview(Guid id, int stars, CancellationToken cancellationToken)
+    {
+        var now = this.timeProvider.GetUtcNow().UtcDateTime;
 
-        return true;
+        var updated = await this.context.Reviews
+            .Where(r => r.Id == id)
+            .ExecuteUpdateAsync(
+                setters => setters
+                    .SetProperty(r => r.Stars, stars)
+                    .SetProperty(r => r.DateModified, now),
+                cancellationToken);
+
+        return updated > 0;
     }
 
     #endregion Reviews
+
+    #region Search
+
+    private const string EscapeCharacter = "\\";
+
+    /// <summary>
+    /// Builds a LIKE pattern that matches any text containing the search term. LIKE ignores case for
+    /// ASCII text in SQLite and SQL Server, and the term's own wildcards are escaped so they match literally.
+    /// </summary>
+    private static string ContainsPattern(string query)
+    {
+        var term = query.Trim()
+            .Replace(EscapeCharacter, EscapeCharacter + EscapeCharacter, StringComparison.Ordinal)
+            .Replace("%", EscapeCharacter + "%", StringComparison.Ordinal)
+            .Replace("_", EscapeCharacter + "_", StringComparison.Ordinal);
+
+        return $"%{term}%";
+    }
+
+    #endregion Search
 }

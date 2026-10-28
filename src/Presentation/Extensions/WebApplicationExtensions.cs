@@ -3,6 +3,7 @@ namespace CleanMinimalApi.Presentation.Extensions;
 using System.Diagnostics.CodeAnalysis;
 using CleanMinimalApi.Presentation.Authentication;
 using CleanMinimalApi.Presentation.Endpoints;
+using Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Scalar.AspNetCore;
 using Serilog;
@@ -12,6 +13,12 @@ public static class WebApplicationExtensions
 {
     public static WebApplication ConfigureApplication(this WebApplication app)
     {
+        #region Database
+
+        _ = app.Services.InitialiseInfrastructure();
+
+        #endregion Database
+
         #region Errors
 
         _ = app.UseExceptionHandler();

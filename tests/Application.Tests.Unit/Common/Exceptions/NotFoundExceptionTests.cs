@@ -32,7 +32,7 @@ public class NotFoundExceptionTests
     {
         // Arrange
         var entityType = EntityType.Author;
-        Author argument = null;
+        Author? argument = null;
 
         // Act
         var result = Should.Throw<NotFoundException>(() =>

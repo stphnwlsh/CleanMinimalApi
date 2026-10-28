@@ -24,6 +24,6 @@ public static class JsonSerializerExtensions
 
     public static T Deserialize<T>(this string input)
     {
-        return JsonSerializer.Deserialize<T>(input, Options);
+        return JsonSerializer.Deserialize<T>(input, Options)!;
     }
 }

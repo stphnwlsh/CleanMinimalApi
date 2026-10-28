@@ -1,8 +1,9 @@
 namespace CleanMinimalApi.Presentation.Tests.Unit.Endpoints;
 
 using System.Threading.Tasks;
+using CleanMinimalApi.Application.Authors.Entities;
 using CleanMinimalApi.Application.Common.Paging;
-using CleanMinimalApi.Application.Reviews.Entities;
+using CleanMinimalApi.Application.Movies.Entities;
 using CleanMinimalApi.Presentation.Endpoints;
 using Mediator;
 using Microsoft.AspNetCore.Http;
@@ -20,30 +21,30 @@ public class MovieEndpointTests
     {
         // Arrange
         var sender = Substitute.For<ISender>();
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         _ = sender
-            .Send(Arg.Any<Queries.GetMovies.GetMoviesQuery>())
-            .ReturnsForAnyArgs(
-            [
-                new Entities.Movie(Guid.Empty, "Lorem Ipsum")
-            ]);
+            .Send(Arg.Is<Queries.GetMovies.GetMoviesQuery>(q => q.Query == "Lorem" && q.Offset == 20 && q.Limit == 5), token)
+            .Returns(new Page<Entities.Movie>([new Entities.Movie(Guid.Empty, "Lorem Ipsum")], 20, 5, 21));
 
         // Act
-        var response = await MovieEndpoints.GetMovies(sender);
+        var response = await MovieEndpoints.GetMovies("Lorem", sender, token, 20, 5);
 
         // Assert
-        var result = response.ShouldBeOfType<Ok<List<Entities.Movie>>>();
+        var result = response.ShouldBeOfType<Ok<Page<Entities.Movie>>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status200OK);
 
-        var value = result.Value.ShouldBeOfType<List<Entities.Movie>>();
+        var value = result.Value.ShouldNotBeNull();
 
-        _ = value[0].Id.ShouldBeOfType<Guid>();
-        value[0].Id.ShouldBe(Guid.Empty);
-        _ = value[0].Title.ShouldBeOfType<string>();
-        value[0].Title.ShouldBe("Lorem Ipsum");
-        _ = value[0].Reviews.ShouldBeAssignableTo<ICollection<Review>>();
-        value[0].Reviews.ShouldBeNull();
+        value.Items.Count.ShouldBe(1);
+        value.Items[0].Id.ShouldBe(Guid.Empty);
+        value.Items[0].Title.ShouldBe("Lorem Ipsum");
+        value.Items[0].Reviews.ShouldBeNull();
+        value.Offset.ShouldBe(20);
+        value.Limit.ShouldBe(5);
+        value.TotalCount.ShouldBe(21);
     }
 
     [Fact]
@@ -51,53 +52,26 @@ public class MovieEndpointTests
     {
         // Arrange
         var sender = Substitute.For<ISender>();
+        var id = Guid.NewGuid();
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         _ = sender
-            .Send(Arg.Any<Queries.GetMovieById.GetMovieByIdQuery>())
-            .ReturnsForAnyArgs(new Entities.Movie(Guid.Empty, "Lorem Ipsum"));
+            .Send(Arg.Is<Queries.GetMovieById.GetMovieByIdQuery>(q => q.Id == id), token)
+            .Returns(new Entities.Movie(id, "Lorem Ipsum"));
 
         // Act
-        var response = await MovieEndpoints.GetMovieById(Guid.Empty, sender);
+        var response = await MovieEndpoints.GetMovieById(id, sender, token);
 
         // Assert
         var result = response.ShouldBeOfType<Ok<Entities.Movie>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status200OK);
 
-        var value = result.Value.ShouldBeOfType<Entities.Movie>();
+        var value = result.Value.ShouldNotBeNull();
 
-        _ = value.Id.ShouldBeOfType<Guid>();
-        value.Id.ShouldBe(Guid.Empty);
-        _ = value.Title.ShouldBeOfType<string>();
+        value.Id.ShouldBe(id);
         value.Title.ShouldBe("Lorem Ipsum");
-        _ = value.Reviews.ShouldBeAssignableTo<ICollection<Review>>();
         value.Reviews.ShouldBeNull();
-    }
-
-    [Fact]
-    public async Task SearchMovies_ShouldReturn_Ok()
-    {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-
-        _ = sender
-            .Send(Arg.Is<Queries.SearchMovies.SearchMoviesQuery>(q => q.Query == "Lorem" && q.Limit == 5 && q.Cursor == "cursor"))
-            .Returns(new Page<Entities.Movie>([new Entities.Movie(Guid.Empty, "Lorem Ipsum")], 6, "next"));
-
-        // Act
-        var response = await MovieEndpoints.SearchMovies("Lorem", sender, 5, "cursor");
-
-        // Assert
-        var result = response.ShouldBeOfType<Ok<Page<Entities.Movie>>>();
-
-        result.StatusCode.ShouldBe(StatusCodes.Status200OK);
-
-        var value = result.Value.ShouldBeOfType<Page<Entities.Movie>>();
-
-        value.TotalCount.ShouldBe(6);
-        value.NextCursor.ShouldBe("next");
-        _ = value.Items.ShouldHaveSingleItem();
-        value.Items[0].Id.ShouldBe(Guid.Empty);
-        value.Items[0].Title.ShouldBe("Lorem Ipsum");
     }
 }

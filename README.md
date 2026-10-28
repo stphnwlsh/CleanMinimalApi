@@ -92,11 +92,11 @@ Every endpoint is documented with XML comments: a summary, a description with a 
 - Optional JWT bearer authentication, turned on by setting an authority, with the security scheme shown in Scalar
 - Logging using [Serilog](https://github.com/serilog/serilog), with [Seq](https://datalust.co/seq) when running in Docker
 - Mediator pattern using [Mediator](https://github.com/martinothamar/Mediator)
-- Search and cursor paging for movies, authors and reviews, on `/api/movie/search`, `/api/author/search` and `/api/review/search`
+- Offset paging and search on every list endpoint, such as `/api/movies?query=star&offset=0&limit=10`
 - Validation using [FluentValidation](https://github.com/FluentValidation/FluentValidation) in an Application pipeline behaviour
 - Error responses using [Problem Details (RFC 9457)](https://learn.microsoft.com/aspnet/core/fundamentals/error-handling-api)
 - Object mapping using [Mapperly](https://mapperly.riok.app)
-- In-memory data using [Entity Framework Core](https://learn.microsoft.com/ef/core/providers/in-memory/) seeded with [Bogus](https://github.com/bchavez/Bogus)
+- Data stored in [SQLite](https://learn.microsoft.com/ef/core/providers/sqlite/) using [Entity Framework Core](https://learn.microsoft.com/ef/core) migrations, seeded with [Bogus](https://github.com/bchavez/Bogus). Tests use a throwaway in-memory SQLite database, so they never touch a real one
 - Testing using [xUnit](https://xunit.net), [Shouldly](https://github.com/shouldly/shouldly) and [NSubstitute](https://github.com/nsubstitute/NSubstitute), with coverage from [Coverlet](https://github.com/coverlet-coverage/coverlet)
 - CI with GitHub Actions: build and test, 95% coverage gate, [Trivy](https://trivy.dev) container scan, [CodeQL](https://codeql.github.com) static analysis, then NuGet publishing and a GitHub release from `main` using [trusted publishing](https://learn.microsoft.com/nuget/nuget-org/trusted-publishing)
 - Monthly grouped dependency updates using [Dependabot](https://docs.github.com/code-security/dependabot)

@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 [ExcludeFromCodeCoverage]
 internal record Movie : Entity
 {
-    public string Title { get; init; }
+    public required string Title { get; init; }
 
-    public ICollection<Review> Reviews { get; init; }
+    public ICollection<Review> Reviews { get; init; } = [];
 }

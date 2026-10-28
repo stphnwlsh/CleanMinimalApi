@@ -29,18 +29,18 @@ public class MovieReviewsConfigurationTests(MovieReviewsDataFixture fixture)
             .FirstOrDefaultAsync(m => m.Stars == 5, token);
 
         // Assert
-        context.Database.IsInMemory().ShouldBeTrue();
+        context.Database.IsSqlite().ShouldBeTrue();
 
         _ = author.ShouldNotBeNull();
         _ = author.Id.ShouldBeOfType<Guid>();
         _ = author.FirstName.ShouldBeOfType<string>();
         _ = author.LastName.ShouldBeOfType<string>();
-        _ = author.Reviews.ShouldBeOfType<HashSet<Review>>();
+        author.Reviews.ShouldNotBeEmpty();
 
         _ = movie.ShouldNotBeNull();
         _ = movie.Id.ShouldBeOfType<Guid>();
         _ = movie.Title.ShouldBeOfType<string>();
-        _ = movie.Reviews.ShouldBeOfType<HashSet<Review>>();
+        movie.Reviews.ShouldNotBeEmpty();
 
         _ = review.ShouldNotBeNull();
         _ = review.Id.ShouldBeOfType<Guid>();

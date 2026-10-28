@@ -1,14 +1,15 @@
 namespace CleanMinimalApi.Application.Movies.Queries.GetMovies;
 
-using System.Threading;
-using System.Threading.Tasks;
+using Common.Paging;
 using Entities;
 using Mediator;
 
-public class GetMoviesHandler(IMoviesRepository repository) : IRequestHandler<GetMoviesQuery, List<Movie>>
+public class GetMoviesHandler(IMoviesRepository repository) : IRequestHandler<GetMoviesQuery, Page<Movie>>
 {
-    public async ValueTask<List<Movie>> Handle(GetMoviesQuery request, CancellationToken cancellationToken)
+    public async ValueTask<Page<Movie>> Handle(GetMoviesQuery request, CancellationToken cancellationToken)
     {
-        return await repository.GetMovies(cancellationToken);
+        var (items, totalCount) = await repository.GetMovies(request.Query, request.Offset, request.Limit, cancellationToken);
+
+        return new Page<Movie>(items, request.Offset, request.Limit, totalCount);
     }
 }

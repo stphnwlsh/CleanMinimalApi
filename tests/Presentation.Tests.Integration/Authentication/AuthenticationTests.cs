@@ -21,7 +21,7 @@ public class AuthenticationTests : IDisposable
     private static readonly SymmetricSecurityKey SigningKey = new(Encoding.UTF8.GetBytes("a-test-signing-key-that-is-long-enough-for-hs256"));
 
     private readonly MinimalApiApplication application = new(
-        settings: new Dictionary<string, string>
+        settings: new Dictionary<string, string?>
         {
             ["Authentication:Authority"] = Authority,
             ["Authentication:Audience"] = Audience
@@ -34,9 +34,9 @@ public class AuthenticationTests : IDisposable
         }));
 
     [Theory]
-    [InlineData("/api/movie")]
-    [InlineData("/api/author")]
-    [InlineData("/api/review")]
+    [InlineData("/api/movies")]
+    [InlineData("/api/authors")]
+    [InlineData("/api/reviews")]
     public async Task Get_WithoutToken_ShouldReturn_Unauthorized(string path)
     {
         // Arrange
@@ -58,16 +58,16 @@ public class AuthenticationTests : IDisposable
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", CreateToken("https://someone-else.example.com"));
 
         // Act
-        using var response = await client.GetAsync("/api/movie");
+        using var response = await client.GetAsync("/api/movies");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
     }
 
     [Theory]
-    [InlineData("/api/movie")]
-    [InlineData("/api/author")]
-    [InlineData("/api/review")]
+    [InlineData("/api/movies")]
+    [InlineData("/api/authors")]
+    [InlineData("/api/reviews")]
     public async Task Get_WithToken_ShouldReturn_Ok(string path)
     {
         // Arrange
@@ -105,10 +105,10 @@ public class AuthenticationTests : IDisposable
 
         // Assert
         var scheme = document.RootElement.GetProperty("components").GetProperty("securitySchemes").GetProperty("Bearer");
-        scheme.GetProperty("type").GetString().ShouldBe("http");
-        scheme.GetProperty("scheme").GetString().ShouldBe("bearer");
+        scheme.GetProperty("type").GetString()!.ShouldBe("http");
+        scheme.GetProperty("scheme").GetString()!.ShouldBe("bearer");
 
-        var getMovies = document.RootElement.GetProperty("paths").GetProperty("/api/movie").GetProperty("get");
+        var getMovies = document.RootElement.GetProperty("paths").GetProperty("/api/movies").GetProperty("get");
         getMovies.GetProperty("security")[0].TryGetProperty("Bearer", out _).ShouldBeTrue();
         getMovies.GetProperty("responses").TryGetProperty("401", out _).ShouldBeTrue();
 
@@ -129,7 +129,7 @@ public class AuthenticationTests : IDisposable
 
         // Assert
         document.RootElement.GetProperty("components").TryGetProperty("securitySchemes", out _).ShouldBeFalse();
-        document.RootElement.GetProperty("paths").GetProperty("/api/movie").GetProperty("get").TryGetProperty("security", out _).ShouldBeFalse();
+        document.RootElement.GetProperty("paths").GetProperty("/api/movies").GetProperty("get").TryGetProperty("security", out _).ShouldBeFalse();
     }
 
     public void Dispose()
