@@ -1,19 +1,18 @@
 namespace CleanMinimalApi.Presentation.Extensions;
 
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Application;
 using CleanMinimalApi.Presentation.Errors;
+using CleanMinimalApi.Presentation.OpenApi;
 using CleanMinimalApi.Presentation.Serialization;
 using Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi;
 using Serilog;
 
 [ExcludeFromCodeCoverage]
@@ -49,41 +48,18 @@ public static class WebApplicationBuilderExtensions
             opt.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             opt.SerializerOptions.PropertyNameCaseInsensitive = true;
             opt.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            opt.SerializerOptions.NumberHandling = JsonNumberHandling.Strict;
             opt.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
             opt.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
         });
 
         #endregion Serialisation
 
-        #region Swagger
+        #region OpenApi
 
-        var ti = CultureInfo.CurrentCulture.TextInfo;
+        _ = builder.Services.AddOpenApi(options => options.AddDocumentTransformer<DocumentInfoTransformer>());
 
-        _ = builder.Services.AddEndpointsApiExplorer();
-
-        _ = builder.Services.AddOpenApi(options =>
-            options.AddDocumentTransformer((document, context, cancellationToken) =>
-            {
-                document.Info = new OpenApiInfo
-                {
-                    Version = "v1",
-                    Title = $"CleanMinimalApi API - {ti.ToTitleCase(builder.Environment.EnvironmentName)}",
-                    Description = "An example to share an implementation of Minimal API in .NET 10.",
-                    Contact = new OpenApiContact
-                    {
-                        Name = "CleanMinimalApi API",
-                        Url = new Uri("https://github.com/stphnwlsh/cleanminimalapi")
-                    },
-                    License = new OpenApiLicense
-                    {
-                        Name = "CleanMinimalApi API - License - MIT",
-                        Url = new Uri("https://opensource.org/licenses/MIT")
-                    },
-                };
-                return Task.CompletedTask;
-            }));
-
-        #endregion Swagger
+        #endregion OpenApi
 
         #region Errors
 

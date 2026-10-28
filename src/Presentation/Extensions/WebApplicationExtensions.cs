@@ -3,6 +3,7 @@ namespace CleanMinimalApi.Presentation.Extensions;
 using System.Diagnostics.CodeAnalysis;
 using CleanMinimalApi.Presentation.Endpoints;
 using Microsoft.AspNetCore.Builder;
+using Scalar.AspNetCore;
 using Serilog;
 
 [ExcludeFromCodeCoverage]
@@ -36,12 +37,18 @@ public static class WebApplicationExtensions
 
         #endregion API Configuration
 
-        #region Swagger
+        #region OpenApi
 
         _ = app.MapOpenApi();
-        _ = app.UseSwaggerUI(options => options.SwaggerEndpoint("/openapi/v1.json", "CleanMinimalApi API v1"));
+        _ = app.MapScalarApiReference(options => options
+            .WithTitle("CleanMinimalApi API")
+            .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient)
+            .HideDeveloperTools()
+            .DisableAgent()
+            .DisableMcp()
+            .DisableTelemetry());
 
-        #endregion Swagger
+        #endregion OpenApi
 
         #region MinimalApi
 

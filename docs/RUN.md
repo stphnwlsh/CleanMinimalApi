@@ -18,7 +18,8 @@ dotnet run --project ./src/Presentation
 docker compose up -d --build
 ```
 
-- App: <http://localhost:8080/swagger> (Swagger UI)
+- App: <http://localhost:8080/scalar> (Scalar API reference)
+- OpenAPI document: <http://localhost:8080/openapi/v1.json>
 - Seq: <http://localhost:5341>
 
 To shut the containers down:
