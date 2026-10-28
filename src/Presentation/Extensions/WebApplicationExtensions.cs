@@ -1,6 +1,7 @@
 namespace CleanMinimalApi.Presentation.Extensions;
 
 using System.Diagnostics.CodeAnalysis;
+using CleanMinimalApi.Presentation.Authentication;
 using CleanMinimalApi.Presentation.Endpoints;
 using Microsoft.AspNetCore.Builder;
 using Scalar.AspNetCore;
@@ -30,6 +31,17 @@ public static class WebApplicationExtensions
         _ = app.UseHsts();
 
         #endregion Security
+
+        #region Authentication
+
+        if (AuthenticationSettings.FromConfiguration(app.Configuration).Enabled)
+        {
+            _ = app.UseAuthentication();
+        }
+
+        _ = app.UseAuthorization();
+
+        #endregion Authentication
 
         #region API Configuration
 
