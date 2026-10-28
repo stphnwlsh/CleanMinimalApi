@@ -264,7 +264,8 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     public async Task DeleteReview_ShouldReturn_True()
     {
         // Arrange
-        var id = fixture.Context.Reviews.First(r => r.Stars == 1).Id;
+        var deleted = fixture.Context.Reviews.First(r => r.Stars == 1);
+        var (id, authorId, movieId) = (deleted.Id, deleted.ReviewAuthorId, deleted.ReviewedMovieId);
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
 
@@ -275,8 +276,6 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
         result.ShouldBeTrue();
 
         // Cleanup
-        var authorId = fixture.Context.Authors.First(a => a.FirstName == "Three").Id;
-        var movieId = fixture.Context.Movies.First(m => m.Title == "Three").Id;
         _ = await fixture.Repository.CreateReview(authorId, movieId, 1, token);
     }
 

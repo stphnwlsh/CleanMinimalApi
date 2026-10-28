@@ -65,6 +65,19 @@ public class BearerSecurityTransformerTests
     }
 
     [Fact]
+    public async Task TransformOperation_ShouldAdd_Unauthorized_WhenOperationHasNoResponses()
+    {
+        // Arrange
+        var operation = new OpenApiOperation { Responses = null };
+
+        // Act
+        await this.transformer.TransformAsync(operation, CreateOperationContext(new AuthorizeAttribute()), CancellationToken.None);
+
+        // Assert
+        operation.Responses.ShouldNotBeNull().Keys.ShouldBe(["401"]);
+    }
+
+    [Fact]
     public async Task TransformOperation_ShouldKeep_ExistingSecurityAndResponses()
     {
         // Arrange
