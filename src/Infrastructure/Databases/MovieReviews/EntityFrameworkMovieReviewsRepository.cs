@@ -243,14 +243,14 @@ internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMovi
     {
         var reviews = this.context.Reviews.AsNoTracking();
 
-        if (movieId.HasValue)
+        if (movieId is Guid reviewedMovieId)
         {
-            reviews = reviews.Where(r => r.ReviewedMovieId == movieId.Value);
+            reviews = reviews.Where(r => r.ReviewedMovieId == reviewedMovieId);
         }
 
-        if (authorId.HasValue)
+        if (authorId is Guid reviewAuthorId)
         {
-            reviews = reviews.Where(r => r.ReviewAuthorId == authorId.Value);
+            reviews = reviews.Where(r => r.ReviewAuthorId == reviewAuthorId);
         }
 
         var totalCount = await reviews.CountAsync(cancellationToken);
