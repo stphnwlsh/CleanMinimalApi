@@ -166,6 +166,8 @@ jobs:
       - name: Checkout
         id: checkout
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - name: Download Coverage
         id: download
@@ -185,7 +187,7 @@ jobs:
         id: threshold
         run: |
           python3 - <<'PY'
-          import os, sys, xml.etree.ElementTree as ET
+          import os, re, subprocess, sys, xml.etree.ElementTree as ET
           from collections import defaultdict
           root = ET.parse("out/coverage.opencover.xml").getroot()
           lines = {}
@@ -211,10 +213,31 @@ jobs:
           coverage = 100 * hit / total if total else 0
           threshold = float(os.environ["THRESHOLD"])
           print(f"Line coverage {coverage:.2f}% ({hit}/{total}), threshold {threshold}%")
-          sys.exit(0 if coverage >= threshold else 1)
+          passed = coverage >= threshold
+          base = os.environ.get("BASE_REF")
+          if base:
+              diff = subprocess.run(["git", "diff", "--unified=0", f"origin/{base}...HEAD"], capture_output=True, text=True, check=True).stdout
+              changed, path = set(), None
+              for line in diff.splitlines():
+                  if line.startswith("+++ "):
+                      path = line[6:] if line.startswith("+++ b/") else None
+                  elif line.startswith("@@") and path:
+                      start, count = re.match(r"@@ -\S+ \+(\d+)(?:,(\d+))? @@", line).groups()
+                      changed.update((path, n) for n in range(int(start), int(start) + int(count or 1)))
+              patch = [hits for key, hits in lines.items() if key in changed]
+              if patch:
+                  patch_coverage = 100 * sum(1 for hits in patch if hits > 0) / len(patch)
+                  patch_threshold = float(os.environ["PATCH_THRESHOLD"])
+                  print(f"Patch coverage {patch_coverage:.2f}% ({sum(1 for hits in patch if hits > 0)}/{len(patch)}), threshold {patch_threshold}%")
+                  passed = passed and patch_coverage >= patch_threshold
+              else:
+                  print("Patch coverage: no coverable lines changed")
+          sys.exit(0 if passed else 1)
           PY
         env:
           THRESHOLD: 95
+          PATCH_THRESHOLD: 90
+          BASE_REF: ${{ github.base_ref }}
 
   scan:
     name: Container Scan
