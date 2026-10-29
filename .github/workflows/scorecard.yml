@@ -16,7 +16,6 @@ jobs:
     name: Scorecard Analysis
     runs-on: ubuntu-latest
     permissions:
-      security-events: write
       id-token: write
 
     steps:
@@ -33,6 +32,35 @@ jobs:
           results_file: results.sarif
           results_format: sarif
           publish_results: true
+
+      - name: Upload Results
+        id: upload-results
+        uses: actions/upload-artifact@v7
+        with:
+          name: scorecard
+          path: results.sarif
+          retention-days: 1
+
+  upload:
+    name: Scorecard Upload
+    runs-on: ubuntu-latest
+    needs: analysis
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Download Results
+        id: download-results
+        uses: actions/download-artifact@v8
+        with:
+          name: scorecard
 
       - name: Fix Locations
         id: fix-locations
