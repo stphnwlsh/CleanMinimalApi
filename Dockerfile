@@ -11,14 +11,11 @@ ENV DOTNET_ENVIRONMENT=${ENVIRONMENT}
 
 WORKDIR /sln
 
-# Dotnet Restore
-COPY ./*.sln ./NuGet.config ./Directory.Build.props ./Directory.Packages.props ./
-COPY --parents src/*/*.csproj src/*/packages.lock.json tests/*/*.csproj tests/*/packages.lock.json ./
-
-RUN dotnet restore --locked-mode -v minimal
-
-# Copy Remaining Files
+# Copy Files
 COPY . .
+
+# Dotnet Restore from the committed lock files
+RUN dotnet restore --locked-mode -v minimal
 
 # Dotnet Build
 RUN dotnet build --no-restore -c Release -v minimal -p:VersionPrefix=${VERSION_PREFIX} -p:VersionSuffix=${VERSION_SUFFIX}
