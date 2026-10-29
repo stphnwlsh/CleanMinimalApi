@@ -6,5 +6,10 @@ coverage:
         informational: true
     patch:
       default:
-        target: 95%
+        target: 90%
         informational: true
+
+ignore:
+  - "**/Program.cs"
+  - "**/Migrations/**"
+  - "**/obj/**"

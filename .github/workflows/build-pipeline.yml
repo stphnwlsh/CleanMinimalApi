@@ -6,8 +6,16 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    - cron: "0 3 * * 1"
+    - cron: "0 9 15 * *"
+      timezone: "America/Chicago"
+    - cron: "0 9 1 * *"
+      timezone: "America/Chicago"
   workflow_dispatch:
+    inputs:
+      force:
+        description: Release even if only .github/ has changed since the last release
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -39,11 +47,7 @@ jobs:
           VERSION_PREFIX=$(date +'%Y.%m.%d').${GITHUB_RUN_NUMBER}
 
           if [[ ${GITHUB_EVENT_NAME} == 'pull_request' ]]; then
-            BRANCH_BASE=${GITHUB_BASE_REF#refs/*/}
-            BRANCH_BASE=${BRANCH_BASE/[^a-zA-Z0-9]//-}
-            BRANCH_COMPARE=${GITHUB_HEAD_REF#refs/*/}
-            BRANCH_COMPARE=${BRANCH_COMPARE//[^a-zA-Z0-9]/-}
-            VERSION_SUFFIX="merge-${BRANCH_BASE}-${BRANCH_COMPARE}"
+            VERSION_SUFFIX="pr-${PR_NUMBER}"
           fi
 
           if [[ $VERSION_SUFFIX == '' ]]; then
@@ -56,6 +60,8 @@ jobs:
           echo "version_prefix=$(eval printf "%s" "$VERSION_PREFIX")" >> $GITHUB_OUTPUT
           echo "version_suffix=$(eval printf "%s" "$VERSION_SUFFIX")" >> $GITHUB_OUTPUT
           echo "version=$(eval printf "%s" "$VERSION")" >> $GITHUB_OUTPUT
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         shell: bash
 
       - name: Test
@@ -160,6 +166,8 @@ jobs:
       - name: Checkout
         id: checkout
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - name: Download Coverage
         id: download
@@ -179,7 +187,7 @@ jobs:
         id: threshold
         run: |
           python3 - <<'PY'
-          import os, sys, xml.etree.ElementTree as ET
+          import os, re, subprocess, sys, xml.etree.ElementTree as ET
           from collections import defaultdict
           root = ET.parse("out/coverage.opencover.xml").getroot()
           lines = {}
@@ -205,10 +213,31 @@ jobs:
           coverage = 100 * hit / total if total else 0
           threshold = float(os.environ["THRESHOLD"])
           print(f"Line coverage {coverage:.2f}% ({hit}/{total}), threshold {threshold}%")
-          sys.exit(0 if coverage >= threshold else 1)
+          passed = coverage >= threshold
+          base = os.environ.get("BASE_REF")
+          if base:
+              diff = subprocess.run(["git", "diff", "--unified=0", f"origin/{base}...HEAD"], capture_output=True, text=True, check=True).stdout
+              changed, path = set(), None
+              for line in diff.splitlines():
+                  if line.startswith("+++ "):
+                      path = line[6:] if line.startswith("+++ b/") else None
+                  elif line.startswith("@@") and path:
+                      start, count = re.match(r"@@ -\S+ \+(\d+)(?:,(\d+))? @@", line).groups()
+                      changed.update((path, n) for n in range(int(start), int(start) + int(count or 1)))
+              patch = [hits for key, hits in lines.items() if key in changed]
+              if patch:
+                  patch_coverage = 100 * sum(1 for hits in patch if hits > 0) / len(patch)
+                  patch_threshold = float(os.environ["PATCH_THRESHOLD"])
+                  print(f"Patch coverage {patch_coverage:.2f}% ({sum(1 for hits in patch if hits > 0)}/{len(patch)}), threshold {patch_threshold}%")
+                  passed = passed and patch_coverage >= patch_threshold
+              else:
+                  print("Patch coverage: no coverable lines changed")
+          sys.exit(0 if passed else 1)
           PY
         env:
           THRESHOLD: 95
+          PATCH_THRESHOLD: 90
+          BASE_REF: ${{ github.base_ref }}
 
   scan:
     name: Container Scan
@@ -290,11 +319,54 @@ jobs:
         with:
           category: "/language:${{ matrix.language }}"
 
+  release:
+    name: Release Check
+    runs-on: ubuntu-latest
+    if: ${{ github.repository == 'stphnwlsh/CleanMinimalApi' && github.ref == 'refs/heads/main' && (github.event.schedule == '0 9 1 * *' || github.event_name == 'workflow_dispatch') }}
+    permissions:
+      contents: read
+
+    outputs:
+      publish: ${{ steps.check.outputs.publish }}
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Check Changes
+        id: check
+        run: |
+          LATEST=$(gh release view --json tagName --jq .tagName 2>/dev/null || true)
+
+          if [[ -z "$LATEST" ]]; then
+            echo "No previous release"
+            PUBLISH=true
+          elif [[ "$FORCE" == 'true' ]]; then
+            echo "Forced release"
+            PUBLISH=true
+          elif git diff --quiet "$LATEST" HEAD -- . ':(exclude).github'; then
+            echo "Nothing outside .github/ has changed since $LATEST, skipping the release"
+            PUBLISH=false
+          else
+            echo "Changes since $LATEST:"
+            git diff --stat "$LATEST" HEAD -- . ':(exclude).github'
+            PUBLISH=true
+          fi
+
+          echo "publish=$PUBLISH" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FORCE: ${{ inputs.force }}
+        shell: bash
+
   publish:
     name: Publish
     runs-on: ubuntu-latest
-    needs: [build, coverage, scan, analysis]
-    if: ${{ github.repository == 'stphnwlsh/CleanMinimalApi' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
+    needs: [build, coverage, scan, analysis, release]
+    if: ${{ needs.release.outputs.publish == 'true' }}
     permissions:
       contents: write
       id-token: write
@@ -319,7 +391,16 @@ jobs:
 
       - name: GitHub Release
         id: github-release
-        run: gh release create "$VERSION" packages/*.nupkg --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "$VERSION" --generate-notes
+        run: |
+          if [[ "$EVENT" == 'schedule' ]]; then
+            NOTES="Monthly release for $(date +'%B %Y'). The template is released on the 1st of each month with every change merged since the previous release."
+          else
+            NOTES="Out-of-cycle release. The template is normally released on the 1st of each month with every change merged since the previous release."
+          fi
+
+          gh release create "$VERSION" packages/*.nupkg --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "$VERSION" --notes "$NOTES" --generate-notes
         env:
           GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
           VERSION: ${{ needs.build.outputs.version }}
+        shell: bash

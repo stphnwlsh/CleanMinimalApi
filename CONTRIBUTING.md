@@ -49,7 +49,7 @@ dotnet new uninstall ./
 
 1. Create a branch from `main` named `feature/`, `fix/` or `chore/` followed by a short description, for example `fix/review-validation`.
 1. Keep the change focused. Unrelated refactors are easier to review as separate pull requests.
-1. Add or update tests. The pipeline fails if line coverage drops below 95%.
+1. Add or update tests. The pipeline fails if line coverage drops below 95%, or if less than 90% of the lines your pull request changes are covered.
 1. Follow the style in `.editorconfig` and `Directory.Build.props`. Warnings are treated as errors, so the build must be clean.
 1. Update the README or docs if behaviour changes.
 
