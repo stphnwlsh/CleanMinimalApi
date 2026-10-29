@@ -1,11 +1,26 @@
 changelog:
+  exclude:
+    labels:
+      - ignore-for-release
   categories:
-    - title: Changes
+    - title: Breaking changes
       labels:
-        - "*"
-      exclude:
-        labels:
-          - dependencies
+        - breaking-change
+    - title: New features
+      labels:
+        - enhancement
+    - title: Bug fixes
+      labels:
+        - bug
+    - title: Documentation
+      labels:
+        - documentation
+    - title: Build and pipeline
+      labels:
+        - build
     - title: Dependencies
       labels:
         - dependencies
+    - title: Other changes
+      labels:
+        - "*"
