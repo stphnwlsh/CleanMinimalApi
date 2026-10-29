@@ -34,8 +34,13 @@ jobs:
           results_format: sarif
           publish_results: true
 
+      - name: Fix Locations
+        id: fix-locations
+        run: |
+          jq '(.runs[].results[]?.locations[]?.physicalLocation.artifactLocation | select(.uri == "no file associated with this alert") | .uri) = ".github/workflows/scorecard.yml"' results.sarif > scorecard.sarif
+
       - name: Upload
         id: upload
         uses: github/codeql-action/upload-sarif@v4
         with:
-          sarif_file: results.sarif
+          sarif_file: scorecard.sarif
