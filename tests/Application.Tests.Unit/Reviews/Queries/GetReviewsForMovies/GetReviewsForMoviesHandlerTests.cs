@@ -41,4 +41,30 @@ public class GetReviewsForMoviesHandlerTests
         result[reviewed].Select(r => r.Stars).ShouldBe([5, 3]);
         result[unreviewed].ShouldBeEmpty();
     }
+
+    [Fact]
+    public async Task Handle_ShouldSkip_ReviewsWithoutMovie()
+    {
+        // Arrange
+        var movie = Guid.NewGuid();
+        var query = new GetReviewsForMoviesQuery { MovieIds = [movie] };
+
+        var repository = Substitute.For<IReviewsRepository>();
+        var handler = new GetReviewsForMoviesHandler(repository);
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
+
+        _ = repository.GetReviewsForMovies(query.MovieIds, token).Returns(
+        [
+            new Review(Guid.NewGuid(), 5, new ReviewedMovie(movie, "Title")),
+            new Review(Guid.NewGuid(), 1)
+        ]);
+
+        // Act
+        var result = await handler.Handle(query, token);
+
+        // Assert
+        result.Count.ShouldBe(1);
+        result[movie].Select(r => r.Stars).ShouldBe([5]);
+    }
 }

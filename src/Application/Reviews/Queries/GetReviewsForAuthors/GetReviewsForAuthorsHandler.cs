@@ -10,7 +10,7 @@ public class GetReviewsForAuthorsHandler(IReviewsRepository repository) : IReque
         var reviews = (await repository.GetReviewsForAuthors(request.AuthorIds, cancellationToken))
             .ToLookup(r => r.ReviewAuthor?.Id);
 
-        // Every id gets an entry, so a author with no reviews has an empty list rather than no entry.
+        // Every id gets an entry, so an author with no reviews has an empty list rather than no entry.
         return request.AuthorIds
             .Distinct()
             .ToDictionary(id => id, id => reviews[id].ToList());

@@ -41,4 +41,30 @@ public class GetReviewsForAuthorsHandlerTests
         result[reviewer].Select(r => r.Stars).ShouldBe([5, 3]);
         result[nonReviewer].ShouldBeEmpty();
     }
+
+    [Fact]
+    public async Task Handle_ShouldSkip_ReviewsWithoutAuthor()
+    {
+        // Arrange
+        var author = Guid.NewGuid();
+        var query = new GetReviewsForAuthorsQuery { AuthorIds = [author] };
+
+        var repository = Substitute.For<IReviewsRepository>();
+        var handler = new GetReviewsForAuthorsHandler(repository);
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
+
+        _ = repository.GetReviewsForAuthors(query.AuthorIds, token).Returns(
+        [
+            new Review(Guid.NewGuid(), 5, ReviewAuthor: new ReviewAuthor(author, "First", "Last")),
+            new Review(Guid.NewGuid(), 1)
+        ]);
+
+        // Act
+        var result = await handler.Handle(query, token);
+
+        // Assert
+        result.Count.ShouldBe(1);
+        result[author].Select(r => r.Stars).ShouldBe([5]);
+    }
 }
