@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    - cron: "0 9 * * 1"
+    - cron: "0 9 15 * *"
       timezone: "America/Chicago"
     - cron: "0 9 1 * *"
       timezone: "America/Chicago"
