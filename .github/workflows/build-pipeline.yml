@@ -6,8 +6,16 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    - cron: "0 3 * * 1"
+    - cron: "0 9 * * 1"
+      timezone: "America/Chicago"
+    - cron: "0 9 1 * *"
+      timezone: "America/Chicago"
   workflow_dispatch:
+    inputs:
+      force:
+        description: Release even if only .github/ has changed since the last release
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -290,11 +298,54 @@ jobs:
         with:
           category: "/language:${{ matrix.language }}"
 
+  release:
+    name: Release Check
+    runs-on: ubuntu-latest
+    if: ${{ github.repository == 'stphnwlsh/CleanMinimalApi' && github.ref == 'refs/heads/main' && (github.event.schedule == '0 9 1 * *' || github.event_name == 'workflow_dispatch') }}
+    permissions:
+      contents: read
+
+    outputs:
+      publish: ${{ steps.check.outputs.publish }}
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Check Changes
+        id: check
+        run: |
+          LATEST=$(gh release view --json tagName --jq .tagName 2>/dev/null || true)
+
+          if [[ -z "$LATEST" ]]; then
+            echo "No previous release"
+            PUBLISH=true
+          elif [[ "$FORCE" == 'true' ]]; then
+            echo "Forced release"
+            PUBLISH=true
+          elif git diff --quiet "$LATEST" HEAD -- . ':(exclude).github'; then
+            echo "Nothing outside .github/ has changed since $LATEST, skipping the release"
+            PUBLISH=false
+          else
+            echo "Changes since $LATEST:"
+            git diff --stat "$LATEST" HEAD -- . ':(exclude).github'
+            PUBLISH=true
+          fi
+
+          echo "publish=$PUBLISH" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FORCE: ${{ inputs.force }}
+        shell: bash
+
   publish:
     name: Publish
     runs-on: ubuntu-latest
-    needs: [build, coverage, scan, analysis]
-    if: ${{ github.repository == 'stphnwlsh/CleanMinimalApi' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
+    needs: [build, coverage, scan, analysis, release]
+    if: ${{ needs.release.outputs.publish == 'true' }}
     permissions:
       contents: write
       id-token: write
@@ -319,7 +370,16 @@ jobs:
 
       - name: GitHub Release
         id: github-release
-        run: gh release create "$VERSION" packages/*.nupkg --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "$VERSION" --generate-notes
+        run: |
+          if [[ "$EVENT" == 'schedule' ]]; then
+            NOTES="Monthly release for $(date +'%B %Y'). The template is released on the 1st of each month with every change merged since the previous release."
+          else
+            NOTES="Out-of-cycle release. The template is normally released on the 1st of each month with every change merged since the previous release."
+          fi
+
+          gh release create "$VERSION" packages/*.nupkg --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "$VERSION" --notes "$NOTES" --generate-notes
         env:
           GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
           VERSION: ${{ needs.build.outputs.version }}
+        shell: bash

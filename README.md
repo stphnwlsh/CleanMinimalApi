@@ -18,6 +18,7 @@ It's one of five templates that share the same Application and Infrastructure la
 - [Running the project](#running-the-project)
 - [Architecture](#architecture)
 - [Features](#features)
+- [Releases](#releases)
 - [Related templates](#related-templates)
 - [Resources](#resources)
 - [Contributing](#contributing)
@@ -100,9 +101,21 @@ Every endpoint is documented with XML comments: a summary, a description with a 
 - Data stored in [SQLite](https://learn.microsoft.com/ef/core/providers/sqlite/) using [Entity Framework Core](https://learn.microsoft.com/ef/core) migrations, seeded with [Bogus](https://github.com/bchavez/Bogus) only when `Database:SeedSampleData` is on. Each test uses its own throwaway in-memory SQLite database, so tests never touch a real one or each other's data
 - Testing using [xUnit](https://xunit.net), [Shouldly](https://github.com/shouldly/shouldly) and [NSubstitute](https://github.com/nsubstitute/NSubstitute), with coverage from [Coverlet](https://github.com/coverlet-coverage/coverlet)
 - Build rules in `Directory.Build.props`: code style and the recommended analyzers are checked on every build, warnings fail it, and package versions live in one place with [Central Package Management](https://learn.microsoft.com/nuget/consume-packages/central-package-management)
-- CI with GitHub Actions: build and test, a `dotnet format` check, 95% coverage gate, [Trivy](https://trivy.dev) container scan, [CodeQL](https://codeql.github.com) static analysis, then NuGet publishing and a GitHub release from `main` using [trusted publishing](https://learn.microsoft.com/nuget/nuget-org/trusted-publishing)
-- Monthly grouped dependency updates using [Dependabot](https://docs.github.com/code-security/dependabot), including the pinned Seq image
+- CI with GitHub Actions: build and test, a `dotnet format` check, 95% coverage gate, [Trivy](https://trivy.dev) container scan, [CodeQL](https://codeql.github.com) static analysis, then a monthly NuGet release and GitHub release from `main` using [trusted publishing](https://learn.microsoft.com/nuget/nuget-org/trusted-publishing)
+- Grouped dependency updates on the 15th of each month using [Dependabot](https://docs.github.com/code-security/dependabot), including the pinned Seq image
 - A Docker image that runs as a non-root user with a health check
+
+## Releases
+
+The template is released once a month. On the 1st, at 9am US Central time, the pipeline checks for changes since the last release. If anything outside `.github/` has changed, it builds and tests `main`, publishes the new version to [NuGet](https://www.nuget.org/packages/CleanMinimalApi.Template) and creates a [GitHub release](https://github.com/stphnwlsh/CleanMinimalApi/releases) with notes for every pull request merged since the previous one. If nothing has changed, there's no release that month. Dependency updates arrive on the 15th, so they're merged in time for the next release.
+
+Versions keep the `YYYY.MM.DD.RUN` format. Up to the end of October 2026, every merge to `main` was released, so the older releases are much smaller. To release outside the monthly cycle, run the **Build Pipeline** workflow by hand. Tick **force** to release even when only `.github/` has changed.
+
+To update an installed template to the latest release:
+
+``` bash
+dotnet new update
+```
 
 ## Related templates
 
