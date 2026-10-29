@@ -30,9 +30,9 @@ public class ReviewEndpointTests : IDisposable
         using var client = this.application.CreateClient();
 
         using var authorResponse = await client.GetAsync("/api/authors");
-        var authorResult = (await authorResponse.Content.ReadAsStringAsync()).Deserialize<Page<Author>>().Items[0];
+        var authorResult = (await authorResponse.Content.ReadAsStringAsync()).Deserialize<Page<AuthorSummary>>().Items[0];
         using var movieResponse = await client.GetAsync("/api/movies");
-        var movieResult = (await movieResponse.Content.ReadAsStringAsync()).Deserialize<Page<Movie>>().Items[0];
+        var movieResult = (await movieResponse.Content.ReadAsStringAsync()).Deserialize<Page<MovieSummary>>().Items[0];
         var json = (new { Stars = 5, AuthorId = authorResult.Id, MovieId = movieResult.Id }).Serialize();
         using var content = new StringContent(json, Encoding.UTF8, "application/json");
 
