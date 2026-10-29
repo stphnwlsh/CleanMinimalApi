@@ -2,10 +2,10 @@ namespace CleanMinimalApi.Application.Tests.Unit.Authors.Queries.GetAuthors;
 
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Common.Paging;
 using Application.Authors;
 using Application.Authors.Entities;
 using Application.Authors.Queries.GetAuthors;
+using Application.Common.Paging;
 using NSubstitute;
 using Shouldly;
 using Xunit;
@@ -23,7 +23,7 @@ public class GetAuthorsHandlerTests
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
 
-        _ = repository.GetAuthors("Lorem", 20, 5, token).Returns(([new Author(Guid.Empty, "First", "Last")], 21));
+        _ = repository.GetAuthors("Lorem", 20, 5, token).Returns(([new AuthorSummary(Guid.Empty, "First", "Last", 0, null)], 21));
 
         // Act
         var result = await handler.Handle(query, token);
@@ -50,7 +50,7 @@ public class GetAuthorsHandlerTests
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
 
-        _ = repository.GetAuthors(null, 0, Paging.DefaultLimit, token).Returns(([new Author(Guid.Empty, "First", "Last")], 1));
+        _ = repository.GetAuthors(null, 0, Paging.DefaultLimit, token).Returns(([new AuthorSummary(Guid.Empty, "First", "Last", 0, null)], 1));
 
         // Act
         var result = await handler.Handle(query, token);

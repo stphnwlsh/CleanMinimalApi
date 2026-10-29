@@ -19,7 +19,7 @@ public static class MovieEndpoints
 
         _ = root.MapGet("/", GetMovies)
             .WithName(nameof(GetMovies))
-            .Produces<Page<Entities.Movie>>()
+            .Produces<Page<Entities.MovieSummary>>()
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
@@ -37,9 +37,9 @@ public static class MovieEndpoints
     /// List Movies
     /// </summary>
     /// <remarks>
-    /// Returns one page of movies, ordered by title, along with the reviews written about them. Add a search
+    /// Returns one page of movies, ordered by title, each with its review count and average stars. Add a search
     /// term to return only the movies whose title contains it, ignoring case. To fetch the next page, add the
-    /// limit to the offset.
+    /// limit to the offset. Look up a movie by its Id to get its reviews.
     ///
     /// Sample request:
     ///
@@ -51,7 +51,7 @@ public static class MovieEndpoints
     /// <response code="200">One page of Movies.</response>
     /// <response code="400">The search term, offset or limit is not valid.</response>
     /// <response code="500">An unexpected error occurred.</response>
-    public static async Task<Ok<Page<Entities.Movie>>> GetMovies(
+    public static async Task<Ok<Page<Entities.MovieSummary>>> GetMovies(
         [FromQuery] string? query,
         [FromServices] ISender sender,
         CancellationToken cancellationToken,

@@ -6,6 +6,7 @@ using Application.Reviews;
 using Infrastructure.Databases.MovieReviews;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Shouldly;
 using Xunit;
 
@@ -52,8 +53,8 @@ public class DependencyInjectionTests
         using var provider = services.BuildServiceProvider(validateScopes: true);
 
         // Act
-        _ = provider.InitialiseInfrastructure();
-        _ = provider.InitialiseInfrastructure();
+        _ = provider.InitialiseInfrastructure(true);
+        _ = provider.InitialiseInfrastructure(true);
 
         // Assert
         using var scope = provider.CreateScope();
@@ -62,6 +63,47 @@ public class DependencyInjectionTests
         (await context.Authors.CountAsync()).ShouldBe(15);
         (await context.Movies.CountAsync()).ShouldBe(50);
         (await context.Reviews.CountAsync()).ShouldBe(150);
+    }
+
+    [Fact]
+    public async Task InitialiseInfrastructure_ShouldNotSeed_WhenSampleDataIsOff()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        _ = services.AddInfrastructure(InMemoryConnectionString());
+
+        using var provider = services.BuildServiceProvider(validateScopes: true);
+
+        // Act
+        _ = provider.InitialiseInfrastructure(false);
+
+        // Assert
+        using var scope = provider.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<MovieReviewsDbContext>();
+
+        (await context.Authors.CountAsync()).ShouldBe(0);
+        (await context.Movies.CountAsync()).ShouldBe(0);
+        (await context.Reviews.CountAsync()).ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task AddInfrastructureHealthChecks_ShouldReport_Healthy()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        _ = services.AddLogging();
+        _ = services.AddInfrastructure(InMemoryConnectionString());
+        _ = services.AddHealthChecks().AddInfrastructureHealthChecks("ready");
+
+        using var provider = services.BuildServiceProvider(validateScopes: true);
+        _ = provider.InitialiseInfrastructure(false);
+
+        // Act
+        var report = await provider.GetRequiredService<HealthCheckService>().CheckHealthAsync();
+
+        // Assert
+        report.Status.ShouldBe(HealthStatus.Healthy);
+        report.Entries["MovieReviewsDatabase"].Tags.ShouldContain("ready");
     }
 
     [Fact]
@@ -85,7 +127,7 @@ public class DependencyInjectionTests
         _ = services.AddInfrastructure(InMemoryConnectionString());
 
         using var provider = services.BuildServiceProvider(validateScopes: true);
-        _ = provider.InitialiseInfrastructure();
+        _ = provider.InitialiseInfrastructure(true);
 
         // Act
         var requests = Enumerable.Range(0, 20).Select(async _ =>
@@ -108,7 +150,7 @@ public class DependencyInjectionTests
         _ = services.AddInfrastructure(InMemoryConnectionString());
 
         using var provider = services.BuildServiceProvider();
-        _ = provider.InitialiseInfrastructure();
+        _ = provider.InitialiseInfrastructure(true);
 
         var (items, _) = await provider.GetRequiredService<IServiceScopeFactory>().CreateScope()
             .ServiceProvider.GetRequiredService<IMoviesRepository>()

@@ -2,10 +2,10 @@ namespace CleanMinimalApi.Infrastructure.Databases.MovieReviews.Mapping;
 
 using Riok.Mapperly.Abstractions;
 using AppAuthor = Application.Authors.Entities.Author;
-using AppReviewAuthor = Application.Authors.Entities.ReviewAuthor;
 using AppMovie = Application.Movies.Entities.Movie;
-using AppReviewedMovie = Application.Movies.Entities.ReviewedMovie;
 using AppReview = Application.Reviews.Entities.Review;
+using AppReviewAuthor = Application.Authors.Entities.ReviewAuthor;
+using AppReviewedMovie = Application.Movies.Entities.ReviewedMovie;
 using InfraAuthor = Models.Author;
 using InfraMovie = Models.Movie;
 using InfraReview = Models.Review;

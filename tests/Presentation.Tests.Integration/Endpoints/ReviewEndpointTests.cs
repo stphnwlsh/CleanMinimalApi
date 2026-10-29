@@ -1,6 +1,5 @@
 namespace CleanMinimalApi.Presentation.Tests.Integration.Endpoints;
 
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;

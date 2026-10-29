@@ -92,6 +92,10 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
+      - name: Format
+        id: format
+        run: dotnet format --verify-no-changes --verbosity diagnostic
+
       - name: Pack
         id: pack
         run: |

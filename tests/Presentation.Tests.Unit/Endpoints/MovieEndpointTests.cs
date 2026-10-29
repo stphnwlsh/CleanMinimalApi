@@ -1,9 +1,7 @@
 namespace CleanMinimalApi.Presentation.Tests.Unit.Endpoints;
 
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Authors.Entities;
 using CleanMinimalApi.Application.Common.Paging;
-using CleanMinimalApi.Application.Movies.Entities;
 using CleanMinimalApi.Presentation.Endpoints;
 using Mediator;
 using Microsoft.AspNetCore.Http;
@@ -26,13 +24,13 @@ public class MovieEndpointTests
 
         _ = sender
             .Send(Arg.Is<Queries.GetMovies.GetMoviesQuery>(q => q.Query == "Lorem" && q.Offset == 20 && q.Limit == 5), token)
-            .Returns(new Page<Entities.Movie>([new Entities.Movie(Guid.Empty, "Lorem Ipsum")], 20, 5, 21));
+            .Returns(new Page<Entities.MovieSummary>([new Entities.MovieSummary(Guid.Empty, "Lorem Ipsum", 2, 3.5)], 20, 5, 21));
 
         // Act
         var response = await MovieEndpoints.GetMovies("Lorem", sender, token, 20, 5);
 
         // Assert
-        var result = response.ShouldBeOfType<Ok<Page<Entities.Movie>>>();
+        var result = response.ShouldBeOfType<Ok<Page<Entities.MovieSummary>>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status200OK);
 
@@ -41,7 +39,8 @@ public class MovieEndpointTests
         value.Items.Count.ShouldBe(1);
         value.Items[0].Id.ShouldBe(Guid.Empty);
         value.Items[0].Title.ShouldBe("Lorem Ipsum");
-        value.Items[0].Reviews.ShouldBeNull();
+        value.Items[0].ReviewCount.ShouldBe(2);
+        value.Items[0].AverageStars.ShouldBe(3.5);
         value.Offset.ShouldBe(20);
         value.Limit.ShouldBe(5);
         value.TotalCount.ShouldBe(21);
@@ -58,7 +57,7 @@ public class MovieEndpointTests
 
         _ = sender
             .Send(Arg.Is<Queries.GetMovieById.GetMovieByIdQuery>(q => q.Id == id), token)
-            .Returns(new Entities.Movie(id, "Lorem Ipsum"));
+            .Returns(new Entities.Movie(id, "Lorem Ipsum", []));
 
         // Act
         var response = await MovieEndpoints.GetMovieById(id, sender, token);
@@ -72,6 +71,6 @@ public class MovieEndpointTests
 
         value.Id.ShouldBe(id);
         value.Title.ShouldBe("Lorem Ipsum");
-        value.Reviews.ShouldBeNull();
+        value.Reviews.ShouldBeEmpty();
     }
 }

@@ -4,7 +4,7 @@ using Entities;
 
 public interface IAuthorsRepository
 {
-    public Task<(List<Author> Items, int TotalCount)> GetAuthors(
+    public Task<(List<AuthorSummary> Items, int TotalCount)> GetAuthors(
         string? query,
         int offset,
         int limit,

@@ -31,7 +31,7 @@
     <None Include="../src/**/*" Exclude="$(TemplateExcludes)" Pack="true" PackagePath="content/src/" />
     <None Include="../tests/**/*" Exclude="$(TemplateExcludes)" Pack="true" PackagePath="content/tests/" />
     <None Include="../docs/RUN.md" Pack="true" PackagePath="content/docs/" />
-    <None Include="../*.sln;../Directory.Build.props;../global.json;../NuGet.config;../Dockerfile;../docker-compose.yml;../icon.png;../.*ignore;../.editorconfig;../.gitattributes" Pack="true" PackagePath="content/" />
+    <None Include="../*.sln;../Directory.Build.props;../Directory.Packages.props;../global.json;../NuGet.config;../Dockerfile;../docker-compose.yml;../icon.png;../.*ignore;../.editorconfig;../.gitattributes" Pack="true" PackagePath="content/" />
     <None Include="../icon.png" Pack="true" PackagePath="images/" />
     <None Include="../LICENSE.md" Pack="true" PackagePath="docs/" />
     <None Include="../NUGET.md" Pack="true" PackagePath="docs/" />

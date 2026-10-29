@@ -9,6 +9,7 @@ using Databases.MovieReviews.Extensions;
 using Databases.MovieReviews.Mapping;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 public static class DependencyInjection
 {
@@ -38,10 +39,24 @@ public static class DependencyInjection
     }
 
     /// <summary>
-    /// Creates or upgrades the database with the migrations, then adds the sample data when it is empty.
-    /// Call it once at startup, before the first request.
+    /// Adds a readiness check that the movie reviews database can be reached.
     /// </summary>
-    public static IServiceProvider InitialiseInfrastructure(this IServiceProvider services)
+    /// <param name="builder">The health checks builder.</param>
+    /// <param name="tags">The tags to give the check, so endpoints can choose which checks they run.</param>
+    public static IHealthChecksBuilder AddInfrastructureHealthChecks(this IHealthChecksBuilder builder, params string[] tags)
+    {
+        return builder.AddDbContextCheck<MovieReviewsDbContext>("MovieReviewsDatabase", HealthStatus.Unhealthy, tags);
+    }
+
+    /// <summary>
+    /// Creates or upgrades the database with the migrations. Call it once at startup, before the first request.
+    /// </summary>
+    /// <param name="services">The application's services.</param>
+    /// <param name="seedSampleData">
+    /// Adds the sample authors, movies and reviews when the database is empty. Turn it on for local runs and demos,
+    /// and leave it off anywhere real data lives.
+    /// </param>
+    public static IServiceProvider InitialiseInfrastructure(this IServiceProvider services, bool seedSampleData)
     {
         services.GetRequiredService<MovieReviewsDatabase>().KeepAlive();
 
@@ -50,7 +65,11 @@ public static class DependencyInjection
         var context = scope.ServiceProvider.GetRequiredService<MovieReviewsDbContext>();
 
         context.Database.Migrate();
-        _ = context.AddData();
+
+        if (seedSampleData)
+        {
+            _ = context.AddData();
+        }
 
         return services;
     }

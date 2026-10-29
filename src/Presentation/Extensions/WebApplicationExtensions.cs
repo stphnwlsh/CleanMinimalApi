@@ -5,6 +5,9 @@ using CleanMinimalApi.Presentation.Authentication;
 using CleanMinimalApi.Presentation.Endpoints;
 using Infrastructure;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -15,9 +18,21 @@ public static class WebApplicationExtensions
     {
         #region Database
 
-        _ = app.Services.InitialiseInfrastructure();
+        _ = app.Services.InitialiseInfrastructure(app.Configuration.GetValue<bool>("Database:SeedSampleData"));
 
         #endregion Database
+
+        #region Security
+
+        // HSTS tells browsers to only use HTTPS from then on, so it's left off for local runs.
+        if (!app.Environment.IsDevelopment() && !app.Environment.IsEnvironment("local"))
+        {
+            _ = app.UseHsts();
+        }
+
+        _ = app.UseHttpsRedirection();
+
+        #endregion Security
 
         #region Errors
 
@@ -33,12 +48,6 @@ public static class WebApplicationExtensions
 
         #endregion Logging
 
-        #region Security
-
-        _ = app.UseHsts();
-
-        #endregion Security
-
         #region Authentication
 
         if (AuthenticationSettings.FromConfiguration(app.Configuration).Enabled)
@@ -50,11 +59,13 @@ public static class WebApplicationExtensions
 
         #endregion Authentication
 
-        #region API Configuration
+        #region Health
 
-        _ = app.UseHttpsRedirection();
+        // Liveness runs no checks, so it only fails when the process can't answer. Readiness checks the database.
+        _ = app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = _ => false }).AllowAnonymous();
+        _ = app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = check => check.Tags.Contains("ready") }).AllowAnonymous();
 
-        #endregion API Configuration
+        #endregion Health
 
         #region OpenApi
 

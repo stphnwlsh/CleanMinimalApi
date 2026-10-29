@@ -1,6 +1,5 @@
 namespace CleanMinimalApi.Presentation.Tests.Integration.Endpoints;
 
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Application.Common.Paging;
@@ -29,7 +28,7 @@ public class MovieEndpointTests : IDisposable
         // Act
         using var response = await client.GetAsync("/api/movies?limit=50");
         var result = (await response.Content.ReadAsStringAsync())
-            .Deserialize<Page<Entities.Movie>>().Items;
+            .Deserialize<Page<Entities.MovieSummary>>().Items;
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -46,18 +45,9 @@ public class MovieEndpointTests : IDisposable
             _ = movie.Title.ShouldBeOfType<string>();
             movie.Title.ShouldNotBeNullOrWhiteSpace();
 
-            foreach (var review in movie.Reviews.ShouldNotBeNull())
-            {
-                _ = review.Stars.ShouldBeOfType<int>();
-                review.Stars.ShouldBeInRange(1, 5);
-
-                _ = review.ReviewAuthor.ShouldNotBeNull();
-                _ = review.ReviewAuthor!.Id.ShouldBeOfType<Guid>();
-                _ = review.ReviewAuthor!.FirstName.ShouldBeOfType<string>();
-                review.ReviewAuthor!.FirstName.ShouldNotBeNullOrWhiteSpace();
-                _ = review.ReviewAuthor!.LastName.ShouldBeOfType<string>();
-                review.ReviewAuthor!.LastName.ShouldNotBeNullOrWhiteSpace();
-            }
+            movie.ReviewCount.ShouldBeGreaterThanOrEqualTo(0);
+            (movie.AverageStars is null || movie.AverageStars is >= 1 and <= 5).ShouldBeTrue();
+            (movie.AverageStars is null).ShouldBe(movie.ReviewCount == 0);
         }
     }
 
@@ -68,8 +58,8 @@ public class MovieEndpointTests : IDisposable
         using var client = this.application.CreateClient();
         using var movieResponse = await client.GetAsync("/api/movies?limit=50");
         var movieResult = (await movieResponse.Content.ReadAsStringAsync())
-            .Deserialize<Page<Entities.Movie>>().Items
-            .First(m => m.Reviews!.Count > 0);
+            .Deserialize<Page<Entities.MovieSummary>>().Items
+            .First(m => m.ReviewCount > 0);
 
         // Act
         using var response = await client.GetAsync($"/api/movies/{movieResult.Id}");
@@ -83,7 +73,7 @@ public class MovieEndpointTests : IDisposable
         result.Id.ShouldBe(movieResult.Id);
         _ = result.Title.ShouldBeOfType<string>();
         result.Title.ShouldNotBeNullOrWhiteSpace();
-        result.Reviews.ShouldNotBeEmpty();
+        result.Reviews.Count.ShouldBe(movieResult.ReviewCount);
 
         foreach (var review in result.Reviews.ShouldNotBeNull())
         {
@@ -166,7 +156,7 @@ public class MovieEndpointTests : IDisposable
 
         // Act
         using var response = await client.GetAsync("/api/movies");
-        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Page<Entities.Movie>>();
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Page<Entities.MovieSummary>>();
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -186,11 +176,11 @@ public class MovieEndpointTests : IDisposable
         // Arrange
         using var client = this.application.CreateClient();
         using var firstResponse = await client.GetAsync("/api/movies?limit=20");
-        var first = (await firstResponse.Content.ReadAsStringAsync()).Deserialize<Page<Entities.Movie>>();
+        var first = (await firstResponse.Content.ReadAsStringAsync()).Deserialize<Page<Entities.MovieSummary>>();
 
         // Act
         using var response = await client.GetAsync($"/api/movies?offset={first.Offset + first.Limit}&limit=40");
-        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Page<Entities.Movie>>();
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Page<Entities.MovieSummary>>();
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -210,12 +200,12 @@ public class MovieEndpointTests : IDisposable
         using var client = this.application.CreateClient();
         using var moviesResponse = await client.GetAsync("/api/movies?limit=50");
         var title = (await moviesResponse.Content.ReadAsStringAsync())
-            .Deserialize<Page<Entities.Movie>>().Items
+            .Deserialize<Page<Entities.MovieSummary>>().Items
             .First().Title;
 
         // Act
         using var response = await client.GetAsync($"/api/movies?query={Uri.EscapeDataString(title.ToUpperInvariant())}");
-        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Page<Entities.Movie>>();
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Page<Entities.MovieSummary>>();
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);

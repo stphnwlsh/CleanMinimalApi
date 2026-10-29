@@ -8,7 +8,9 @@ using Mapping;
 using Microsoft.EntityFrameworkCore;
 using Models;
 using ApplicationAuthor = Application.Authors.Entities.Author;
+using ApplicationAuthorSummary = Application.Authors.Entities.AuthorSummary;
 using ApplicationMovie = Application.Movies.Entities.Movie;
+using ApplicationMovieSummary = Application.Movies.Entities.MovieSummary;
 using ApplicationReview = Application.Reviews.Entities.Review;
 
 internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMoviesRepository, IReviewsRepository
@@ -33,7 +35,7 @@ internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMovi
 
     #region Authors
 
-    public virtual async Task<(List<ApplicationAuthor> Items, int TotalCount)> GetAuthors(
+    public virtual async Task<(List<ApplicationAuthorSummary> Items, int TotalCount)> GetAuthors(
         string? query,
         int offset,
         int limit,
@@ -50,17 +52,24 @@ internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMovi
 
         var totalCount = await authors.CountAsync(cancellationToken);
 
+        // The review count and average are worked out by the database, so the reviews themselves are never loaded.
         var result = await authors
             .OrderBy(a => a.LastName)
             .ThenBy(a => a.FirstName)
             .ThenBy(a => a.Id)
             .Skip(offset)
             .Take(limit)
-            .Include(a => a.Reviews)
-            .ThenInclude(r => r.ReviewedMovie)
+            .Select(a => new
+            {
+                a.Id,
+                a.FirstName,
+                a.LastName,
+                ReviewCount = a.Reviews.Count,
+                AverageStars = a.Reviews.Average(r => (double?)r.Stars)
+            })
             .ToListAsync(cancellationToken);
 
-        return ([.. result.Select(this.mapper.ToDomain)], totalCount);
+        return ([.. result.Select(a => new ApplicationAuthorSummary(a.Id, a.FirstName, a.LastName, a.ReviewCount, RoundStars(a.AverageStars)))], totalCount);
     }
 
     public virtual async Task<ApplicationAuthor?> GetAuthorById(Guid id, CancellationToken cancellationToken)
@@ -83,7 +92,7 @@ internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMovi
 
     #region Movies
 
-    public virtual async Task<(List<ApplicationMovie> Items, int TotalCount)> GetMovies(
+    public virtual async Task<(List<ApplicationMovieSummary> Items, int TotalCount)> GetMovies(
         string? query,
         int offset,
         int limit,
@@ -100,16 +109,22 @@ internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMovi
 
         var totalCount = await movies.CountAsync(cancellationToken);
 
+        // The review count and average are worked out by the database, so the reviews themselves are never loaded.
         var result = await movies
             .OrderBy(m => m.Title)
             .ThenBy(m => m.Id)
             .Skip(offset)
             .Take(limit)
-            .Include(m => m.Reviews)
-            .ThenInclude(r => r.ReviewAuthor)
+            .Select(m => new
+            {
+                m.Id,
+                m.Title,
+                ReviewCount = m.Reviews.Count,
+                AverageStars = m.Reviews.Average(r => (double?)r.Stars)
+            })
             .ToListAsync(cancellationToken);
 
-        return ([.. result.Select(this.mapper.ToDomain)], totalCount);
+        return ([.. result.Select(m => new ApplicationMovieSummary(m.Id, m.Title, m.ReviewCount, RoundStars(m.AverageStars)))], totalCount);
     }
 
     public virtual async Task<ApplicationMovie?> GetMovieById(Guid id, CancellationToken cancellationToken)
@@ -207,6 +222,35 @@ internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMovi
         return ([.. result.Select(this.mapper.ToDomain)], totalCount);
     }
 
+    public async Task<List<ApplicationReview>> GetReviewsForMovies(IReadOnlyCollection<Guid> movieIds, CancellationToken cancellationToken)
+    {
+        var result = await this.context.Reviews
+            .AsNoTracking()
+            .Where(r => movieIds.Contains(r.ReviewedMovieId))
+            .Include(r => r.ReviewAuthor)
+            .Include(r => r.ReviewedMovie)
+            .OrderBy(r => r.ReviewAuthor.LastName)
+            .ThenBy(r => r.ReviewAuthor.FirstName)
+            .ThenBy(r => r.Id)
+            .ToListAsync(cancellationToken);
+
+        return [.. result.Select(this.mapper.ToDomain)];
+    }
+
+    public async Task<List<ApplicationReview>> GetReviewsForAuthors(IReadOnlyCollection<Guid> authorIds, CancellationToken cancellationToken)
+    {
+        var result = await this.context.Reviews
+            .AsNoTracking()
+            .Where(r => authorIds.Contains(r.ReviewAuthorId))
+            .Include(r => r.ReviewAuthor)
+            .Include(r => r.ReviewedMovie)
+            .OrderBy(r => r.ReviewedMovie.Title)
+            .ThenBy(r => r.Id)
+            .ToListAsync(cancellationToken);
+
+        return [.. result.Select(this.mapper.ToDomain)];
+    }
+
     public async Task<ApplicationReview?> GetReviewById(Guid id, CancellationToken cancellationToken)
     {
         var result = await this.context.Reviews
@@ -240,6 +284,15 @@ internal class EntityFrameworkMovieReviewsRepository : IAuthorsRepository, IMovi
     }
 
     #endregion Reviews
+
+    #region Helpers
+
+    private static double? RoundStars(double? averageStars)
+    {
+        return averageStars is null ? null : Math.Round(averageStars.Value, 1, MidpointRounding.AwayFromZero);
+    }
+
+    #endregion Helpers
 
     #region Search
 

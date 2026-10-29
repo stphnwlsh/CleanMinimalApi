@@ -17,7 +17,8 @@ internal sealed class MinimalApiApplication(
         // Every application gets its own in-memory database, so tests never share or keep data.
         var testSettings = new Dictionary<string, string?>
         {
-            ["ConnectionStrings:MovieReviews"] = $"Data Source=Tests-{Guid.NewGuid()};Mode=Memory;Cache=Shared"
+            ["ConnectionStrings:MovieReviews"] = $"Data Source=Tests-{Guid.NewGuid()};Mode=Memory;Cache=Shared",
+            ["Database:SeedSampleData"] = "true"
         };
 
         foreach (var setting in settings ?? [])

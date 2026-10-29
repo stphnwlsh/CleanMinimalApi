@@ -4,7 +4,7 @@ using Entities;
 
 public interface IMoviesRepository
 {
-    public Task<(List<Movie> Items, int TotalCount)> GetMovies(
+    public Task<(List<MovieSummary> Items, int TotalCount)> GetMovies(
         string? query,
         int offset,
         int limit,

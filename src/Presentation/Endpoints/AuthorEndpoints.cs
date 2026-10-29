@@ -19,7 +19,7 @@ public static class AuthorEndpoints
 
         _ = root.MapGet("/", GetAuthors)
             .WithName(nameof(GetAuthors))
-            .Produces<Page<Entities.Author>>()
+            .Produces<Page<Entities.AuthorSummary>>()
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
@@ -37,9 +37,9 @@ public static class AuthorEndpoints
     /// List Authors
     /// </summary>
     /// <remarks>
-    /// Returns one page of authors, ordered by last name then first name, along with the reviews they have
-    /// written. Add a search term to return only the authors whose first, last or full name contains it,
-    /// ignoring case. To fetch the next page, add the limit to the offset.
+    /// Returns one page of authors, ordered by last name then first name, each with their review count and average
+    /// stars. Add a search term to return only the authors whose first, last or full name contains it, ignoring
+    /// case. To fetch the next page, add the limit to the offset. Look up an author by their Id to get their reviews.
     ///
     /// Sample request:
     ///
@@ -51,7 +51,7 @@ public static class AuthorEndpoints
     /// <response code="200">One page of Authors.</response>
     /// <response code="400">The search term, offset or limit is not valid.</response>
     /// <response code="500">An unexpected error occurred.</response>
-    public static async Task<Ok<Page<Entities.Author>>> GetAuthors(
+    public static async Task<Ok<Page<Entities.AuthorSummary>>> GetAuthors(
         [FromQuery] string? query,
         [FromServices] ISender sender,
         CancellationToken cancellationToken,

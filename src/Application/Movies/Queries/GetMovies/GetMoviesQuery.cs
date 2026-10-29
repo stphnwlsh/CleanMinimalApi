@@ -5,9 +5,10 @@ using Entities;
 using Mediator;
 
 /// <summary>
-/// Lists movies one page at a time, optionally only those whose title contains a search term.
+/// Lists movies one page at a time, optionally only those whose title contains a search term. Each movie comes with its
+/// review count and average stars rather than its reviews, which <see cref="GetMovieById.GetMovieByIdQuery"/> returns.
 /// </summary>
-public class GetMoviesQuery : IRequest<Page<Movie>>
+public class GetMoviesQuery : IRequest<Page<MovieSummary>>
 {
     /// <summary>The words to look for in the title, ignoring case. Leave empty to list every movie.</summary>
     public string? Query { get; init; }

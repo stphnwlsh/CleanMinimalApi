@@ -23,7 +23,7 @@ public class GetMoviesHandlerTests
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
 
-        _ = repository.GetMovies("Lorem", 20, 5, token).Returns(([new Movie(Guid.Empty, "Title")], 21));
+        _ = repository.GetMovies("Lorem", 20, 5, token).Returns(([new MovieSummary(Guid.Empty, "Title", 0, null)], 21));
 
         // Act
         var result = await handler.Handle(query, token);
@@ -50,7 +50,7 @@ public class GetMoviesHandlerTests
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
 
-        _ = repository.GetMovies(null, 0, Paging.DefaultLimit, token).Returns(([new Movie(Guid.Empty, "Title")], 1));
+        _ = repository.GetMovies(null, 0, Paging.DefaultLimit, token).Returns(([new MovieSummary(Guid.Empty, "Title", 0, null)], 1));
 
         // Act
         var result = await handler.Handle(query, token);

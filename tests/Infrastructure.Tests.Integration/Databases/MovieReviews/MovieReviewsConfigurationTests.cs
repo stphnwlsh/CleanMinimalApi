@@ -5,14 +5,20 @@ using Microsoft.EntityFrameworkCore;
 using Shouldly;
 using Xunit;
 
-[Collection("MovieReviews")]
-public class MovieReviewsConfigurationTests(MovieReviewsDataFixture fixture)
+public sealed class MovieReviewsConfigurationTests : IDisposable
 {
+    private readonly MovieReviewsTestDatabase database = new();
+
+    public void Dispose()
+    {
+        this.database.Dispose();
+    }
+
     [Fact]
     public async Task Database_ShouldBe_Configured()
     {
         // Arrange
-        var context = fixture.Context;
+        var context = this.database.Context;
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
 

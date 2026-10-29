@@ -83,7 +83,7 @@ public class BearerSecurityTransformerTests
         // Arrange
         var operation = new OpenApiOperation
         {
-            Security = [new OpenApiSecurityRequirement()],
+            Security = [[]],
             Responses = new OpenApiResponses { ["401"] = new OpenApiResponse { Description = "Existing." } }
         };
 

@@ -26,7 +26,7 @@ public class GetAuthorByIdHandlerTests
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
 
-        _ = context.GetAuthorById(Arg.Any<Guid>(), token).Returns(new Author(Guid.Empty, "FirstName", "LastName"));
+        _ = context.GetAuthorById(Arg.Any<Guid>(), token).Returns(new Author(Guid.Empty, "FirstName", "LastName", []));
 
         // Act
         var result = await handler.Handle(query, token);
@@ -40,7 +40,7 @@ public class GetAuthorByIdHandlerTests
         result.Id.ShouldBe(Guid.Empty);
         result.FirstName.ShouldBe("FirstName");
         result.LastName.ShouldBe("LastName");
-        result.Reviews.ShouldBeNull();
+        result.Reviews.ShouldBeEmpty();
     }
 
 

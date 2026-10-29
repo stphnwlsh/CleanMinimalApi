@@ -1,6 +1,5 @@
 namespace CleanMinimalApi.Presentation.Tests.Integration.Endpoints;
 
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Application.Common.Paging;
@@ -29,7 +28,7 @@ public class AuthorEndpointTests : IDisposable
         // Act
         using var response = await client.GetAsync("/api/authors?limit=50");
         var result = (await response.Content.ReadAsStringAsync())
-            .Deserialize<Page<Entities.Author>>().Items;
+            .Deserialize<Page<Entities.AuthorSummary>>().Items;
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -48,15 +47,9 @@ public class AuthorEndpointTests : IDisposable
             _ = author.LastName.ShouldBeOfType<string>();
             author.LastName.ShouldNotBeNullOrWhiteSpace();
 
-            foreach (var review in author.Reviews.ShouldNotBeNull())
-            {
-                _ = review.Stars.ShouldBeOfType<int>();
-                review.Stars.ShouldBeInRange(1, 5);
-                _ = review.ReviewedMovie.ShouldNotBeNull();
-                _ = review.ReviewedMovie!.Id.ShouldBeOfType<Guid>();
-                _ = review.ReviewedMovie!.Title.ShouldBeOfType<string>();
-                review.ReviewedMovie!.Title.ShouldNotBeNullOrWhiteSpace();
-            }
+            author.ReviewCount.ShouldBeGreaterThanOrEqualTo(0);
+            (author.AverageStars is null || author.AverageStars is >= 1 and <= 5).ShouldBeTrue();
+            (author.AverageStars is null).ShouldBe(author.ReviewCount == 0);
         }
     }
 
@@ -67,7 +60,7 @@ public class AuthorEndpointTests : IDisposable
         using var client = this.application.CreateClient();
         using var authorResponse = await client.GetAsync("/api/authors?limit=50");
         var authorResult = (await authorResponse.Content.ReadAsStringAsync())
-            .Deserialize<Page<Entities.Author>>().Items[0];
+            .Deserialize<Page<Entities.AuthorSummary>>().Items.First(a => a.ReviewCount > 0);
 
         // Act
         using var response = await client.GetAsync($"/api/authors/{authorResult.Id}");
@@ -83,7 +76,7 @@ public class AuthorEndpointTests : IDisposable
         result.FirstName.ShouldNotBeNullOrWhiteSpace();
         _ = result.LastName.ShouldBeOfType<string>();
         result.FirstName.ShouldNotBeNullOrWhiteSpace();
-        result.Reviews.ShouldNotBeEmpty();
+        result.Reviews.Count.ShouldBe(authorResult.ReviewCount);
 
         foreach (var review in result.Reviews.ShouldNotBeNull())
         {
@@ -161,11 +154,11 @@ public class AuthorEndpointTests : IDisposable
         // Arrange
         using var client = this.application.CreateClient();
         using var authorsResponse = await client.GetAsync("/api/authors");
-        var authors = (await authorsResponse.Content.ReadAsStringAsync()).Deserialize<Page<Entities.Author>>().Items;
+        var authors = (await authorsResponse.Content.ReadAsStringAsync()).Deserialize<Page<Entities.AuthorSummary>>().Items;
 
         // Act
         using var response = await client.GetAsync("/api/authors?limit=5");
-        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Page<Entities.Author>>();
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Page<Entities.AuthorSummary>>();
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -183,12 +176,12 @@ public class AuthorEndpointTests : IDisposable
         using var client = this.application.CreateClient();
         using var authorsResponse = await client.GetAsync("/api/authors?limit=50");
         var lastName = (await authorsResponse.Content.ReadAsStringAsync())
-            .Deserialize<Page<Entities.Author>>().Items
+            .Deserialize<Page<Entities.AuthorSummary>>().Items
             .First().LastName;
 
         // Act
         using var response = await client.GetAsync($"/api/authors?query={Uri.EscapeDataString(lastName.ToLowerInvariant())}");
-        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Page<Entities.Author>>();
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Page<Entities.AuthorSummary>>();
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);

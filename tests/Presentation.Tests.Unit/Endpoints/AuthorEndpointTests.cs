@@ -1,9 +1,7 @@
 namespace CleanMinimalApi.Presentation.Tests.Unit.Endpoints;
 
 using System.Threading.Tasks;
-using CleanMinimalApi.Application.Authors.Entities;
 using CleanMinimalApi.Application.Common.Paging;
-using CleanMinimalApi.Application.Movies.Entities;
 using CleanMinimalApi.Presentation.Endpoints;
 using Mediator;
 using Microsoft.AspNetCore.Http;
@@ -26,13 +24,13 @@ public class AuthorEndpointTests
 
         _ = sender
             .Send(Arg.Is<Queries.GetAuthors.GetAuthorsQuery>(q => q.Query == "Lorem" && q.Offset == 20 && q.Limit == 5), token)
-            .Returns(new Page<Entities.Author>([new Entities.Author(Guid.Empty, "Lorem", "Ipsum")], 20, 5, 21));
+            .Returns(new Page<Entities.AuthorSummary>([new Entities.AuthorSummary(Guid.Empty, "Lorem", "Ipsum", 2, 3.5)], 20, 5, 21));
 
         // Act
         var response = await AuthorEndpoints.GetAuthors("Lorem", sender, token, 20, 5);
 
         // Assert
-        var result = response.ShouldBeOfType<Ok<Page<Entities.Author>>>();
+        var result = response.ShouldBeOfType<Ok<Page<Entities.AuthorSummary>>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status200OK);
 
@@ -42,7 +40,8 @@ public class AuthorEndpointTests
         value.Items[0].Id.ShouldBe(Guid.Empty);
         value.Items[0].FirstName.ShouldBe("Lorem");
         value.Items[0].LastName.ShouldBe("Ipsum");
-        value.Items[0].Reviews.ShouldBeNull();
+        value.Items[0].ReviewCount.ShouldBe(2);
+        value.Items[0].AverageStars.ShouldBe(3.5);
         value.Offset.ShouldBe(20);
         value.Limit.ShouldBe(5);
         value.TotalCount.ShouldBe(21);
@@ -59,7 +58,7 @@ public class AuthorEndpointTests
 
         _ = sender
             .Send(Arg.Is<Queries.GetAuthorById.GetAuthorByIdQuery>(q => q.Id == id), token)
-            .Returns(new Entities.Author(id, "Lorem", "Ipsum"));
+            .Returns(new Entities.Author(id, "Lorem", "Ipsum", []));
 
         // Act
         var response = await AuthorEndpoints.GetAuthorById(id, sender, token);
@@ -74,6 +73,6 @@ public class AuthorEndpointTests
         value.Id.ShouldBe(id);
         value.FirstName.ShouldBe("Lorem");
         value.LastName.ShouldBe("Ipsum");
-        value.Reviews.ShouldBeNull();
+        value.Reviews.ShouldBeEmpty();
     }
 }

@@ -7,17 +7,12 @@ using Infrastructure.Databases.MovieReviews.Mapping;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Time.Testing;
-using Xunit;
 
-[CollectionDefinition("MovieReviews")]
-public class MovieReviewsCollectionFixture : ICollectionFixture<MovieReviewsDataFixture>
-{
-    // This class has no code, and is never created. Its purpose is simply
-    // to be the place to apply [CollectionDefinition] and all the
-    // ICollectionFixture<> interfaces.
-}
-
-public class MovieReviewsDataFixture : IDisposable
+/// <summary>
+/// A private in-memory database with the test data. Each test creates its own, so a test that changes the data
+/// can't change what another test sees.
+/// </summary>
+public sealed class MovieReviewsTestDatabase : IDisposable
 {
     private SqliteConnection? connection;
 
@@ -25,10 +20,10 @@ public class MovieReviewsDataFixture : IDisposable
     internal FakeTimeProvider TimeProvider { get; set; }
     internal EntityFrameworkMovieReviewsRepository Repository { get; set; }
 
-    public MovieReviewsDataFixture()
+    public MovieReviewsTestDatabase()
     {
         // A private in-memory SQLite database that lives as long as this connection is open,
-        // so every test run starts from the same data and nothing is written to disk.
+        // so every test starts from the same data and nothing is written to disk.
         this.connection = new SqliteConnection("Data Source=:memory:");
         this.connection.Open();
 
@@ -51,17 +46,8 @@ public class MovieReviewsDataFixture : IDisposable
 
     public void Dispose()
     {
-        this.Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            this.Context.Dispose();
-            this.connection?.Dispose();
-            this.connection = null;
-        }
+        this.Context.Dispose();
+        this.connection?.Dispose();
+        this.connection = null;
     }
 }
