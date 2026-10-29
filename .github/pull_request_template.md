@@ -23,6 +23,6 @@
 ## Checklist
 
 - [ ] `dotnet build` and `dotnet test` pass locally with no warnings.
-- [ ] I added or updated tests, and coverage stays at or above 95%.
+- [ ] I added or updated tests, and coverage stays at or above 95% overall and 90% on changed lines.
 - [ ] I updated the README or docs where behaviour changed.
 - [ ] I checked the template still installs and creates a working solution (see CONTRIBUTING.md).

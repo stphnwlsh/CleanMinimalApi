@@ -3,7 +3,9 @@ version: 2
 multi-ecosystem-groups:
   monthly-dependencies:
     schedule:
-      interval: "monthly"
+      interval: "cron"
+      cronjob: "0 9 15 * *"
+      timezone: "America/Chicago"
 
 updates:
   - package-ecosystem: "nuget"

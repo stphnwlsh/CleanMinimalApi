@@ -5,7 +5,8 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: "0 4 * * 1"
+    - cron: "0 9 15 * *"
+      timezone: "America/Chicago"
   workflow_dispatch:
 
 permissions: read-all
