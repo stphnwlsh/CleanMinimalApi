@@ -26,7 +26,7 @@ public class ValidationBehaviourTests
         var token = tokenSource.Token;
         var next = Substitute.For<MessageHandlerDelegate<GetAuthorByIdQuery, Author>>();
 
-        _ = next(query, token).Returns(new Author(Guid.Empty, "Test", "Test"));
+        _ = next(query, token).Returns(new Author(Guid.Empty, "Test", "Test", []));
 
         // Act
         var result = await handler.Handle(query, next, token);

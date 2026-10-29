@@ -7,17 +7,26 @@ using Microsoft.Extensions.Hosting;
 
 internal sealed class MinimalApiApplication(
     string environment = "local",
-    Dictionary<string, string> settings = null,
-    Action<IServiceCollection> configureServices = null) : WebApplicationFactory<Program>
+    Dictionary<string, string?>? settings = null,
+    Action<IServiceCollection>? configureServices = null) : WebApplicationFactory<Program>
 {
     protected override IHost CreateHost(IHostBuilder builder)
     {
         _ = builder.UseEnvironment(environment);
 
-        if (settings is not null)
+        // Every application gets its own in-memory database, so tests never share or keep data.
+        var testSettings = new Dictionary<string, string?>
         {
-            _ = builder.ConfigureHostConfiguration(configuration => configuration.AddInMemoryCollection(settings));
+            ["ConnectionStrings:MovieReviews"] = $"Data Source=Tests-{Guid.NewGuid()};Mode=Memory;Cache=Shared",
+            ["Database:SeedSampleData"] = "true"
+        };
+
+        foreach (var setting in settings ?? [])
+        {
+            testSettings[setting.Key] = setting.Value;
         }
+
+        _ = builder.ConfigureHostConfiguration(configuration => configuration.AddInMemoryCollection(testSettings));
 
         if (configureServices is not null)
         {

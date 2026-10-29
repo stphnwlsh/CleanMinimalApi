@@ -92,6 +92,10 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
+      - name: Format
+        id: format
+        run: dotnet format --verify-no-changes --verbosity diagnostic
+
       - name: Pack
         id: pack
         run: |
@@ -290,7 +294,7 @@ jobs:
     name: Publish
     runs-on: ubuntu-latest
     needs: [build, coverage, scan, analysis]
-    if: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
+    if: ${{ github.repository == 'stphnwlsh/CleanMinimalApi' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
     permissions:
       contents: write
       id-token: write

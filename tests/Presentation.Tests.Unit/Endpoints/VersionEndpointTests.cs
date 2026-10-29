@@ -26,7 +26,7 @@ public class VersionEndpointTests
         });
 
         // Act
-        var response = await VersionEndpoints.GetVersion(sender);
+        var response = await VersionEndpoints.GetVersion(sender, CancellationToken.None);
 
         // Assert
         var result = response.ShouldBeOfType<Ok<Entities.Version>>();

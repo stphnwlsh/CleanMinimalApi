@@ -13,7 +13,7 @@ public class NotFoundExceptionTests
     {
         // Arrange
         var entityType = EntityType.Author;
-        var argument = new Author(Guid.NewGuid(), "FirstName", "LastName");
+        var argument = new Author(Guid.NewGuid(), "FirstName", "LastName", []);
 
         // Act
         var result = Should.NotThrow(() =>
@@ -32,7 +32,7 @@ public class NotFoundExceptionTests
     {
         // Arrange
         var entityType = EntityType.Author;
-        Author argument = null;
+        Author? argument = null;
 
         // Act
         var result = Should.Throw<NotFoundException>(() =>

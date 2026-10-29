@@ -1,6 +1,5 @@
 namespace CleanMinimalApi.Presentation.Tests.Integration.Endpoints;
 
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Application.Common.Paging;
@@ -13,7 +12,7 @@ using Entities = Application.Authors.Entities;
 
 public class AuthorEndpointTests : IDisposable
 {
-    private MinimalApiApplication application;
+    private readonly MinimalApiApplication application;
 
     public AuthorEndpointTests()
     {
@@ -27,9 +26,9 @@ public class AuthorEndpointTests : IDisposable
         using var client = this.application.CreateClient();
 
         // Act
-        using var response = await client.GetAsync("/api/author");
+        using var response = await client.GetAsync("/api/authors?limit=50");
         var result = (await response.Content.ReadAsStringAsync())
-            .Deserialize<List<Entities.Author>>();
+            .Deserialize<Page<Entities.AuthorSummary>>().Items;
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -48,15 +47,9 @@ public class AuthorEndpointTests : IDisposable
             _ = author.LastName.ShouldBeOfType<string>();
             author.LastName.ShouldNotBeNullOrWhiteSpace();
 
-            foreach (var review in author.Reviews)
-            {
-                _ = review.Stars.ShouldBeOfType<int>();
-                review.Stars.ShouldBeInRange(1, 5);
-                _ = review.ReviewedMovie.ShouldNotBeNull();
-                _ = review.ReviewedMovie.Id.ShouldBeOfType<Guid>();
-                _ = review.ReviewedMovie.Title.ShouldBeOfType<string>();
-                review.ReviewedMovie.Title.ShouldNotBeNullOrWhiteSpace();
-            }
+            author.ReviewCount.ShouldBeGreaterThanOrEqualTo(0);
+            (author.AverageStars is null || author.AverageStars is >= 1 and <= 5).ShouldBeTrue();
+            (author.AverageStars is null).ShouldBe(author.ReviewCount == 0);
         }
     }
 
@@ -65,12 +58,12 @@ public class AuthorEndpointTests : IDisposable
     {
         // Arrange
         using var client = this.application.CreateClient();
-        using var authorResponse = await client.GetAsync("/api/author");
+        using var authorResponse = await client.GetAsync("/api/authors?limit=50");
         var authorResult = (await authorResponse.Content.ReadAsStringAsync())
-            .Deserialize<List<Entities.Author>>()[0];
+            .Deserialize<Page<Entities.AuthorSummary>>().Items.First(a => a.ReviewCount > 0);
 
         // Act
-        using var response = await client.GetAsync($"/api/author/{authorResult.Id}");
+        using var response = await client.GetAsync($"/api/authors/{authorResult.Id}");
         var result = (await response.Content.ReadAsStringAsync()).Deserialize<Entities.Author>();
 
         // Assert
@@ -83,16 +76,16 @@ public class AuthorEndpointTests : IDisposable
         result.FirstName.ShouldNotBeNullOrWhiteSpace();
         _ = result.LastName.ShouldBeOfType<string>();
         result.FirstName.ShouldNotBeNullOrWhiteSpace();
-        result.Reviews.ShouldNotBeEmpty();
+        result.Reviews.Count.ShouldBe(authorResult.ReviewCount);
 
-        foreach (var review in result.Reviews)
+        foreach (var review in result.Reviews.ShouldNotBeNull())
         {
             _ = review.Stars.ShouldBeOfType<int>();
             review.Stars.ShouldBeInRange(1, 5);
             _ = review.ReviewedMovie.ShouldNotBeNull();
-            _ = review.ReviewedMovie.Id.ShouldBeOfType<Guid>();
-            _ = review.ReviewedMovie.Title.ShouldBeOfType<string>();
-            review.ReviewedMovie.Title.ShouldNotBeNullOrWhiteSpace();
+            _ = review.ReviewedMovie!.Id.ShouldBeOfType<Guid>();
+            _ = review.ReviewedMovie!.Title.ShouldBeOfType<string>();
+            review.ReviewedMovie!.Title.ShouldNotBeNullOrWhiteSpace();
         }
     }
 
@@ -103,7 +96,7 @@ public class AuthorEndpointTests : IDisposable
         using var client = this.application.CreateClient();
 
         // Act
-        using var response = await client.GetAsync($"/api/author/{Guid.Empty}");
+        using var response = await client.GetAsync($"/api/authors/{Guid.Empty}");
         var result = (await response.Content.ReadAsStringAsync()).Deserialize<ValidationProblemDetails>();
 
         // Assert
@@ -123,7 +116,7 @@ public class AuthorEndpointTests : IDisposable
         using var client = this.application.CreateClient();
 
         // Act
-        using var response = await client.GetAsync($"/api/author/{Guid.NewGuid()}");
+        using var response = await client.GetAsync($"/api/authors/{Guid.NewGuid()}");
         var result = (await response.Content.ReadAsStringAsync()).Deserialize<ProblemDetails>();
 
         // Assert
@@ -144,7 +137,7 @@ public class AuthorEndpointTests : IDisposable
         using var client = this.application.CreateClient();
 
         // Act
-        using var response = await client.GetAsync($"/api/author/{input}");
+        using var response = await client.GetAsync($"/api/authors/{input}");
         var result = (await response.Content.ReadAsStringAsync()).Deserialize<ProblemDetails>();
 
         // Assert
@@ -156,16 +149,16 @@ public class AuthorEndpointTests : IDisposable
     }
 
     [Fact]
-    public async Task SearchAuthors_ShouldReturn_FirstPage()
+    public async Task GetAuthors_ShouldReturn_FirstPage()
     {
         // Arrange
         using var client = this.application.CreateClient();
-        using var authorsResponse = await client.GetAsync("/api/author");
-        var authors = (await authorsResponse.Content.ReadAsStringAsync()).Deserialize<List<Entities.Author>>();
+        using var authorsResponse = await client.GetAsync("/api/authors");
+        var authors = (await authorsResponse.Content.ReadAsStringAsync()).Deserialize<Page<Entities.AuthorSummary>>().Items;
 
         // Act
-        using var response = await client.GetAsync("/api/author/search?limit=5");
-        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Page<Entities.Author>>();
+        using var response = await client.GetAsync("/api/authors?limit=5");
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Page<Entities.AuthorSummary>>();
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -173,22 +166,22 @@ public class AuthorEndpointTests : IDisposable
         _ = result.ShouldNotBeNull();
 
         result.Items.Count.ShouldBe(Math.Min(5, authors.Count));
-        result.TotalCount.ShouldBe(authors.Count);
+        result.TotalCount.ShouldBe(15);
     }
 
     [Fact]
-    public async Task SearchAuthors_ShouldReturn_Matches()
+    public async Task GetAuthors_ShouldReturn_Matches()
     {
         // Arrange
         using var client = this.application.CreateClient();
-        using var authorsResponse = await client.GetAsync("/api/author");
+        using var authorsResponse = await client.GetAsync("/api/authors?limit=50");
         var lastName = (await authorsResponse.Content.ReadAsStringAsync())
-            .Deserialize<List<Entities.Author>>()
+            .Deserialize<Page<Entities.AuthorSummary>>().Items
             .First().LastName;
 
         // Act
-        using var response = await client.GetAsync($"/api/author/search?query={Uri.EscapeDataString(lastName.ToLowerInvariant())}");
-        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Page<Entities.Author>>();
+        using var response = await client.GetAsync($"/api/authors?query={Uri.EscapeDataString(lastName.ToLowerInvariant())}");
+        var result = (await response.Content.ReadAsStringAsync()).Deserialize<Page<Entities.AuthorSummary>>();
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -200,13 +193,13 @@ public class AuthorEndpointTests : IDisposable
     }
 
     [Fact]
-    public async Task SearchAuthors_ShouldReturn_ValidationProblem()
+    public async Task GetAuthors_ShouldReturn_ValidationProblem()
     {
         // Arrange
         using var client = this.application.CreateClient();
 
         // Act
-        using var response = await client.GetAsync($"/api/author/search?query={new string('a', 101)}");
+        using var response = await client.GetAsync($"/api/authors?query={new string('a', 101)}");
         var result = (await response.Content.ReadAsStringAsync()).Deserialize<ValidationProblemDetails>();
 
         // Assert
@@ -229,8 +222,7 @@ public class AuthorEndpointTests : IDisposable
     {
         if (disposing)
         {
-            this.application?.Dispose();
-            this.application = null;
+            this.application.Dispose();
         }
     }
 }

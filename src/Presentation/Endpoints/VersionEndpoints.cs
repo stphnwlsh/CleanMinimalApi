@@ -25,7 +25,7 @@ public static class VersionEndpoints
     }
 
     /// <summary>
-    /// Lookup the application version details
+    /// Look up the application version details
     /// </summary>
     /// <remarks>
     /// Returns the file and informational versions of the running application.
@@ -36,8 +36,8 @@ public static class VersionEndpoints
     /// </remarks>
     /// <response code="200">The current application version details.</response>
     /// <response code="500">An unexpected error occurred.</response>
-    public static async Task<Ok<Entities.Version>> GetVersion([FromServices] ISender sender)
+    public static async Task<Ok<Entities.Version>> GetVersion([FromServices] ISender sender, CancellationToken cancellationToken)
     {
-        return TypedResults.Ok(await sender.Send(new Queries.GetVersion.GetVersionQuery()));
+        return TypedResults.Ok(await sender.Send(new Queries.GetVersion.GetVersionQuery(), cancellationToken));
     }
 }

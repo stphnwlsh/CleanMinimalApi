@@ -24,7 +24,7 @@ public class BearerSecurityTransformerTests
         await this.transformer.TransformAsync(document, CreateDocumentContext(), CancellationToken.None);
 
         // Assert
-        var scheme = document.Components.SecuritySchemes[BearerSecurityTransformer.SchemeName];
+        var scheme = document.Components.ShouldNotBeNull().SecuritySchemes.ShouldNotBeNull()[BearerSecurityTransformer.SchemeName];
         scheme.Type.ShouldBe(SecuritySchemeType.Http);
         scheme.Scheme.ShouldBe("bearer");
         scheme.BearerFormat.ShouldBe("JWT");
@@ -46,7 +46,7 @@ public class BearerSecurityTransformerTests
         await this.transformer.TransformAsync(document, CreateDocumentContext(), CancellationToken.None);
 
         // Assert
-        document.Components.SecuritySchemes.Keys.ShouldBe(["ApiKey", BearerSecurityTransformer.SchemeName], ignoreOrder: true);
+        document.Components.ShouldNotBeNull().SecuritySchemes.ShouldNotBeNull().Keys.ShouldBe(["ApiKey", BearerSecurityTransformer.SchemeName], ignoreOrder: true);
     }
 
     [Fact]
@@ -59,9 +59,22 @@ public class BearerSecurityTransformerTests
         await this.transformer.TransformAsync(operation, CreateOperationContext(new AuthorizeAttribute()), CancellationToken.None);
 
         // Assert
-        operation.Security.Count.ShouldBe(1);
+        operation.Security.ShouldNotBeNull().Count.ShouldBe(1);
         operation.Security[0].Keys.Single().Reference.Id.ShouldBe(BearerSecurityTransformer.SchemeName);
-        operation.Responses["401"].Description.ShouldNotBeNullOrWhiteSpace();
+        operation.Responses.ShouldNotBeNull()["401"].Description.ShouldNotBeNullOrWhiteSpace();
+    }
+
+    [Fact]
+    public async Task TransformOperation_ShouldAdd_Unauthorized_WhenOperationHasNoResponses()
+    {
+        // Arrange
+        var operation = new OpenApiOperation { Responses = null };
+
+        // Act
+        await this.transformer.TransformAsync(operation, CreateOperationContext(new AuthorizeAttribute()), CancellationToken.None);
+
+        // Assert
+        operation.Responses.ShouldNotBeNull().Keys.ShouldBe(["401"]);
     }
 
     [Fact]
@@ -70,7 +83,7 @@ public class BearerSecurityTransformerTests
         // Arrange
         var operation = new OpenApiOperation
         {
-            Security = [new OpenApiSecurityRequirement()],
+            Security = [[]],
             Responses = new OpenApiResponses { ["401"] = new OpenApiResponse { Description = "Existing." } }
         };
 

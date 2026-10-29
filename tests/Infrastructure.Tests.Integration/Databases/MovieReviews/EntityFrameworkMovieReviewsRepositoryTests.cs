@@ -5,37 +5,25 @@ using Application.Reviews.Commands.UpdateReview;
 using Shouldly;
 using Xunit;
 
-[Collection("MovieReviews")]
-public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture fixture)
+public sealed class EntityFrameworkMovieReviewsRepositoryTests : IDisposable
 {
+    private readonly MovieReviewsTestDatabase database = new();
 
-    #region Authors
-
-    [Fact]
-    public async Task GetAuthors_ShouldReturn_Authors()
+    public void Dispose()
     {
-        // Arrange
-        var repository = fixture.Repository;
-        using var tokenSource = new CancellationTokenSource();
-        var token = tokenSource.Token;
-
-        // Act
-        var result = await repository.GetAuthors(token);
-
-        // Assert
-        result.ShouldNotBeEmpty();
-        result.Count.ShouldBe(3);
+        this.database.Dispose();
     }
 
+    #region Authors
 
     [Fact]
     public async Task GetAuthorById_ShouldReturn_Author()
     {
         // Arrange
-        var repository = fixture.Repository;
+        var repository = this.database.Repository;
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
-        var author = fixture.Context.Authors.FirstOrDefault(a => a.FirstName == "One");
+        var author = this.database.Context.Authors.First(a => a.FirstName == "One");
 
         // Act
         var result = await repository.GetAuthorById(author.Id, token);
@@ -53,7 +41,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     public async Task GetAuthorById_ShouldReturn_Null()
     {
         // Arrange
-        var repository = fixture.Repository;
+        var repository = this.database.Repository;
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
 
@@ -68,10 +56,10 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     public async Task AuthorExists_ShouldReturn_True()
     {
         // Arrange
-        var repository = fixture.Repository;
+        var repository = this.database.Repository;
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
-        var author = fixture.Context.Authors.FirstOrDefault(a => a.FirstName == "One");
+        var author = this.database.Context.Authors.First(a => a.FirstName == "One");
 
         // Act
         var result = await repository.AuthorExists(author.Id, token);
@@ -84,7 +72,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     public async Task AuthorExists_ShouldReturn_False()
     {
         // Arrange
-        var repository = fixture.Repository;
+        var repository = this.database.Repository;
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
 
@@ -100,32 +88,49 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     [InlineData("one", 1)]
     [InlineData("TWO TWO", 1)]
     [InlineData("missing", 0)]
-    public async Task SearchAuthors_ShouldReturn_Matches(string query, int expected)
+    [InlineData("%", 0)]
+    public async Task GetAuthors_ShouldReturn_Matches(string? query, int expected)
     {
         // Arrange
-        var repository = fixture.Repository;
+        var repository = this.database.Repository;
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
 
         // Act
-        var (items, totalCount) = await repository.SearchAuthors(query, 0, 10, token);
+        var (items, totalCount) = await repository.GetAuthors(query, 0, 10, token);
 
         // Assert
         items.Count.ShouldBe(expected);
         totalCount.ShouldBe(expected);
-        items.ShouldAllBe(a => a.Reviews != null);
     }
 
     [Fact]
-    public async Task SearchAuthors_ShouldReturn_Page()
+    public async Task GetAuthors_ShouldReturn_ReviewCountAndAverageStars()
     {
         // Arrange
-        var repository = fixture.Repository;
+        var repository = this.database.Repository;
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
 
         // Act
-        var (items, totalCount) = await repository.SearchAuthors(null, 1, 1, token);
+        var (items, _) = await repository.GetAuthors("one", 0, 10, token);
+
+        // Assert
+        var author = items.ShouldHaveSingleItem();
+        author.ReviewCount.ShouldBe(3);
+        author.AverageStars.ShouldBe(2.0);
+    }
+
+    [Fact]
+    public async Task GetAuthors_ShouldReturn_Page()
+    {
+        // Arrange
+        var repository = this.database.Repository;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
+
+        // Act
+        var (items, totalCount) = await repository.GetAuthors(null, 1, 1, token);
 
         // Assert
         items.Count.ShouldBe(1);
@@ -137,31 +142,15 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
 
     #region Movies
 
-    [Fact]
-    public async Task GetMovies_ShouldReturn_Movies()
-    {
-        // Arrange
-        var repository = fixture.Repository;
-        using var tokenSource = new CancellationTokenSource();
-        var token = tokenSource.Token;
-
-        // Act
-        var result = await repository.GetMovies(token);
-
-        // Assert
-        result.ShouldNotBeEmpty();
-        result.Count.ShouldBe(3);
-    }
-
 
     [Fact]
     public async Task GetMovieById_ShouldReturn_Movie()
     {
         // Arrange
-        var repository = fixture.Repository;
+        var repository = this.database.Repository;
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
-        var movie = fixture.Context.Movies.FirstOrDefault(m => m.Title == "One");
+        var movie = this.database.Context.Movies.First(m => m.Title == "One");
 
         // Act
         var result = await repository.GetMovieById(movie.Id, token);
@@ -178,7 +167,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     public async Task GetMovieById_ShouldReturn_Null()
     {
         // Arrange
-        var repository = fixture.Repository;
+        var repository = this.database.Repository;
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
 
@@ -193,10 +182,10 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     public async Task MovieExists_ShouldReturn_True()
     {
         // Arrange
-        var repository = fixture.Repository;
+        var repository = this.database.Repository;
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
-        var movie = fixture.Context.Movies.FirstOrDefault(m => m.Title == "One");
+        var movie = this.database.Context.Movies.First(m => m.Title == "One");
 
         // Act
         var result = await repository.MovieExists(movie.Id, token);
@@ -209,7 +198,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     public async Task MovieExists_ShouldReturn_False()
     {
         // Arrange
-        var repository = fixture.Repository;
+        var repository = this.database.Repository;
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
 
@@ -225,33 +214,66 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     [InlineData("t", 2)]
     [InlineData("ONE", 1)]
     [InlineData("missing", 0)]
-    public async Task SearchMovies_ShouldReturn_Matches(string query, int expected)
+    public async Task GetMovies_ShouldReturn_Matches(string? query, int expected)
     {
         // Arrange
-        var repository = fixture.Repository;
+        var repository = this.database.Repository;
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
 
         // Act
-        var (items, totalCount) = await repository.SearchMovies(query, 0, 10, token);
+        var (items, totalCount) = await repository.GetMovies(query, 0, 10, token);
 
         // Assert
         items.Count.ShouldBe(expected);
         totalCount.ShouldBe(expected);
-        items.ShouldAllBe(m => m.Reviews != null);
     }
 
     [Fact]
-    public async Task SearchMovies_ShouldReturn_PagesInTitleOrder()
+    public async Task GetMovies_ShouldReturn_ReviewCountAndAverageStars()
     {
         // Arrange
-        var repository = fixture.Repository;
+        var repository = this.database.Repository;
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
 
         // Act
-        var (first, firstTotal) = await repository.SearchMovies(null, 0, 2, token);
-        var (second, secondTotal) = await repository.SearchMovies(null, 2, 2, token);
+        var (items, _) = await repository.GetMovies("one", 0, 10, token);
+
+        // Assert
+        var movie = items.ShouldHaveSingleItem();
+        movie.ReviewCount.ShouldBe(3);
+        movie.AverageStars.ShouldBe(2.7);
+    }
+
+    [Fact]
+    public async Task GetMovies_ShouldReturn_NullAverageStars_WhenNoReviews()
+    {
+        // Arrange
+        var repository = this.database.Repository;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
+        this.database.Context.Reviews.RemoveRange(this.database.Context.Reviews);
+        _ = await this.database.Context.SaveChangesAsync(token);
+
+        // Act
+        var (items, _) = await repository.GetMovies(null, 0, 10, token);
+
+        // Assert
+        items.ShouldAllBe(m => m.ReviewCount == 0 && m.AverageStars == null);
+    }
+
+    [Fact]
+    public async Task GetMovies_ShouldReturn_PagesInTitleOrder()
+    {
+        // Arrange
+        var repository = this.database.Repository;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
+
+        // Act
+        var (first, firstTotal) = await repository.GetMovies(null, 0, 2, token);
+        var (second, secondTotal) = await repository.GetMovies(null, 2, 2, token);
 
         // Assert
         first.Select(m => m.Title).ShouldBe(["One", "Three"]);
@@ -270,45 +292,38 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
         // Arrange
         var review = new CreateReviewCommand
         {
-            AuthorId = fixture.Context.Authors.FirstOrDefault(a => a.FirstName == "One").Id,
-            MovieId = fixture.Context.Movies.FirstOrDefault(m => m.Title == "One").Id,
+            AuthorId = this.database.Context.Authors.First(a => a.FirstName == "One").Id,
+            MovieId = this.database.Context.Movies.First(m => m.Title == "One").Id,
             Stars = 5
         };
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
 
         // Act
-        var result = await fixture.Repository.CreateReview(review.AuthorId, review.MovieId, review.Stars, token);
+        var result = await this.database.Repository.CreateReview(review.AuthorId, review.MovieId, review.Stars, token);
 
         // Assert
         _ = result.ShouldNotBeNull();
         result.Id.ShouldNotBe(Guid.Empty);
-        result.ReviewAuthor.Id.ShouldBe(review.AuthorId);
-        result.ReviewedMovie.Id.ShouldBe(review.MovieId);
+        result.ReviewAuthor.ShouldNotBeNull().Id.ShouldBe(review.AuthorId);
+        result.ReviewedMovie.ShouldNotBeNull().Id.ShouldBe(review.MovieId);
         result.Stars.ShouldBe(review.Stars);
-
-        // Cleanup
-        _ = await fixture.Repository.DeleteReview(result.Id, token);
     }
 
     [Fact]
     public async Task DeleteReview_ShouldReturn_True()
     {
         // Arrange
-        var id = fixture.Context.Reviews.FirstOrDefault(r => r.Stars == 1).Id;
+        var id = this.database.Context.Reviews.First(r => r.Stars == 1).Id;
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
 
         // Act
-        var result = await fixture.Repository.DeleteReview(id, token);
+        var result = await this.database.Repository.DeleteReview(id, token);
 
         // Assert
         result.ShouldBeTrue();
-
-        // Cleanup
-        var authorId = fixture.Context.Authors.FirstOrDefault(a => a.FirstName == "Three").Id;
-        var movieId = fixture.Context.Movies.FirstOrDefault(m => m.Title == "Three").Id;
-        _ = await fixture.Repository.CreateReview(authorId, movieId, 1, token);
+        this.database.Context.Reviews.Any(r => r.Id == id).ShouldBeFalse();
     }
 
     [Fact]
@@ -319,26 +334,10 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
         var token = tokenSource.Token;
 
         // Act
-        var result = await fixture.Repository.DeleteReview(Guid.Empty, token);
+        var result = await this.database.Repository.DeleteReview(Guid.Empty, token);
 
         // Assert
         result.ShouldBeFalse();
-    }
-
-    [Fact]
-    public async Task GetReviews_ShouldReturn_Reviews()
-    {
-        // Arrange
-        var repository = fixture.Repository;
-        using var tokenSource = new CancellationTokenSource();
-        var token = tokenSource.Token;
-
-        // Act
-        var result = await repository.GetReviews(token);
-
-        // Assert
-        result.ShouldNotBeEmpty();
-        result.Count.ShouldBe(9);
     }
 
 
@@ -346,10 +345,10 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     public async Task GetReviewById_ShouldReturn_Review()
     {
         // Arrange
-        var repository = fixture.Repository;
+        var repository = this.database.Repository;
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
-        var review = fixture.Context.Reviews.FirstOrDefault(m => m.Stars == 5);
+        var review = this.database.Context.Reviews.First(m => m.Stars == 5);
 
         // Act
         var result = await repository.GetReviewById(review.Id, token);
@@ -371,7 +370,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     public async Task GetReviewById_ShouldReturn_Null()
     {
         // Arrange
-        var repository = fixture.Repository;
+        var repository = this.database.Repository;
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
 
@@ -386,10 +385,10 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     public async Task ReviewExists_ShouldReturn_True()
     {
         // Arrange
-        var repository = fixture.Repository;
+        var repository = this.database.Repository;
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
-        var review = fixture.Context.Reviews.FirstOrDefault(m => m.Stars == 5);
+        var review = this.database.Context.Reviews.First(m => m.Stars == 5);
 
         // Act
         var result = await repository.ReviewExists(review.Id, token);
@@ -402,7 +401,7 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     public async Task ReviewExists_ShouldReturn_False()
     {
         // Arrange
-        var repository = fixture.Repository;
+        var repository = this.database.Repository;
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
 
@@ -417,29 +416,28 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
     public async Task UpdateReview_ShouldReturn_True()
     {
         // Arrange
+        var original = this.database.Context.Reviews.First(a => a.Stars == 2);
         var review = new UpdateReviewCommand
         {
-            Id = fixture.Context.Reviews.FirstOrDefault(a => a.Stars == 2).Id,
-            AuthorId = fixture.Context.Authors.FirstOrDefault(a => a.FirstName == "Two").Id,
-            MovieId = fixture.Context.Movies.FirstOrDefault(m => m.Title == "Two").Id,
+            Id = original.Id,
             Stars = 4
         };
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
 
         // Act
-        var result = await fixture.Repository.UpdateReview(review.Id, review.AuthorId, review.MovieId, review.Stars, token);
+        var result = await this.database.Repository.UpdateReview(review.Id, review.Stars, token);
 
         // Assert
         result.ShouldBeTrue();
 
-        var updatedReview = fixture.Context.Reviews.FirstOrDefault(a => a.Id == review.Id);
+        var updatedReview = this.database.Context.Reviews.First(a => a.Id == review.Id);
 
         updatedReview.Id.ShouldBe(review.Id);
-        updatedReview.ReviewAuthorId.ShouldBe(review.AuthorId);
-        updatedReview.ReviewedMovieId.ShouldBe(review.MovieId);
+        updatedReview.ReviewAuthorId.ShouldBe(original.ReviewAuthorId);
+        updatedReview.ReviewedMovieId.ShouldBe(original.ReviewedMovieId);
         updatedReview.Stars.ShouldBe(review.Stars);
-        updatedReview.DateModified.ShouldBe(fixture.TimeProvider.GetUtcNow().UtcDateTime);
+        updatedReview.DateModified.ShouldBe(this.database.TimeProvider.GetUtcNow().UtcDateTime);
     }
 
     [Fact]
@@ -449,70 +447,119 @@ public class EntityFrameworkMovieReviewsRepositoryTests(MovieReviewsDataFixture 
         var review = new UpdateReviewCommand
         {
             Id = Guid.Empty,
-            AuthorId = fixture.Context.Authors.FirstOrDefault(a => a.FirstName == "One").Id,
-            MovieId = fixture.Context.Movies.FirstOrDefault(m => m.Title == "One").Id,
             Stars = 5
         };
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
 
         // Act
-        var result = await fixture.Repository.UpdateReview(review.Id, review.AuthorId, review.MovieId, review.Stars, token);
+        var result = await this.database.Repository.UpdateReview(review.Id, review.Stars, token);
 
         // Assert
         result.ShouldBeFalse();
     }
 
     [Fact]
-    public async Task SearchReviews_ShouldReturn_ReviewsForMovie()
+    public async Task GetReviews_ShouldReturn_ReviewsForMovie()
     {
         // Arrange
-        var repository = fixture.Repository;
+        var repository = this.database.Repository;
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
-        var movieId = fixture.Context.Movies.First(m => m.Title == "Two").Id;
+        var movieId = this.database.Context.Movies.First(m => m.Title == "Two").Id;
 
         // Act
-        var (items, totalCount) = await repository.SearchReviews(movieId, null, 0, 50, token);
+        var (items, totalCount) = await repository.GetReviews(movieId, null, 0, 50, token);
 
         // Assert
         items.ShouldNotBeEmpty();
         items.Count.ShouldBe(totalCount);
-        items.ShouldAllBe(r => r.ReviewedMovie.Id == movieId && r.ReviewedMovie.Title == "Two");
+        items.ShouldAllBe(r => r.ReviewedMovie!.Id == movieId && r.ReviewedMovie.Title == "Two");
         items.ShouldAllBe(r => r.ReviewAuthor != null);
     }
 
     [Fact]
-    public async Task SearchReviews_ShouldReturn_ReviewsForAuthorAndMovie()
+    public async Task GetReviews_ShouldReturn_ReviewsForAuthorAndMovie()
     {
         // Arrange
-        var repository = fixture.Repository;
+        var repository = this.database.Repository;
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
-        var movieId = fixture.Context.Movies.First(m => m.Title == "Three").Id;
-        var authorId = fixture.Context.Authors.First(a => a.FirstName == "Two").Id;
+        var movieId = this.database.Context.Movies.First(m => m.Title == "Three").Id;
+        var authorId = this.database.Context.Authors.First(a => a.FirstName == "Two").Id;
 
         // Act
-        var (items, _) = await repository.SearchReviews(movieId, authorId, 0, 50, token);
+        var (items, _) = await repository.GetReviews(movieId, authorId, 0, 50, token);
 
         // Assert
-        items.ShouldAllBe(r => r.ReviewedMovie.Id == movieId && r.ReviewAuthor.Id == authorId);
+        items.ShouldAllBe(r => r.ReviewedMovie!.Id == movieId && r.ReviewAuthor!.Id == authorId);
     }
 
     [Fact]
-    public async Task SearchReviews_ShouldReturn_Page()
+    public async Task GetReviews_ShouldReturn_Page()
     {
         // Arrange
-        var repository = fixture.Repository;
+        var repository = this.database.Repository;
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
 
         // Act
-        var (items, totalCount) = await repository.SearchReviews(null, null, 0, 2, token);
+        var (items, totalCount) = await repository.GetReviews(null, null, 0, 2, token);
 
         // Assert
         items.Count.ShouldBe(2);
         totalCount.ShouldBeGreaterThan(2);
+    }
+
+    [Fact]
+    public async Task GetReviewsForMovies_ShouldReturn_ReviewsForEachMovie()
+    {
+        // Arrange
+        var repository = this.database.Repository;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
+        var movieIds = this.database.Context.Movies.Where(m => m.Title != "Three").Select(m => m.Id).ToList();
+
+        // Act
+        var result = await repository.GetReviewsForMovies(movieIds, token);
+
+        // Assert
+        result.Count.ShouldBe(6);
+        result.ShouldAllBe(r => movieIds.Contains(r.ReviewedMovie!.Id) && r.ReviewAuthor != null);
+        result.Select(r => r.ReviewAuthor!.LastName).ShouldBeInOrder();
+    }
+
+    [Fact]
+    public async Task GetReviewsForMovies_ShouldReturn_Empty_WhenNoMatches()
+    {
+        // Arrange
+        var repository = this.database.Repository;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
+
+        // Act
+        var result = await repository.GetReviewsForMovies([Guid.NewGuid()], token);
+
+        // Assert
+        result.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task GetReviewsForAuthors_ShouldReturn_ReviewsForEachAuthor()
+    {
+        // Arrange
+        var repository = this.database.Repository;
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
+        var authorIds = this.database.Context.Authors.Where(a => a.FirstName == "One").Select(a => a.Id).ToList();
+
+        // Act
+        var result = await repository.GetReviewsForAuthors(authorIds, token);
+
+        // Assert
+        result.Count.ShouldBe(3);
+        result.ShouldAllBe(r => authorIds.Contains(r.ReviewAuthor!.Id) && r.ReviewedMovie != null);
+        result.Select(r => r.ReviewedMovie!.Title).ShouldBe(["One", "Three", "Two"]);
     }
 
     #endregion Reviews

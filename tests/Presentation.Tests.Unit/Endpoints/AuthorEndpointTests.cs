@@ -2,7 +2,6 @@ namespace CleanMinimalApi.Presentation.Tests.Unit.Endpoints;
 
 using System.Threading.Tasks;
 using CleanMinimalApi.Application.Common.Paging;
-using CleanMinimalApi.Application.Reviews.Entities;
 using CleanMinimalApi.Presentation.Endpoints;
 using Mediator;
 using Microsoft.AspNetCore.Http;
@@ -20,32 +19,32 @@ public class AuthorEndpointTests
     {
         // Arrange
         var sender = Substitute.For<ISender>();
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         _ = sender
-            .Send(Arg.Any<Queries.GetAuthors.GetAuthorsQuery>())
-            .ReturnsForAnyArgs(
-            [
-                new Entities.Author(Guid.Empty, "Lorem", "Ipsum")
-            ]);
+            .Send(Arg.Is<Queries.GetAuthors.GetAuthorsQuery>(q => q.Query == "Lorem" && q.Offset == 20 && q.Limit == 5), token)
+            .Returns(new Page<Entities.AuthorSummary>([new Entities.AuthorSummary(Guid.Empty, "Lorem", "Ipsum", 2, 3.5)], 20, 5, 21));
 
         // Act
-        var response = await AuthorEndpoints.GetAuthors(sender);
+        var response = await AuthorEndpoints.GetAuthors("Lorem", sender, token, 20, 5);
 
         // Assert
-        var result = response.ShouldBeOfType<Ok<List<Entities.Author>>>();
+        var result = response.ShouldBeOfType<Ok<Page<Entities.AuthorSummary>>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status200OK);
 
-        var value = result.Value.ShouldBeOfType<List<Entities.Author>>();
+        var value = result.Value.ShouldNotBeNull();
 
-        _ = value[0].Id.ShouldBeOfType<Guid>();
-        value[0].Id.ShouldBe(Guid.Empty);
-        _ = value[0].FirstName.ShouldBeOfType<string>();
-        value[0].FirstName.ShouldBe("Lorem");
-        _ = value[0].LastName.ShouldBeOfType<string>();
-        value[0].LastName.ShouldBe("Ipsum");
-        _ = value[0].Reviews.ShouldBeAssignableTo<ICollection<Review>>();
-        value[0].Reviews.ShouldBeNull();
+        value.Items.Count.ShouldBe(1);
+        value.Items[0].Id.ShouldBe(Guid.Empty);
+        value.Items[0].FirstName.ShouldBe("Lorem");
+        value.Items[0].LastName.ShouldBe("Ipsum");
+        value.Items[0].ReviewCount.ShouldBe(2);
+        value.Items[0].AverageStars.ShouldBe(3.5);
+        value.Offset.ShouldBe(20);
+        value.Limit.ShouldBe(5);
+        value.TotalCount.ShouldBe(21);
     }
 
     [Fact]
@@ -53,56 +52,27 @@ public class AuthorEndpointTests
     {
         // Arrange
         var sender = Substitute.For<ISender>();
+        var id = Guid.NewGuid();
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         _ = sender
-            .Send(Arg.Any<Queries.GetAuthorById.GetAuthorByIdQuery>())
-            .ReturnsForAnyArgs(new Entities.Author(Guid.Empty, "Lorem", "Ipsum"));
+            .Send(Arg.Is<Queries.GetAuthorById.GetAuthorByIdQuery>(q => q.Id == id), token)
+            .Returns(new Entities.Author(id, "Lorem", "Ipsum", []));
 
         // Act
-        var response = await AuthorEndpoints.GetAuthorById(Guid.Empty, sender);
+        var response = await AuthorEndpoints.GetAuthorById(id, sender, token);
 
         // Assert
         var result = response.ShouldBeOfType<Ok<Entities.Author>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status200OK);
 
-        var value = result.Value.ShouldBeOfType<Entities.Author>();
+        var value = result.Value.ShouldNotBeNull();
 
-        _ = value.Id.ShouldBeOfType<Guid>();
-        value.Id.ShouldBe(Guid.Empty);
-        _ = value.FirstName.ShouldBeOfType<string>();
+        value.Id.ShouldBe(id);
         value.FirstName.ShouldBe("Lorem");
-        _ = value.LastName.ShouldBeOfType<string>();
         value.LastName.ShouldBe("Ipsum");
-        _ = value.Reviews.ShouldBeAssignableTo<ICollection<Review>>();
-        value.Reviews.ShouldBeNull();
-    }
-
-    [Fact]
-    public async Task SearchAuthors_ShouldReturn_Ok()
-    {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-
-        _ = sender
-            .Send(Arg.Is<Queries.SearchAuthors.SearchAuthorsQuery>(q => q.Query == "Lorem" && q.Limit == 5 && q.Cursor == "cursor"))
-            .Returns(new Page<Entities.Author>([new Entities.Author(Guid.Empty, "Lorem", "Ipsum")], 6, "next"));
-
-        // Act
-        var response = await AuthorEndpoints.SearchAuthors("Lorem", sender, 5, "cursor");
-
-        // Assert
-        var result = response.ShouldBeOfType<Ok<Page<Entities.Author>>>();
-
-        result.StatusCode.ShouldBe(StatusCodes.Status200OK);
-
-        var value = result.Value.ShouldBeOfType<Page<Entities.Author>>();
-
-        value.TotalCount.ShouldBe(6);
-        value.NextCursor.ShouldBe("next");
-        _ = value.Items.ShouldHaveSingleItem();
-        value.Items[0].Id.ShouldBe(Guid.Empty);
-        value.Items[0].FirstName.ShouldBe("Lorem");
-        value.Items[0].LastName.ShouldBe("Ipsum");
+        value.Reviews.ShouldBeEmpty();
     }
 }

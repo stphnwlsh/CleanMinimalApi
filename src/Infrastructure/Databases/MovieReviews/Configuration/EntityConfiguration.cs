@@ -11,7 +11,7 @@ internal abstract class EntityConfiguration<T> : IEntityTypeConfiguration<T>
     {
         _ = builder.HasKey(e => e.Id);
         _ = builder.Property(m => m.Id).ValueGeneratedOnAdd().IsRequired();
-        _ = builder.Property(m => m.DateCreated).ValueGeneratedOnAdd().IsRequired();
-        _ = builder.Property(m => m.DateModified).ValueGeneratedOnAdd().IsRequired();
+        _ = builder.Property(m => m.DateCreated).IsRequired();
+        _ = builder.Property(m => m.DateModified).IsRequired();
     }
 }

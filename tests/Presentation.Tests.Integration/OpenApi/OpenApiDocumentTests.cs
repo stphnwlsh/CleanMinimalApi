@@ -8,7 +8,7 @@ using Xunit;
 
 public class OpenApiDocumentTests : IDisposable
 {
-    private MinimalApiApplication application;
+    private readonly MinimalApiApplication application;
 
     public OpenApiDocumentTests()
     {
@@ -25,7 +25,7 @@ public class OpenApiDocumentTests : IDisposable
         var info = document.RootElement.GetProperty("info");
 
         // Assert
-        info.GetProperty("title").GetString().ShouldStartWith("CleanMinimalApi API");
+        info.GetProperty("title").GetString()!.ShouldStartWith("CleanMinimalApi API");
         info.GetProperty("description").GetString().ShouldNotBeNullOrWhiteSpace();
         info.GetProperty("license").GetProperty("name").GetString().ShouldNotBeNullOrWhiteSpace();
     }
@@ -61,13 +61,13 @@ public class OpenApiDocumentTests : IDisposable
             .ToList();
 
         // Assert
-        operations.Count.ShouldBe(13);
+        operations.Count.ShouldBe(10);
 
         foreach (var operation in operations)
         {
             operation.GetProperty("operationId").GetString().ShouldNotBeNullOrWhiteSpace();
             operation.GetProperty("summary").GetString().ShouldNotBeNullOrWhiteSpace();
-            operation.GetProperty("description").GetString().ShouldContain("Sample request:");
+            operation.GetProperty("description").GetString()!.ShouldContain("Sample request:");
 
             if (operation.TryGetProperty("parameters", out var parameters))
             {
@@ -84,7 +84,7 @@ public class OpenApiDocumentTests : IDisposable
 
             foreach (var response in operation.GetProperty("responses").EnumerateObject())
             {
-                response.Value.GetProperty("description").GetString().ShouldEndWith(".");
+                response.Value.GetProperty("description").GetString()!.ShouldEndWith(".");
             }
         }
     }
@@ -94,8 +94,10 @@ public class OpenApiDocumentTests : IDisposable
     [InlineData("Movie")]
     [InlineData("Review")]
     [InlineData("Version")]
-    [InlineData("PageOfAuthor")]
-    [InlineData("PageOfMovie")]
+    [InlineData("AuthorSummary")]
+    [InlineData("PageOfAuthorSummary")]
+    [InlineData("MovieSummary")]
+    [InlineData("PageOfMovieSummary")]
     [InlineData("PageOfReview")]
     [InlineData("CreateReviewRequest")]
     [InlineData("UpdateReviewRequest")]
@@ -112,8 +114,21 @@ public class OpenApiDocumentTests : IDisposable
 
         foreach (var property in schema.GetProperty("properties").EnumerateObject())
         {
-            property.Value.GetProperty("description").GetString().ShouldNotBeNullOrWhiteSpace();
+            Description(property.Value).ShouldNotBeNullOrWhiteSpace();
         }
+    }
+
+    // A nullable reference to another schema is written as oneOf null or the schema, with the description on the schema.
+    private static string? Description(JsonElement property)
+    {
+        if (property.TryGetProperty("description", out var description))
+        {
+            return description.GetString();
+        }
+
+        return property.GetProperty("oneOf").EnumerateArray()
+            .Select(option => option.TryGetProperty("description", out var value) ? value.GetString() : null)
+            .FirstOrDefault(value => value is not null);
     }
 
     [Fact]
@@ -140,8 +155,7 @@ public class OpenApiDocumentTests : IDisposable
     {
         if (disposing)
         {
-            this.application?.Dispose();
-            this.application = null;
+            this.application.Dispose();
         }
     }
 

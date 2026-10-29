@@ -26,7 +26,7 @@ public class ReadByIdHandlerTests
         using var tokenSource = new CancellationTokenSource();
         var token = tokenSource.Token;
 
-        _ = context.GetMovieById(Arg.Any<Guid>(), token).Returns(new Movie(Guid.Empty, "Title"));
+        _ = context.GetMovieById(Arg.Any<Guid>(), token).Returns(new Movie(Guid.Empty, "Title", []));
 
         // Act
         var result = await handler.Handle(query, token);
@@ -39,7 +39,7 @@ public class ReadByIdHandlerTests
 
         result.Id.ShouldBe(Guid.Empty);
         result.Title.ShouldBe("Title");
-        result.Reviews.ShouldBeNull();
+        result.Reviews.ShouldBeEmpty();
     }
 
     [Fact]

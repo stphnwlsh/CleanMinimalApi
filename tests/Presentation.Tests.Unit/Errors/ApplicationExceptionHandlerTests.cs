@@ -7,7 +7,6 @@ using CleanMinimalApi.Presentation.Errors;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
-using NSubstitute;
 using Shouldly;
 using Xunit;
 
@@ -89,18 +88,30 @@ public class ApplicationExceptionHandlerTests
 
     private static async Task<(bool Handled, HttpContext HttpContext, ProblemDetailsContext Context)> Handle(Exception exception)
     {
-        var problemDetailsService = Substitute.For<IProblemDetailsService>();
-        ProblemDetailsContext context = null;
-
-        _ = problemDetailsService
-            .TryWriteAsync(Arg.Do<ProblemDetailsContext>(c => context = c))
-            .Returns(ValueTask.FromResult(true));
+        var problemDetailsService = new CapturingProblemDetailsService();
 
         var handler = new ApplicationExceptionHandler(problemDetailsService);
         var httpContext = new DefaultHttpContext();
 
         var handled = await handler.TryHandleAsync(httpContext, exception, CancellationToken.None);
 
-        return (handled, httpContext, context);
+        return (handled, httpContext, problemDetailsService.Context.ShouldNotBeNull());
+    }
+
+    private sealed class CapturingProblemDetailsService : IProblemDetailsService
+    {
+        public ProblemDetailsContext? Context { get; private set; }
+
+        public ValueTask WriteAsync(ProblemDetailsContext context)
+        {
+            this.Context = context;
+            return ValueTask.CompletedTask;
+        }
+
+        public ValueTask<bool> TryWriteAsync(ProblemDetailsContext context)
+        {
+            this.Context = context;
+            return ValueTask.FromResult(true);
+        }
     }
 }

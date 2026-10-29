@@ -108,8 +108,9 @@ public static class WebApplicationBuilderExtensions
         #region Project Dependencies
 
         _ = builder.Services.AddMediator(options => options.ServiceLifetime = ServiceLifetime.Scoped);
-        _ = builder.Services.AddInfrastructure();
+        _ = builder.Services.AddInfrastructure(builder.Configuration.GetConnectionString("MovieReviews"));
         _ = builder.Services.AddApplication();
+        _ = builder.Services.AddHealthChecks().AddInfrastructureHealthChecks("ready");
 
         #endregion Project Dependencies
 

@@ -17,50 +17,43 @@ using Queries = Application.Reviews.Queries;
 
 public class ReviewEndpointTests
 {
+    private static readonly Entities.Review Review = new(
+        Guid.NewGuid(),
+        5,
+        new ReviewedMovie(Guid.NewGuid(), "Lorem Ipsum"),
+        new ReviewAuthor(Guid.NewGuid(), "Lorem", "Ipsum"));
+
     [Fact]
     public async Task GetReviews_ShouldReturn_Ok()
     {
         // Arrange
         var sender = Substitute.For<ISender>();
+        var movieId = Guid.NewGuid();
+        var authorId = Guid.NewGuid();
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         _ = sender
-            .Send(Arg.Any<Queries.GetReviews.GetReviewsQuery>())
-            .ReturnsForAnyArgs(
-            [
-                new Entities.Review(
-                    Guid.Empty,
-                    5,
-                    new ReviewedMovie(Guid.Empty, "Lorem Ipsum"),
-                    new ReviewAuthor(Guid.Empty, "Lorem", "Ipsum")
-                )
-            ]);
+            .Send(
+                Arg.Is<Queries.GetReviews.GetReviewsQuery>(q =>
+                    q.MovieId == movieId && q.AuthorId == authorId && q.Offset == 20 && q.Limit == 5),
+                token)
+            .Returns(new Page<Entities.Review>([Review], 20, 5, 21));
 
         // Act
-        var response = await ReviewEndpoints.GetReviews(sender);
+        var response = await ReviewEndpoints.GetReviews(movieId, authorId, sender, token, 20, 5);
 
         // Assert
-        var result = response.ShouldBeOfType<Ok<List<Entities.Review>>>();
+        var result = response.ShouldBeOfType<Ok<Page<Entities.Review>>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status200OK);
 
-        var value = result.Value.ShouldBeOfType<List<Entities.Review>>();
+        var value = result.Value.ShouldNotBeNull();
 
-        _ = value[0].Id.ShouldBeOfType<Guid>();
-        value[0].Id.ShouldBe(Guid.Empty);
-        _ = value[0].Stars.ShouldBeOfType<int>();
-        value[0].Stars.ShouldBe(5);
-
-        _ = value[0].ReviewAuthor.Id.ShouldBeOfType<Guid>();
-        value[0].ReviewAuthor.Id.ShouldBe(Guid.Empty);
-        _ = value[0].ReviewAuthor.FirstName.ShouldBeOfType<string>();
-        value[0].ReviewAuthor.FirstName.ShouldBe("Lorem");
-        _ = value[0].ReviewAuthor.LastName.ShouldBeOfType<string>();
-        value[0].ReviewAuthor.LastName.ShouldBe("Ipsum");
-
-        _ = value[0].ReviewedMovie.Id.ShouldBeOfType<Guid>();
-        value[0].ReviewedMovie.Id.ShouldBe(Guid.Empty);
-        _ = value[0].ReviewedMovie.Title.ShouldBeOfType<string>();
-        value[0].ReviewedMovie.Title.ShouldBe("Lorem Ipsum");
+        value.Items.ShouldBe([Review]);
+        value.Offset.ShouldBe(20);
+        value.Limit.ShouldBe(5);
+        value.TotalCount.ShouldBe(21);
     }
 
     [Fact]
@@ -68,92 +61,54 @@ public class ReviewEndpointTests
     {
         // Arrange
         var sender = Substitute.For<ISender>();
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         _ = sender
-            .Send(Arg.Any<Queries.GetReviewById.GetReviewByIdQuery>())
-            .ReturnsForAnyArgs(new Entities.Review(
-                Guid.Empty,
-                5,
-                new ReviewedMovie(Guid.Empty, "Lorem Ipsum"),
-                new ReviewAuthor(Guid.Empty, "Lorem", "Ipsum")
-            ));
+            .Send(Arg.Is<Queries.GetReviewById.GetReviewByIdQuery>(q => q.Id == Review.Id), token)
+            .Returns(Review);
 
         // Act
-        var response = await ReviewEndpoints.GetReviewById(Guid.Empty, sender);
+        var response = await ReviewEndpoints.GetReviewById(Review.Id, sender, token);
 
         // Assert
         var result = response.ShouldBeOfType<Ok<Entities.Review>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status200OK);
-
-        var value = result.Value.ShouldBeOfType<Entities.Review>();
-
-        _ = value.Id.ShouldBeOfType<Guid>();
-        value.Id.ShouldBe(Guid.Empty);
-        _ = value.Stars.ShouldBeOfType<int>();
-        value.Stars.ShouldBe(5);
-
-        _ = value.ReviewAuthor.Id.ShouldBeOfType<Guid>();
-        value.ReviewAuthor.Id.ShouldBe(Guid.Empty);
-        _ = value.ReviewAuthor.FirstName.ShouldBeOfType<string>();
-        value.ReviewAuthor.FirstName.ShouldBe("Lorem");
-        _ = value.ReviewAuthor.LastName.ShouldBeOfType<string>();
-        value.ReviewAuthor.LastName.ShouldBe("Ipsum");
-
-        _ = value.ReviewedMovie.Id.ShouldBeOfType<Guid>();
-        value.ReviewedMovie.Id.ShouldBe(Guid.Empty);
-        _ = value.ReviewedMovie.Title.ShouldBeOfType<string>();
-        value.ReviewedMovie.Title.ShouldBe("Lorem Ipsum");
+        result.Value.ShouldBe(Review);
     }
 
     [Fact]
-    public async Task CreateReview_ShouldReturn_Created()
+    public async Task CreateReview_ShouldReturn_CreatedAtRoute()
     {
         // Arrange
-        //var httpRequest = Substitute.For<HttpRequest>();
         var sender = Substitute.For<ISender>();
         var request = new Requests.CreateReviewRequest
         {
-            AuthorId = Guid.Empty,
-            MovieId = Guid.Empty,
+            AuthorId = Review.ReviewAuthor!.Id,
+            MovieId = Review.ReviewedMovie!.Id,
             Stars = 5
         };
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         _ = sender
-            .Send(Arg.Any<Commands.CreateReview.CreateReviewCommand>())
-            .ReturnsForAnyArgs(new Entities.Review(
-                Guid.Empty,
-                5,
-                new ReviewedMovie(Guid.Empty, "Lorem Ipsum"),
-                new ReviewAuthor(Guid.Empty, "Lorem", "Ipsum")
-            ));
+            .Send(
+                Arg.Is<Commands.CreateReview.CreateReviewCommand>(c =>
+                    c.AuthorId == request.AuthorId && c.MovieId == request.MovieId && c.Stars == 5),
+                token)
+            .Returns(Review);
 
         // Act
-        var response = await ReviewEndpoints.CreateReview(request, sender);
+        var response = await ReviewEndpoints.CreateReview(request, sender, token);
 
         // Assert
-        var result = response.ShouldBeOfType<Created<Entities.Review>>();
+        var result = response.ShouldBeOfType<CreatedAtRoute<Entities.Review>>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status201Created);
-
-        var value = result.Value.ShouldBeOfType<Entities.Review>();
-
-        _ = value.Id.ShouldBeOfType<Guid>();
-        value.Id.ShouldBe(Guid.Empty);
-        _ = value.Stars.ShouldBeOfType<int>();
-        value.Stars.ShouldBe(5);
-
-        _ = value.ReviewAuthor.Id.ShouldBeOfType<Guid>();
-        value.ReviewAuthor.Id.ShouldBe(Guid.Empty);
-        _ = value.ReviewAuthor.FirstName.ShouldBeOfType<string>();
-        value.ReviewAuthor.FirstName.ShouldBe("Lorem");
-        _ = value.ReviewAuthor.LastName.ShouldBeOfType<string>();
-        value.ReviewAuthor.LastName.ShouldBe("Ipsum");
-
-        _ = value.ReviewedMovie.Id.ShouldBeOfType<Guid>();
-        value.ReviewedMovie.Id.ShouldBe(Guid.Empty);
-        _ = value.ReviewedMovie.Title.ShouldBeOfType<string>();
-        value.ReviewedMovie.Title.ShouldBe("Lorem Ipsum");
+        result.RouteName.ShouldBe(nameof(ReviewEndpoints.GetReviewById));
+        result.RouteValues["id"].ShouldBe(Review.Id);
+        result.Value.ShouldBe(Review);
     }
 
     [Fact]
@@ -161,24 +116,27 @@ public class ReviewEndpointTests
     {
         // Arrange
         var sender = Substitute.For<ISender>();
+        var id = Guid.NewGuid();
         var request = new Requests.UpdateReviewRequest
         {
-            AuthorId = Guid.Empty,
-            MovieId = Guid.Empty,
-            Stars = 5
+            Stars = 4
         };
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         _ = sender
-            .Send(Arg.Any<Commands.UpdateReview.UpdateReviewCommand>())
-            .ReturnsForAnyArgs(true);
+            .Send(Arg.Is<Commands.UpdateReview.UpdateReviewCommand>(c => c.Id == id && c.Stars == 4), token)
+            .Returns(true);
 
         // Act
-        var response = await ReviewEndpoints.UpdateReview(Guid.NewGuid(), request, sender);
+        var response = await ReviewEndpoints.UpdateReview(id, request, sender, token);
 
         // Assert
         var result = response.ShouldBeOfType<NoContent>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status204NoContent);
+
+        _ = await sender.Received(1).Send(Arg.Is<Commands.UpdateReview.UpdateReviewCommand>(c => c.Id == id && c.Stars == 4), token);
     }
 
     [Fact]
@@ -186,56 +144,22 @@ public class ReviewEndpointTests
     {
         // Arrange
         var sender = Substitute.For<ISender>();
+        var id = Guid.NewGuid();
+        using var tokenSource = new CancellationTokenSource();
+        var token = tokenSource.Token;
 
         _ = sender
-            .Send(Arg.Any<Commands.DeleteReview.DeleteReviewCommand>())
-            .ReturnsForAnyArgs(true);
+            .Send(Arg.Is<Commands.DeleteReview.DeleteReviewCommand>(c => c.Id == id), token)
+            .Returns(true);
 
         // Act
-        var response = await ReviewEndpoints.DeleteReview(Guid.NewGuid(), sender);
+        var response = await ReviewEndpoints.DeleteReview(id, sender, token);
 
         // Assert
         var result = response.ShouldBeOfType<NoContent>();
 
         result.StatusCode.ShouldBe(StatusCodes.Status204NoContent);
-    }
 
-    [Fact]
-    public async Task SearchReviews_ShouldReturn_Ok()
-    {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var movieId = Guid.NewGuid();
-        var authorId = Guid.NewGuid();
-
-        _ = sender
-            .Send(Arg.Is<Queries.SearchReviews.SearchReviewsQuery>(q =>
-                q.MovieId == movieId && q.AuthorId == authorId && q.Limit == 5 && q.Cursor == "cursor"))
-            .Returns(new Page<Entities.Review>(
-            [
-                new Entities.Review(
-                    Guid.Empty,
-                    5,
-                    new ReviewedMovie(movieId, "Lorem Ipsum"),
-                    new ReviewAuthor(authorId, "Lorem", "Ipsum")
-                )
-            ], 6, "next"));
-
-        // Act
-        var response = await ReviewEndpoints.SearchReviews(movieId, authorId, sender, 5, "cursor");
-
-        // Assert
-        var result = response.ShouldBeOfType<Ok<Page<Entities.Review>>>();
-
-        result.StatusCode.ShouldBe(StatusCodes.Status200OK);
-
-        var value = result.Value.ShouldBeOfType<Page<Entities.Review>>();
-
-        value.TotalCount.ShouldBe(6);
-        value.NextCursor.ShouldBe("next");
-        _ = value.Items.ShouldHaveSingleItem();
-        value.Items[0].Stars.ShouldBe(5);
-        value.Items[0].ReviewedMovie.Id.ShouldBe(movieId);
-        value.Items[0].ReviewAuthor.Id.ShouldBe(authorId);
+        _ = await sender.Received(1).Send(Arg.Is<Commands.DeleteReview.DeleteReviewCommand>(c => c.Id == id), token);
     }
 }
