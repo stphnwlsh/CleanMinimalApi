@@ -38,7 +38,7 @@ jobs:
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Initialize
         id: initialize
@@ -94,7 +94,7 @@ jobs:
 
       - name: Setup .NET
         id: setup
-        uses: actions/setup-dotnet@v6
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           dotnet-version: '10.0.x'
 
@@ -133,7 +133,7 @@ jobs:
 
       - name: Upload Coverage
         id: upload-coverage
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: coverage
           path: out/coverage.opencover.xml
@@ -141,7 +141,7 @@ jobs:
 
       - name: Upload Image
         id: upload-image
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: image
           path: image.tar
@@ -149,7 +149,7 @@ jobs:
 
       - name: Upload Template
         id: upload-template
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: template
           path: packages/*.nupkg
@@ -165,13 +165,13 @@ jobs:
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
       - name: Download Coverage
         id: download
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: coverage
           path: out
@@ -250,7 +250,7 @@ jobs:
     steps:
       - name: Download Image
         id: download
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: image
 
@@ -270,7 +270,7 @@ jobs:
 
       - name: Upload Scan
         id: upload-scan
-        uses: github/codeql-action/upload-sarif@v4
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         with:
           sarif_file: trivy-results.sarif
           category: trivy
@@ -303,11 +303,11 @@ jobs:
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Initialize
         id: initialize
-        uses: github/codeql-action/init@v4
+        uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         with:
           languages: ${{ matrix.language }}
           build-mode: none
@@ -315,7 +315,7 @@ jobs:
 
       - name: Analysis
         id: analysis
-        uses: github/codeql-action/analyze@v4
+        uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         with:
           category: "/language:${{ matrix.language }}"
 
@@ -332,7 +332,7 @@ jobs:
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
@@ -374,7 +374,7 @@ jobs:
     steps:
       - name: Download Template
         id: download-template
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: template
           path: packages

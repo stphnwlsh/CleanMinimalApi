@@ -1,12 +1,5 @@
-# Docker image ARGS
-ARG BASE_IMAGE_REPO=mcr.microsoft.com
-ARG BASE_IMAGE_BUILD=dotnet/sdk
-ARG BASE_IMAGE_BUILD_TAG=10.0-alpine
-ARG BASE_IMAGE_RUNTIME=dotnet/aspnet
-ARG BASE_IMAGE_RUNTIME_TAG=10.0-alpine
-
 # Setup Build Image
-FROM ${BASE_IMAGE_REPO}/${BASE_IMAGE_BUILD}:${BASE_IMAGE_BUILD_TAG} AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine@sha256:cc02b814237a76c4735fb6eeee87181597b5e56f2ce458a435e527674d91f4d7 AS build
 
 # Build, Test and Publish ARGS
 ARG VERSION_PREFIX=1.0.0.0
@@ -20,12 +13,9 @@ WORKDIR /sln
 
 # Dotnet Restore
 COPY ./*.sln ./NuGet.config ./Directory.Build.props ./Directory.Packages.props ./
-COPY src/*/*.csproj ./
-RUN for file in $(ls *.csproj); do mkdir -p src/${file%.*}/ && mv $file src/${file%.*}/; done
-COPY tests/*/*.csproj ./
-RUN for file in $(ls *.csproj); do mkdir -p tests/${file%.*}/ && mv $file tests/${file%.*}/; done
+COPY --parents src/*/*.csproj src/*/packages.lock.json tests/*/*.csproj tests/*/packages.lock.json ./
 
-RUN dotnet restore -v minimal
+RUN dotnet restore --locked-mode -v minimal
 
 # Copy Remaining Files
 COPY . .
@@ -47,7 +37,7 @@ ARG VERSION_SUFFIX
 RUN dotnet publish ./src/**/Presentation.csproj --no-restore -c Release -v quiet -o app -p:VersionPrefix=${VERSION_PREFIX} -p:VersionSuffix=${VERSION_SUFFIX}
 
 # Runtime Image
-FROM ${BASE_IMAGE_REPO}/${BASE_IMAGE_RUNTIME}:${BASE_IMAGE_RUNTIME_TAG} AS run
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine@sha256:254fe017495996d3abcc487ffacdcce2b73affb380d3af87af12c8dff41fe0b0 AS run
 WORKDIR /app
 EXPOSE 8080
 COPY --from=publish /sln/app .

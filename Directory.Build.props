@@ -20,4 +20,10 @@
     <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- Every restore writes a packages.lock.json, and CI restores fail if a lock file is out of date. -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <RestoreLockedMode Condition="'$(CI)' == 'true'">true</RestoreLockedMode>
+  </PropertyGroup>
+
 </Project>

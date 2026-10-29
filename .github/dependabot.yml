@@ -13,6 +13,11 @@ updates:
     patterns: ["*"]
     multi-ecosystem-group: "monthly-dependencies"
 
+  - package-ecosystem: "docker"
+    directory: "/"
+    patterns: ["*"]
+    multi-ecosystem-group: "monthly-dependencies"
+
   - package-ecosystem: "docker-compose"
     directory: "/"
     patterns: ["*"]

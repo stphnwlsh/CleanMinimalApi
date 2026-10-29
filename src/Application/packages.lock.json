@@ -1,0 +1,36 @@
+{
+  "version": 2,
+  "dependencies": {
+    "net10.0": {
+      "FluentValidation.DependencyInjectionExtensions": {
+        "type": "Direct",
+        "requested": "[12.2.0, )",
+        "resolved": "12.2.0",
+        "contentHash": "QpKXgiO9E6wXCh19X2Musn8MZM0xt7KQt/QrD6GDBn3MCUfy8a+rkhCzrYJNCfoxTsTRQ7bpKP8T3geTnJNNeQ==",
+        "dependencies": {
+          "FluentValidation": "12.2.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "2.1.0"
+        }
+      },
+      "Mediator.Abstractions": {
+        "type": "Direct",
+        "requested": "[3.0.2, )",
+        "resolved": "3.0.2",
+        "contentHash": "TytjnyN8gLObZBxkM7HHPFJF3LHtk6Y8mHW56ONuXRuVEK6Fmed3f0z79H9TpmoZQP2zQAIS4/0O9R2w0v02qw==",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.0"
+        }
+      },
+      "FluentValidation": {
+        "type": "Transitive",
+        "resolved": "12.2.0",
+        "contentHash": "DR3lFbdnKucaaj1/8zMNOACMz/64igzox1yVZSFVsLxYB5mxAB+wFP1WZ8fjwrZnbU1KA1DoMzHKYKxUfuZ4wQ=="
+      },
+      "Microsoft.Extensions.DependencyInjection.Abstractions": {
+        "type": "Transitive",
+        "resolved": "8.0.0",
+        "contentHash": "cjWrLkJXK0rs4zofsK4bSdg+jhDLTaxrkXu4gS6Y7MAlCvRyNNgwY/lJi5RDlQOnSZweHqoyvgvbdvQsRIW+hg=="
+      }
+    }
+  }
+}
