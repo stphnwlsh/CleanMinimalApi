@@ -47,11 +47,7 @@ jobs:
           VERSION_PREFIX=$(date +'%Y.%m.%d').${GITHUB_RUN_NUMBER}
 
           if [[ ${GITHUB_EVENT_NAME} == 'pull_request' ]]; then
-            BRANCH_BASE=${GITHUB_BASE_REF#refs/*/}
-            BRANCH_BASE=${BRANCH_BASE/[^a-zA-Z0-9]//-}
-            BRANCH_COMPARE=${GITHUB_HEAD_REF#refs/*/}
-            BRANCH_COMPARE=${BRANCH_COMPARE//[^a-zA-Z0-9]/-}
-            VERSION_SUFFIX="merge-${BRANCH_BASE}-${BRANCH_COMPARE}"
+            VERSION_SUFFIX="pr-${PR_NUMBER}"
           fi
 
           if [[ $VERSION_SUFFIX == '' ]]; then
@@ -64,6 +60,8 @@ jobs:
           echo "version_prefix=$(eval printf "%s" "$VERSION_PREFIX")" >> $GITHUB_OUTPUT
           echo "version_suffix=$(eval printf "%s" "$VERSION_SUFFIX")" >> $GITHUB_OUTPUT
           echo "version=$(eval printf "%s" "$VERSION")" >> $GITHUB_OUTPUT
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         shell: bash
 
       - name: Test
