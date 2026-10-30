@@ -16,7 +16,7 @@ A `dotnet new` template for an API built with a streamlined version of Clean Arc
 
 It's one of five [Lean Mean Clean Apps](https://leanmeancleanapps.github.io/) templates that share the same Application and Infrastructure layers and differ only in how they present them. Same genes, different haircuts. See [Related templates](#related-templates).
 
-The template's home page is **[leanmeancleanapps.github.io/minimalapi](https://leanmeancleanapps.github.io/minimalapi/)**. Until its guides are written, this README is the full manual, so settle in.
+The template's home page is **[leanmeancleanapps.github.io/minimalapi](https://leanmeancleanapps.github.io/minimalapi/)**, with guides, a reference and the reasons behind every opinion in here. This README is the short version.
 
 ## Contents
 
