@@ -8,7 +8,7 @@
     <Authors>Stephen Walsh</Authors>
     <Description>A dotnet new template for an ASP.NET Core Minimal API built with a streamlined Clean Architecture on .NET 10.</Description>
     <PackageTags>dotnet;csharp;dotnet-template;template;clean-architecture;cqrs;mediator;fluentvalidation;mapperly;entity-framework-core;docker;aspnetcore;minimal-api;rest-api;openapi</PackageTags>
-    <PackageProjectUrl>https://github.com/stphnwlsh/CleanMinimalApi</PackageProjectUrl>
+    <PackageProjectUrl>https://leanmeancleanapps.github.io/minimalapi/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/stphnwlsh/CleanMinimalApi</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>docs/LICENSE.md</PackageLicenseFile>

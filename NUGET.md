@@ -68,6 +68,7 @@ What changed in each version is in the [release notes](https://github.com/stphnw
 
 ## More help
 
+- [Home page](https://leanmeancleanapps.github.io/minimalapi/) for the template and the rest of the family
 - [README on GitHub](https://github.com/stphnwlsh/CleanMinimalApi#readme) for the architecture, every feature and the Docker build options
 - [Running guide](https://github.com/stphnwlsh/CleanMinimalApi/blob/main/docs/RUN.md) for every way to run, configure and test the solution
 - [GitHub issues](https://github.com/stphnwlsh/CleanMinimalApi/issues) for bugs and ideas

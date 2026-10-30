@@ -33,6 +33,7 @@ If your change touches the Application or Infrastructure layers, their tests, th
    ```
 
 1. Run the project as described in [docs/RUN.md](docs/RUN.md).
+1. The docs site lives in the [Lean Mean Clean Apps site repository](https://github.com/LeanMeanCleanApps/leanmeancleanapps.github.io), so send docs changes there.
 
 ### Testing the template itself
 
