@@ -2,7 +2,6 @@
 
 [![Build Pipeline](https://img.shields.io/github/actions/workflow/status/stphnwlsh/CleanMinimalApi/build-pipeline.yml?branch=main&label=Build%20Pipeline&logo=github&style=for-the-badge)](https://github.com/stphnwlsh/CleanMinimalApi/actions/workflows/build-pipeline.yml)
 [![Code Coverage](https://img.shields.io/codecov/c/github/stphnwlsh/CleanMinimalApi?label=Code%20Coverage&logo=codecov&logoColor=white&style=for-the-badge)](https://codecov.io/gh/stphnwlsh/CleanMinimalApi)
-[![OpenSSF Scorecard](https://img.shields.io/ossf-scorecard/github.com/stphnwlsh/CleanMinimalApi?label=OpenSSF%20Scorecard&style=for-the-badge)](https://scorecard.dev/viewer/?uri=github.com/stphnwlsh/CleanMinimalApi)
 [![NuGet](https://img.shields.io/nuget/v/CleanMinimalApi.Template?label=NuGet&logo=nuget&logoColor=white&style=for-the-badge)](https://www.nuget.org/packages/CleanMinimalApi.Template)
 [![NuGet Downloads](https://img.shields.io/nuget/dt/CleanMinimalApi.Template?label=Downloads&logo=nuget&logoColor=white&style=for-the-badge)](https://www.nuget.org/packages/CleanMinimalApi.Template)
 [![License](https://img.shields.io/github/license/stphnwlsh/CleanMinimalApi?label=License&style=for-the-badge)](LICENSE.md)
