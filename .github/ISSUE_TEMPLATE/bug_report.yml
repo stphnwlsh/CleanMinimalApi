@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to report a bug. Please search the [existing issues](https://github.com/stphnwlsh/CleanMinimalApi/issues) first, and report security vulnerabilities through the [security policy](https://github.com/stphnwlsh/CleanMinimalApi/security/policy) instead.
+        Thanks for taking the time to report a bug. Every bug found here is one that doesn't end up in somebody's production. Please search the [existing issues](https://github.com/stphnwlsh/CleanMinimalApi/issues) first, and report security vulnerabilities through the [security policy](https://github.com/stphnwlsh/CleanMinimalApi/security/policy) instead.
   - type: textarea
     id: description
     attributes:
@@ -18,7 +18,7 @@ body:
     id: reproduce
     attributes:
       label: Steps to reproduce
-      description: The commands you ran and the steps that trigger the bug.
+      description: The commands you ran and the steps that trigger the bug. "It doesn't work" is a feeling, not a reproduction.
       placeholder: |
         1. dotnet new install CleanMinimalApi.Template
         2. dotnet new cleanminimalapi --name Sample

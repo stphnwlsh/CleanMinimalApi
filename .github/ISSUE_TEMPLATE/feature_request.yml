@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for the suggestion. This template is one of five that share their Application and Infrastructure layers, so it helps to know whether your idea is specific to this template or would apply to all of them.
+        Thanks for the suggestion. Good ideas are always welcome, and so are the strange ones. This template is one of five that share their Application and Infrastructure layers, so it helps to know whether your idea is specific to this template or would apply to all of them.
   - type: textarea
     id: problem
     attributes:
