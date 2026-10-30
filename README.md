@@ -1,3 +1,8 @@
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/LeanMeanCleanApps/brand/main/assets/logos/minimalapi/png/minimalapi-light-256.png">
+  <img src="https://raw.githubusercontent.com/LeanMeanCleanApps/brand/main/assets/logos/minimalapi/png/minimalapi-256.png" alt="Clean Minimal API logo" width="128" align="right">
+</picture>
+
 # Clean Minimal API
 
 [![Build Pipeline](https://img.shields.io/github/actions/workflow/status/stphnwlsh/CleanMinimalApi/build-pipeline.yml?branch=main&label=Build%20Pipeline&logo=github&style=for-the-badge)](https://github.com/stphnwlsh/CleanMinimalApi/actions/workflows/build-pipeline.yml)
@@ -7,9 +12,11 @@
 [![License](https://img.shields.io/github/license/stphnwlsh/CleanMinimalApi?label=License&style=for-the-badge)](LICENSE.md)
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/stphnwlsh?label=Sponsor&logo=githubsponsors&logoColor=white&color=ea4aaa&style=for-the-badge)](https://github.com/sponsors/stphnwlsh)
 
-A `dotnet new` template for an API built with a streamlined version of Clean Architecture and ASP.NET Core [Minimal APIs](https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis).
+A `dotnet new` template for an API built with a streamlined version of Clean Architecture and ASP.NET Core [Minimal APIs](https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis). All the layers you need, none of the ceremony you don't.
 
-It's one of five templates that share the same Application and Infrastructure layers and differ only in how they present them. See [Related templates](#related-templates).
+It's one of five [Lean Mean Clean Apps](https://leanmeancleanapps.github.io/) templates that share the same Application and Infrastructure layers and differ only in how they present them. Same genes, different haircuts. See [Related templates](#related-templates).
+
+The full documentation, with guides, a reference and the reasoning behind every opinion in here, lives at **[leanmeancleanapps.github.io/minimalapi](https://leanmeancleanapps.github.io/minimalapi/)**. This README is the short version for people who skim. We see you.
 
 ## Contents
 
@@ -21,7 +28,7 @@ It's one of five templates that share the same Application and Infrastructure la
 - [Related templates](#related-templates)
 - [Resources](#resources)
 - [Contributing](#contributing)
-- [Support](#support)
+- [The team](#the-team)
 - [License](#license)
 
 ## Getting started
@@ -42,6 +49,8 @@ dotnet new install CleanMinimalApi.Template
 ``` bash
 dotnet new cleanminimalapi --name {YOUR_SOLUTION_NAMESPACE} --authorName "{YOUR_NAME}"
 ```
+
+That's it. You now have three layers, four test projects, a Dockerfile and a CI pipeline. Go and tell your team you've been working on it all week.
 
 ### Protect the API with bearer tokens (optional)
 
@@ -69,11 +78,11 @@ docker build . --target run --tag cleanminimalapi:latest --build-arg VERSION_PRE
 
 ## Architecture
 
-This solution is loosely based on Clean Architecture. It's by no means perfect, so I prefer to call it "Lean Mean Clean Architecture". Inspiration comes from [Jason Taylor's Clean Architecture Template](https://github.com/jasontaylordev/CleanArchitecture), with some ideas taken further and others scaled back.
+This solution is loosely based on Clean Architecture. It's by no means perfect, so I prefer to call it "Lean Mean Clean Architecture". Fewer layers than an onion, more than a sandwich. Inspiration comes from [Jason Taylor's Clean Architecture Template](https://github.com/jasontaylordev/CleanArchitecture), with some ideas taken further and others scaled back.
 
-There's a little CQRS in the style of the commands and queries, but reads and writes use the same data source underneath.
+There's a little CQRS in the style of the commands and queries, but reads and writes use the same data source underneath. CQRS-curious, not CQRS-committed.
 
-The one deliberate break from Clean Architecture is that the Presentation project references the Infrastructure project, so it can wire up dependency injection. To protect that boundary, every class in Infrastructure is `internal`, so it can't be used from Presentation by accident.
+The one deliberate break from Clean Architecture is that the Presentation project references the Infrastructure project, so it can wire up dependency injection. To protect that boundary, every class in Infrastructure is `internal`, so it can't be used from Presentation by accident. Presentation can introduce itself, but it can't move in.
 
 ### Project structure
 
@@ -106,7 +115,7 @@ Every endpoint is documented with XML comments: a summary, a description with a 
 
 ## Releases
 
-The template is released once a month. On the 1st, at 9am US Central time, the pipeline checks for changes since the last release. If anything outside `.github/` has changed, it builds and tests `main`, publishes the new version to [NuGet](https://www.nuget.org/packages/CleanMinimalApi.Template) and creates a [GitHub release](https://github.com/stphnwlsh/CleanMinimalApi/releases) with notes for every pull request merged since the previous one. If nothing has changed, there's no release that month. Dependency updates arrive on the 15th, so they're merged in time for the next release.
+The template is released once a month. On the 1st, at 9am US Central time, the pipeline checks for changes since the last release. If anything outside `.github/` has changed, it builds and tests `main`, publishes the new version to [NuGet](https://www.nuget.org/packages/CleanMinimalApi.Template) and creates a [GitHub release](https://github.com/stphnwlsh/CleanMinimalApi/releases) with notes for every pull request merged since the previous one. If nothing has changed, there's no release that month, because nobody needs a new version number for the same code. Dependency updates arrive on the 15th, so they're merged in time for the next release.
 
 Versions keep the `YYYY.MM.DD.RUN` format. Up to the end of October 2026, every merge to `main` was released, so the older releases are much smaller. To release outside the monthly cycle, run the **Build Pipeline** workflow by hand. Tick **force** to release even when only `.github/` has changed.
 
@@ -123,14 +132,14 @@ All five templates share the same Application and Infrastructure layers, tests, 
 | Template | Presentation | Package |
 | --- | --- | --- |
 | **Clean Minimal API** (this repo) | ASP.NET Core Minimal APIs | [CleanMinimalApi.Template](https://www.nuget.org/packages/CleanMinimalApi.Template) |
-| [Clean Web API](https://github.com/stphnwlsh/CleanWebApi) | ASP.NET Core controllers | [CleanWebApi.Template](https://www.nuget.org/packages/CleanWebApi.Template) |
-| [Clean GraphQL API](https://github.com/stphnwlsh/CleanGraphQLApi) | GraphQL | [CleanGraphQLApi.Template](https://www.nuget.org/packages/CleanGraphQLApi.Template) |
 | [Clean Model Context Protocol](https://github.com/stphnwlsh/CleanModelContextProtocol) | Model Context Protocol server | [CleanModelContextProtocol.Template](https://www.nuget.org/packages/CleanModelContextProtocol.Template) |
+| [Clean GraphQL API](https://github.com/stphnwlsh/CleanGraphQLApi) | GraphQL with Hot Chocolate | [CleanGraphQLApi.Template](https://www.nuget.org/packages/CleanGraphQLApi.Template) |
+| [Clean Web API](https://github.com/stphnwlsh/CleanWebApi) | ASP.NET Core controllers | [CleanWebApi.Template](https://www.nuget.org/packages/CleanWebApi.Template) |
 | [Clean Lambda Function](https://github.com/stphnwlsh/CleanLamdaFunction) | AWS Lambda function | [CleanLambdaFunction.Template](https://www.nuget.org/packages/CleanLambdaFunction.Template) |
 
 ## Resources
 
-This template wouldn't exist without these resources. If you're on your own learning adventure, they're well worth a read.
+This template wouldn't exist without these resources. If you're on your own learning adventure, they're well worth a read. Better than the comments section, anyway.
 
 - [David Fowler - Minimal APIs at a glance](https://gist.github.com/davidfowl/ff1addd02d239d2d26f4648a06158727)
 - [Damian Edwards - Minimal API Playground](https://github.com/DamianEdwards/MinimalApiPlayground)
@@ -141,16 +150,22 @@ This template wouldn't exist without these resources. If you're on your own lear
 
 ## Contributing
 
-Bug reports, ideas and pull requests are welcome. Please read the [contributing guide](CONTRIBUTING.md) and the [code of conduct](CODE_OF_CONDUCT.md) first. To report a security vulnerability, follow the [security policy](SECURITY.md) instead of opening an issue.
+Bug reports, ideas and pull requests are welcome, and typo fixes are welcome with open arms. Please read the [contributing guide](CONTRIBUTING.md) and the [code of conduct](CODE_OF_CONDUCT.md) first. To report a security vulnerability, follow the [security policy](SECURITY.md) instead of opening an issue.
 
-## Support
+## The team
 
-If this template saves you time, please consider [sponsoring me on GitHub](https://github.com/sponsors/stphnwlsh). It helps me keep all five templates up to date.
+This template is part of [Lean Mean Clean Apps](https://leanmeancleanapps.github.io/), a small family of .NET templates built and looked after in spare time.
 
-[![Please sponsor me](docs/sponsor.jpg)](https://github.com/sponsors/stphnwlsh)
+| | Who | What they do | Find them |
+| --- | --- | --- | --- |
+| <img src="https://github.com/stphnwlsh.png?size=96" width="48" alt=""> | **Stephen Walsh** | Maintainer. Builds every template, keeps them current with each .NET release, and drinks the coffee. | [GitHub](https://github.com/stphnwlsh) · [LinkedIn](https://www.linkedin.com/in/stphnwlsh) · [Medium](https://stphnwlsh.medium.com) · [Website](https://stphnwlsh.github.io) |
 
-You can also connect with me on [LinkedIn](https://www.linkedin.com/in/stphnwlsh), follow me on [Medium](https://stphnwlsh.medium.com) or [GitHub](https://github.com/stphnwlsh). For help using the template, see [SUPPORT.md](SUPPORT.md).
+Want your name in this table? Pull requests are the way in, so start with the [contributing guide](CONTRIBUTING.md). For help using the template, see [SUPPORT.md](SUPPORT.md).
+
+### Support the work
+
+If this template saves you time, please consider [sponsoring the work on GitHub](https://github.com/sponsors/stphnwlsh). It keeps all five templates current with each .NET release, and it keeps the coffee flowing, which is the real dependency here.
 
 ## License
 
-Released under the [MIT License](LICENSE.md).
+Released under the [MIT License](LICENSE.md). Take it, change it, ship it. Just don't blame us for your production incidents.

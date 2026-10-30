@@ -1,6 +1,6 @@
 ## Summary
 
-<!-- What does this change and why? -->
+<!-- What does this change and why? Two or three sentences is plenty. Save the novel for the commit history. -->
 
 ## Related issues
 
